@@ -47,3 +47,30 @@ def more_kwargs(**kwargs):
         print(f"{key}:{value}")
 
 more_kwargs(first_key="first value", second_key="second value", third_key="third key")
+
+
+# functions as arguments for functions
+def called_function(): # outer function
+    return "this is an outer function"
+
+def calls_a_function(function):
+    return function() + " it was called here"
+
+print(calls_a_function(called_function))
+
+# user input
+
+def create_user(**kwargs):
+    print("\nUser Information:")
+    for key,value in kwargs.items():
+        print(f"{key}:{value}")
+
+# collect user input using 
+
+name = input("enter name: ")
+age = input("enter age: ")
+city = input("city: ")
+
+create_user(name = name, age = age, city = city)
+
+
