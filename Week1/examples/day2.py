@@ -52,4 +52,13 @@ print(just_hello)
 just_scot = my_string[6:]
 print(just_scot)
 
-# using negatg
+# reversing letters
+
+my_string = "Hello"
+reversed_letters = my_string[::-1]
+print(reversed_letters)
+
+a_number:int = 3
+print(type(a_number))
+a_string:str = str(a_number)
+print(type(a_string))
