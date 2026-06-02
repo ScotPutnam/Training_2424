@@ -46,3 +46,19 @@ formatted_by_method_string = "Hello {}".format("Scot")
 my_string = "Hello Scot"
 just_hello = my_string[0:5]
 print(just_hello)
+
+# using starting index X: grabs all chars from x index to end of string
+
+just_scot = my_string[6:]
+print(just_scot)
+
+# reversing letters
+
+my_string = "Hello"
+reversed_letters = my_string[::-1]
+print(reversed_letters)
+
+a_number:int = 3
+print(type(a_number))
+a_string:str = str(a_number)
+print(type(a_string))
