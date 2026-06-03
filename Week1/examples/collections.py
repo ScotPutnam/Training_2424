@@ -96,3 +96,36 @@ print(this_is_fixed.count("are"))
 
 print(this_is_fixed.index("these"))
 
+def inside_the_dictionary():
+    return "nice"
+
+my_dictionary = {
+    "key": "value",
+    100: 1000,
+    "string key": 5,
+    None: "this still works",
+    "can also do this": None,
+    "function": inside_the_dictionary(),
+    inside_the_dictionary(): "does this work?"
+
+}
+
+
+print(my_dictionary)
+
+print(my_dictionary.items())
+
+print(type(my_dictionary.items()))
+# list -> set -> coversion removes duplicates
+l2 = [1,2,2,3,3,4,4,5,5,5,2,1,0]
+l3 = list(set(l2)) 
+print(l3)
+
+# dictionary set defualt can be useful
+
+# dic.setdefault(key,[value]) returns the value of the provided key, if it doesnt exist, creates with value
+
+my_dictionary.setdefault("key1", )
+print(my_dictionary) 
+
+# dic.values() returns all valuies dic.keys() returns all keys
