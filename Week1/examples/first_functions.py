@@ -68,14 +68,6 @@ city = input("enter city: ")
 
 create_user(name = name, age = age, city=city)
 
-
-
-
-
-
-
-
-
 # create functions in python using def keyword, name the function, finish with ():, write code in block
 # return keyword has function return a value
 
