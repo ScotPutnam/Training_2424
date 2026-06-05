@@ -1,0 +1,6 @@
+2026-06-05 10:19:17 | DEBUG    | Test_Logger:45 | Debug Msg
+2026-06-05 10:19:17 | WARNING  | Test_Logger:46 | Warning Msg
+2026-06-05 10:19:17 | INFO     | Test_Logger:47 | Info Msg
+2026-06-05 10:19:17 | ERROR    | Test_Logger:48 | Error Msg
+2026-06-05 10:19:17 | CRITICAL | Test_Logger:49 | Critical Msg
+2026-06-05 10:19:17 | ERROR    | Test_Logger:57 | Division by zero 10/0
