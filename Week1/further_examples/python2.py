@@ -48,3 +48,13 @@ some_tuples = [(1,2,3), (4,5,6), (7,8,9)]
 # reads as for tuple in some_tuples, grab the value of tuple and return to x
 flattened = [x for tup in some_tuples for x in tup]
 print(flattened)
+
+
+import re
+def remove_punctuation(word) -> str:
+    """ Removes punctuation from word given to function """
+
+    
+    return re.sub("[!@#$]", " ", )
+
+clean_ops = [str.strip, remove_punctuation, str.title]

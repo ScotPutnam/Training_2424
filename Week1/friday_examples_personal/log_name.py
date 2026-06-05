@@ -58,3 +58,29 @@ def div(a, b):
         return None
 
 div(10, 0)
+
+def my_decorator(func):
+    def wrapper():
+        print("Before function runs")
+        func()
+        print("After function runs")
+    return wrapper()
+
+@my_decorator
+def say_hello():
+    print("Hello!")
+
+def my_decorator_2(func):
+    def wrapper(*args, **kwargs):
+        print("Starting func...")
+        result = func(*args, **kwargs)
+        print("Function finished")
+        return result
+    return wrapper
+
+@my_decorator
+def add(x,y):
+    return x + y
+
+print(add(3,5))
+
