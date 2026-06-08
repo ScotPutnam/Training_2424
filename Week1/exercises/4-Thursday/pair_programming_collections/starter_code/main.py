@@ -33,9 +33,9 @@ def main():
     # TODO: Create and add at least 8 Product instances.
     # Use at least 3 different categories (e.g., "electronics", "accessories", "software").
     # Example:
-    #   p = Product("Laptop", 999.99, stock=15, category="electronics")
-    #   product_id = inv.add_product(p)
-    #   print(f"  Added: {p} → ID={product_id}")
+    p = Product("Laptop", 999.99, stock=15, category="electronics")
+    product_id = inv.add_product(p)
+    print(f"  Added: {p} → ID={product_id}")
 
     # ── 2. Display all products sorted by price ────────────────────────────
     section("2. All Products (sorted by price)")

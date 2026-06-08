@@ -8,6 +8,7 @@ See the README for the full specification and validation tests.
 Reference: written/4-Thursday/dunder-methods.md
 """
 
+import exceptions
 
 class Product:
     """A single product in the inventory.
@@ -34,40 +35,48 @@ class Product:
     total_products = 0  # Class attribute — shared across all instances
 
     def __init__(self, name: str, price: float, stock: int = 0, category: str = "general"):
-        # TODO: Store all parameters as instance attributes.
-        # TODO: Increment Product.total_products by 1.
-        pass
+        self.name: str = name
+        self.price: float = price
+        self.stock: int = stock
+        self.category: str = category
+        # self.id = total_products
+        Product.total_products += 1
 
     def __str__(self) -> str:
-        # TODO: Return "Laptop ($999.99) — 15 in stock"
-        pass
+        return f"{self.name} (${self.price}) \u2014 {self.stock} in stock"
+
 
     def __repr__(self) -> str:
-        # TODO: Return "Product('Laptop', 999.99, stock=15, category='electronics')"
-        pass
+        return f"{self}"
 
     def __eq__(self, other) -> bool:
         # TODO: Two products are equal if name AND category match (case-insensitive).
         # Hint: check isinstance(other, Product) first.
-        pass
+        if not isinstance(other, Product):
+            raise exceptions.ProductNotFoundError(f"{other.name} not found")
+
+        result = self.name == other.name and self.category == other.category
+        return result
+
 
     def __hash__(self) -> int:
         # TODO: Return hash((self.name.lower(), self.category.lower()))
         # Required because we defined __eq__ — Python removes __hash__ by default.
-        pass
+        return hash((self.name.lower(), self.category.lower()))
+
 
     def __lt__(self, other) -> bool:
         # TODO: Compare by price. Enables sorted(list_of_products).
-        pass
+        return self.price < other.price
 
     def __bool__(self) -> bool:
         # TODO: Return True if stock > 0, False if out of stock.
-        pass
+        return self.stock > 0
 
     def __contains__(self, item: str) -> bool:
         # TODO: Return True if item (string) is a substring of self.name (case-insensitive).
         # Enables: "laptop" in product
-        pass
+        return item.lower() in (self.name).lower()
 
 
 # ── Validation ───────────────────────────────────────────────────────────────

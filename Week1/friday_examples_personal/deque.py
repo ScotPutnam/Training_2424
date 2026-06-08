@@ -1,9 +1,18 @@
 from collections import deque
 
-d = deque([1,2,3])
+d = deque([])
 
-d.append(4)
-d.appendleft(0)
+d.append("jo1")
+d.appendleft("bo1")
+d.append("jo2")
+d.appendleft("bo2")
+
 print(d)
+
+flat = ""
+for x in d:
+    flat += x
+
+print(flat)
 
 d.popleft()

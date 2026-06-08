@@ -44,7 +44,7 @@ class Inventory:
 
     def add_product(self, product: Product) -> int:
         """Add a product to the inventory and return its assigned ID.
-
+        
         Steps:
             1. Assign self._next_id as the product's ID (store on the product or as dict key).
             2. Add the product to self.products with that ID as key.
