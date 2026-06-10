@@ -1,0 +1,4 @@
+Row count: 5
+Total: [25.0, 60.0, 5.0, 99.99, 75.0]
+Sku max average: blah
+Line average: 53 

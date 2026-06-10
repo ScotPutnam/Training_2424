@@ -1,70 +1,78 @@
-#!/bin/python3
+# #!/bin/python3
 
-import math
-import os
-import random
-import re
-import sys
+# import math
+# import os
+# import random
+# import re
+# import sys
 
-#
-# Complete the 'superDigit' function below.
-#
-# The function is expected to return an INTEGER.
-# The function accepts following parameters:
-#  1. STRING n
-#  2. INTEGER k
-#
+# #
+# # Complete the 'superDigit' function below.
+# #
+# # The function is expected to return an INTEGER.
+# # The function accepts following parameters:
+# #  1. STRING n
+# #  2. INTEGER k
+# #
 
-def superDigit(n, k):
-    # Write your code here
-    p = ""
-    for i in range(k):
-        p += f"{n}"
+# def superDigit(n, k):
+#     # Write your code here
+#     p = ""
+#     for i in range(k):
+#         p += f"{n}"
     
-    total = 0
-    for char in p:
-        temp = int(char)
-        total += temp
+#     total = 0
+#     for char in p:
+#         temp = int(char)
+#         total += temp
     
-    while total > 10:
-        temp = str(total) 
-        print(temp)   
+#     while total > 10:
+#         temp = str(total) 
+#         print(temp)   
         
         
     
-    return total
+#     return total
 
-n = "148"
-k = 3
+# n = "148"
+# k = 3
 
-# print(superDigit(n,k))
+# # print(superDigit(n,k))
 
-def superDigit2(n, k):
+# def superDigit2(n, k):
 
-    p = [int(char) for char in n * k]
+#     p = [int(char) for char in n * k]
     
-    q = sum(p)
-    while q >= 10:
-        temp = [val for val in str(q)]
-        temp2 = [int(val) for val in temp]
-        q = sum(temp2)
+#     q = sum(p)
+#     while q >= 10:
+#         temp = [val for val in str(q)]
+#         temp2 = [int(val) for val in temp]
+#         q = sum(temp2)
 
-    return q
+#     return q
 
-print(superDigit2(n, k))
+# print(superDigit2(n, k))
 
 
-# if __name__ == '__main__':
-#     fptr = open(os.environ['OUTPUT_PATH'], 'w')
+# # if __name__ == '__main__':
+# #     fptr = open(os.environ['OUTPUT_PATH'], 'w')
 
-#     first_multiple_input = input().rstrip().split()
+# #     first_multiple_input = input().rstrip().split()
 
-#     n = first_multiple_input[0]
+# #     n = first_multiple_input[0]
 
-#     k = int(first_multiple_input[1])
+# #     k = int(first_multiple_input[1])
 
-#     result = superDigit(n, k)
+# #     result = superDigit(n, k)
 
-#     fptr.write(str(result) + '\n')
+# #     fptr.write(str(result) + '\n')
 
-#     fptr.close()
+# #     fptr.close()
+
+sample_int = "100 200 10 1 3 2"
+
+input_arr = []
+for char in sample_int:
+    input_arr.append(sample_int)
+
+print(input_arr)

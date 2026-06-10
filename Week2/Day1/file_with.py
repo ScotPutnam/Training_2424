@@ -12,5 +12,5 @@ with open("num_pick.dat", "rb") as file:
     data = pickle.load(file)
 
 # next: random access
-# use tell method - research
-# use seek method - positions file pointer to position of bytes
+# use tell method - research - tells you what line fptr is on
+# use seek method - tell fptr what line to go to

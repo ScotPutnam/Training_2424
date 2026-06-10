@@ -1,7 +1,6 @@
 #https://www.codewars.com/kata/5a86d2e24a6b34be2700003e
 
 def sum_of_unique_sublists(arr):
-    n = len(arr)
     seen = {}
     total = 0
     start = 0  # start of the current unique window
@@ -18,3 +17,25 @@ def sum_of_unique_sublists(arr):
 # Example
 arr = [1, 2, 1]
 print(sum_of_unique_sublists(arr))  # Output: 13
+
+# naive
+def solve(lst):
+    
+    result = []
+    
+    for i in range(len(lst)):
+        for j in range(i+1,len(lst)+1):
+            if lst[i:j] not in result:
+                result.append(lst[i:j]) 
+    
+    flat_result = []
+    for set in result:
+        flat_result.extend(set)
+    
+    print(result)
+    print(flat_result)
+    
+    
+     
+    
+    return sum(flat_result)
