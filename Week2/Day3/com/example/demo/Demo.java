@@ -1,4 +1,4 @@
-package Day3.com.example.demo;
+package Week2.Day3.com.example.demo;
 
 // Fully qualified import
 import java.util.Scanner;

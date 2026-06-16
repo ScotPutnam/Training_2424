@@ -69,10 +69,47 @@
 
 # #     fptr.close()
 
-sample_int = "100 200 10 1 3 2"
+# sample_int = "100 200 10 1 3 2"
 
-input_arr = []
-for char in sample_int:
-    input_arr.append(sample_int)
+# input_arr = []
+# for char in sample_int:
+#     input_arr.append(sample_int)
 
-print(input_arr)
+# print(input_arr)
+
+# arr = [0, 0, 0, 8, 8, 8, 5, 5, 7]
+
+# dupe_arr = []
+# index = 0
+# for val in arr:
+#     count = 1
+    
+#     while(val == arr[index + 1]):
+#         count += 1
+#         arr.pop(index + 1)
+
+
+
+#     arr.insert(index, count)
+#     index += 1
+#     # for value in list if index + 1 == value
+
+arr = [0, 4, 6, 8, 8, 8, 5, 5, 7]
+
+def set_reducer(arr):
+
+    for index, number in enumerate(arr):
+        print(index, number, arr)
+        if index == len(arr) - 1 :
+            break
+
+        count = 1
+        if (number == arr[index + 1]):
+            while number == arr[index + 1]:
+                count += 1
+                arr.pop(index + 1)
+            arr.insert(index, count)
+            
+        
+    
+

@@ -1,4 +1,4 @@
-package Day3.com.example.constructor;
+package Week2.Day3.com.example.constructor;
 
 public class Person {
 

@@ -2,5 +2,8 @@ package com.scotputnam.polymorphism;
 
 import com.scotputnam.polymorphism.Parent;
 public class Playground {
-    Parent p = new Parent();
+    public static void main(String[] args) {
+        Parent p = new Parent();
+
+    }
 }
