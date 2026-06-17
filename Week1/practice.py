@@ -94,21 +94,28 @@
 #     index += 1
 #     # for value in list if index + 1 == value
 
-arr = [0, 4, 6, 8, 8, 8, 5, 5, 7]
+inp = [0, 4, 6, 8, 8, 8, 5, 5, 7]
 
-def set_reducer(arr):
+def set_reducer(inp):
+    
+    dupe_set = []
+    for i in range(1, len(inp) - 1, 1):
+        
+        if(inp[i] is not inp[i + 1]):
+            dupe_set.append(1)
+        
+        if (inp[i] == inp[i + 1]):
+            count = 1
+            while(inp[i] == inp[i+1]):
+                inp.insert(i+1, 1)
+                count +=1
+                i +=1
+            print(count)
+    
+    print(dupe_set)
+    
+    
 
-    for index, number in enumerate(arr):
-        print(index, number, arr)
-        if index == len(arr) - 1 :
-            break
-
-        count = 1
-        if (number == arr[index + 1]):
-            while number == arr[index + 1]:
-                count += 1
-                arr.pop(index + 1)
-            arr.insert(index, count)
             
         
     

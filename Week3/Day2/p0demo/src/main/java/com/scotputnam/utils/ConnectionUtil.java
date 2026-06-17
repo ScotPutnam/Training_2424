@@ -16,7 +16,7 @@ public class ConnectionUtil {
             e.printStackTrace();
             System.out.println("Problem occurred locating driver");
         }
-        String url = "jdbc:sqllite:src/dbfile/dbfile";
+        String url = "jdbc:sqlite:src/dbfile/dbfile";
         return DriverManager.getConnection(url);
     }
 }
