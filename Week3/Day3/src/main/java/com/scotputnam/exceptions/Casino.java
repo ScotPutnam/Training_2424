@@ -1,5 +1,7 @@
 package com.scotputnam.exceptions;
 
+import java.util.ArrayList;
+
 public class Casino {
     public static void main(String[] args) {
         double luck = Math.random();
@@ -18,6 +20,6 @@ public class Casino {
             System.out.println("Here's a couple of bones, you won!");
        }
        else throw new LostMoneyException("Please gamble responsibly!");
-
     }
+
 }
