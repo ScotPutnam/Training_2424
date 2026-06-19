@@ -1,3 +1,4 @@
-2026-06-19 09:30:49,737 INFO  com.scotputnam.Logging.DemoLogbackSetup - info: extra info
-2026-06-19 09:30:49,740 WARN  com.scotputnam.Logging.DemoLogbackSetup - warning: memory low
-2026-06-19 09:30:49,740 ERROR com.scotputnam.Logging.DemoLogbackSetup - error: critical error
+2026-06-19 09:50:12,798 DEBUG com.scotputnam.Logging.DemoLogbackSetup - debug: configuration loaded
+2026-06-19 09:50:12,800 INFO  com.scotputnam.Logging.DemoLogbackSetup - info: extra info
+2026-06-19 09:50:12,800 WARN  com.scotputnam.Logging.DemoLogbackSetup - warning: memory low
+2026-06-19 09:50:12,800 ERROR com.scotputnam.Logging.DemoLogbackSetup - error: critical error
