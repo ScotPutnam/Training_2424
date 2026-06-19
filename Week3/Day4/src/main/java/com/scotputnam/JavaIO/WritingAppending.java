@@ -77,7 +77,4 @@ public class WritingAppending {
         System.out.println("Report Saved: " + output.toAbsolutePath());
         failures.forEach(s -> System.out.println(" >> " + s));
     }
-
-
-
 }

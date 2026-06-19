@@ -1,0 +1,59 @@
+== JVM || JRE || JDK ==
+
+-- Java Virtual Machine (JVM) --
+
+JVM is an abstract computing machine, it's a software layer that sits
+between Java bytecode and hardware. The JVM is what makes Java
+code runnable across different machines.
+
+The JVM is responsible for some critical things:
+
+-> Class loading
+--> Finds, loads, and links .class files at startup and execution
+
+-> Bytecode Verification
+--> Checks bytecode validity and safety before execution - called the security layer
+
+-> Bytecode Execution
+--> Interprets bytecode instructions OR compiles the instructions to native code
+
+-> JIT Compilation
+--> Identifies "Hot" or frequently accessed methods and compiles them to native machine code for faster exec times
+
+-> Garbage Collection
+--> Automatically reclaims memory from objects that are no longer reachable
+
+-> Thread Management
+--> Schedules Java threads on OS threads
+
+-> Memory Areas
+--> Manages the Heap (objects)
+--> Manages the Stack (method frames)
+--> Manages the Method Area (class metadata)
+
+-- Just-In Time Compilation --
+
+On bytecode execution the JVM tracks how many times a method is ran and after enough
+executions the JVM marks the method as "hot" and so the method is converted to machine native code (cpu runnable)
+this is why Java can be slow to execute at first.
+
+-> JVM interprets bytecode (first few calls)        -> slow
+-> JIT compiles native code (after hot threshold)   -> fast
+-> Runs native code directly (subsequent calls)     -> fastest
+
+-- Garbage Collection --
+
+Java has automatic memory management unlike C/C++. When object references go unused the GC reclaims the memory.
+GC causes some latency and so can cause unexpected behavior in QA scenarios where performance/load tests expect
+response times within a threshold, keep in mind.
+
+-- Java Runtime Environment -> JRE --
+
+The JRE is the minimum needed to run an already compiled Java program.
+The JRE contains the JVM, the standard Java class libraries such as java.lang, java.util, java.io, and java.net, etc.
+The JRE also contains other supporting files such as .dll and shared libraries. A JRE or a bundled runtime is requried
+to run a Java program.
+
+-- Java development kit -> JDK --
+
+The JDK contains the JRE plus extra development tools. Eclipse temurin is recommended

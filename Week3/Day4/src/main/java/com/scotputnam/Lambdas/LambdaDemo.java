@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class LambdaDemo {
+
     static void main() {
 
         List<String> names = new ArrayList<>(List.of("Bob", "Alice", "Charlie"));
@@ -29,6 +30,5 @@ public class LambdaDemo {
         names.stream().filter(longWord).map(upper).forEach(printer);
 
     }
-
 
 }

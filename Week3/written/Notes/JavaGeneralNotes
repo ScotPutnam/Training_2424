@@ -1,0 +1,81 @@
+== Java in General ==
+Java has many mature frameworks since it's been leading enterprise
+development for 25 years. Java also has three different editions based on use case
+
+Java Editions
+----
+
+-> Java SE
+--> Standard edition - java.util, java.io, java.net, etc.
+
+-> Jakarta EE (was Java EE)
+--> Enterprise Edition - Builds on the SE; adds servlets, Jakarta Persistence API, messaging, etc. - enterprise level
+
+-> Java ME
+--> Micro Edition - Subset of SE for embedded/IoT devices. Not used in QA contexts often
+
+SE is most often used for QA
+
+These frameworks include:
+----
+
+-> Backend REST/GraphQL API's
+--> Spring Boot, Quarkus, Micronaut
+
+-> Microservices
+--> Container (docker etc.) friendly JARs, strong logging & debugging tools
+
+-> Enterprise software (ERP, CRM)
+--> SAP, Oracle applications run on the JVM
+
+-> Big Data / Data Engineering
+--> Apache Hadoop, Spark, Kafka
+
+-> Financial services and Banking
+--> Regulated environments value LTS JDK support, strong typing, and auditability
+
+-> Telecommunication services
+--> Long lived, mission critical services which require stability rely on Java
+
+== Why Java is useful for QA Engineers ==
+
+Test Frameworks and Tools:
+--
+
+-> Junit5
+--> Unit test framework
+
+-> TestNG
+--> Alternative test framework to Junit with more configuration options
+
+-> REST Assured
+--> Java Domain Specific Language (DSL) for testing HTTP API's
+
+-> Selenium
+--> Browser Automation Library - UI automation based in Java
+
+-> Maven/Gradle
+--> Build and dependency management tools - Run tests and compile JARs, enable CI/CD pipelines
+
+-> Mockito
+--> Java mocking framework - Isolate dependencies in unit tests
+
+-> WireMock
+--> Http service visualizer
+
+== Key Points ==
+
+-> Python automation scripts call Java APIs at the service/gateway level
+-> Integration tests (Junit + REST Assured) test service tier
+-> End-To-End tests (Selenium /  Playwright) test the full stack from the client down
+-> Contract Tests validate agreements between client and service tiers
+
+== Why Choose Java ==
+-> Portability
+-> Static typing catches errors before runtime - fewer runtime errors
+-> Object Oriented - every method is inside a class
+-> JVM is platform neutral (portable)
+-> Flexible enterprise services
+-> Mature frameworks (Spring Boot)
+
+

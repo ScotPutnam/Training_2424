@@ -40,7 +40,7 @@ public class ReadingData {
             }
         } catch (IOException e) {
             System.err.println("Could not read file: " + e.getStackTrace());;
-        } ;
+        }
 
     }
 
@@ -54,12 +54,9 @@ public class ReadingData {
         List<String> lines = Files.readAllLines(path);
         lines.forEach(l-> System.out.println("  " + l));
 
-
         // Option B: entire file as a single string
         System.out.println("\n--readString():");
         String content = Files.readString(path);
         System.out.println(content);
-
-
     }
 }

@@ -6,9 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Day4" />
+        <module name="Day5" />
         <module name="demo-maven" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Day4" target="25" />
+      <module name="Week3" target="25" />
+    </bytecodeTargetLevel>
   </component>
 </project>

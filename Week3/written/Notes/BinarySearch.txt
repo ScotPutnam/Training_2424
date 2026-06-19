@@ -1,0 +1,193 @@
+== Binary Search ==
+
+Binary search is used on ordered data with O(log n) time complexity. Ordered data typically shows up as version ranges,
+timestamps, sorted IDs, config tables, and log lines. Binary search cuts the search results by half on each lookup
+thus doubling the size of the input will only produce one extra lookup.
+
+-> The Idea <-
+
+Suppose a range of indices where the target value might live. On each step, compare the middle element of the range to
+the target value, if the target value is less, discard the greater than indices of the array and vice versa.
+
+Sorted input is necessary:
+
+Binary search only works on ordered lists else the search can go for an infinite time.
+
+-> Implemented with inclusive indices lo - hi <-
+
+Using lo - hi indices:
+-> initially; if the target exists anywhere, index in [lo,hi]
+-> Each iteration shrinks [lo,hi] bounds, preserving target within lo -> hi range
+-> loop while lo <= hi; when lo > hi, range is empty -> not found
+
+mid is used to shrink bounds of [lo,hi] based on: lo < mid < hi
+
+int mid = lo + (hi - lo) / 2 (int division)
+
+This mid-formula prevents integer overflow when lo - hi are large values
+
+== Java implementation ==
+
+-- Iterative Binary Search --
+
+public static int binarySearch(int[] sorted, int target) {
+    int lo = 0;
+    int hi = sorted.length - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        int v = sorted[mid];
+        if (v == target) {
+            return mid;
+        } else if (v < target) {
+            lo = mid + 1;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    return -1;
+}
+
+-- Recursive Binary Search --
+
+public static int binarySearchRec(int[] sorted, int target) {
+    return searchRange(sorted, target, 0, sorted.length - 1);
+}
+
+private static int searchRange(int[] a, int target, int lo, int hi) {
+    if (lo > hi) {
+        return -1;
+    }
+    int mid = lo + (hi - lo) / 2;
+    int v = a[mid];
+    if (v == target) {
+        return mid;
+    }
+    if (v < target) {
+        return searchRange(a, target, mid + 1, hi);
+    }
+    return searchRange(a, target, lo, mid - 1);
+}
+
+== Python Implementation ==
+
+-- Iterative Search --
+
+def binary_search(sorted_vals: list[int], target: int) -> int:
+    lo, hi = 0, len(sorted_vals) - 1
+    while lo <= hi:
+        mid = lo + (hi - lo) // 2
+        v = sorted_vals[mid]
+        if v == target:
+            return mid
+        if v < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+
+-- Recursive Search --
+
+def binary_search_rec(sorted_vals: list[int], target: int) -> int:
+    def search(lo: int, hi: int) -> int:
+        if lo > hi:
+            return -1
+        mid = lo + (hi - lo) // 2
+        v = sorted_vals[mid]
+        if v == target:
+            return mid
+        if v < target:
+            return search(mid + 1, hi)
+        return search(lo, mid - 1)
+    return search(0, len(sorted_vals) - 1)
+
+
+== Libraries for Binary Search ==
+
+Java
+----
+Arrays.binarySearch returns an index >= 0 if found, otherwise returns a negative value representing
+the index which the target value would be located within the array.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Python
+----
+bisect module implements binary-search-style insertion points for sorted lists; gives where would this target go value
+as a return
+
+
+== Time & Space Complexity ==
+
+ Binary Search:
+ -> Time Complexity: O(log n)
+ -> Space Complexity: O(1),  Recursive case - O(log n)
+
+ Linear Search:
+ -> Time Complexity: O(1)
+ -> Space Complexity: O(1)
