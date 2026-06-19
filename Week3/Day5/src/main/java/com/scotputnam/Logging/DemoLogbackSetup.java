@@ -14,7 +14,7 @@ public class DemoLogbackSetup {
         log.info("info: extra info");
         log.warn("warning: memory low");
         log.error("error: critical error");
-        System.out.println("\n check logs/demo-logback.log in relative path to see results");
+        System.out.println("\ncheck logs/demo-logback.log in relative path to see results");
 
     }
 }
