@@ -13,6 +13,12 @@ public class EmployeeController {
     public Handler getEmployeesHandler = (ctx -> {
 
         // ctx is the context object containing methods to process http requests
+        // if session is not null, session is logged in, can view employees
+//        if (AuthController.ses != null){
+
+        // how to retrieve saved session attributes
+        // values typically belong in DAO
+        System.out.println(AuthController.ses.getAttribute("employee_id"));
 
         // First we need an ArrayList of employees (from DAO)
         ArrayList<Employee> employees = eDAO.getEmployees();
@@ -22,6 +28,10 @@ public class EmployeeController {
 
         // HttpStatus has static enum fields
         ctx.status(HttpStatus.OK);
+
+//        }
+
+
     });
 
     // This handler creates post request for inserting data to DB

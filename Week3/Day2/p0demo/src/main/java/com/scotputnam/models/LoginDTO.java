@@ -1,10 +1,34 @@
 package com.scotputnam.models;
 
+import com.scotputnam.DAOs.EmployeeDAO;
+import com.scotputnam.controllers.EmployeeController;
+
 public class LoginDTO {
-    public String getFirst_Name() {
+
+    private String first_name;
+    private String last_name;
+
+    public LoginDTO(String first_name, String last_name){
+        this.first_name = first_name;
+        this.last_name = last_name;
     }
 
-    public String getLast_Name() {
-        return null;
+    public LoginDTO() {
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public String getLast_name() {
+        return last_name;
+    }
+
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
     }
 }

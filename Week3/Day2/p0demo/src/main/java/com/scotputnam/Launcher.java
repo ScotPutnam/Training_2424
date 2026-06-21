@@ -2,6 +2,7 @@ package com.scotputnam;
 
 import com.scotputnam.DAOs.AuthDAO;
 import com.scotputnam.DAOs.EmployeeDAO;
+import com.scotputnam.controllers.AuthController;
 import com.scotputnam.controllers.EmployeeController;
 import com.scotputnam.models.Employee;
 import io.javalin.Javalin;
@@ -19,7 +20,6 @@ public class Launcher {
         System.out.println(e1);
 
         EmployeeDAO eDAO = new EmployeeDAO();
-
         eDAO.insertEmployee(e1);
 
         ArrayList<Employee> employees = new ArrayList<>();
@@ -30,13 +30,20 @@ public class Launcher {
         }
 
         EmployeeController ec = new EmployeeController();
+        AuthController ac = new AuthController();
         var app = Javalin.create(config -> {
             config.router.apiBuilder(() -> {
+                path("/login", () -> {
+                    get(ac.loginHandler);
+                    post(ac.loginHandler);
+                });
                 path("/employees", () -> {
+                    get("hello", ctx -> ctx.result("HelloWorld"));
                     get(ec.getEmployeesHandler);
                     post(ec.insertEmployee);
                 });
             });
+
         }).start(8080);
 
         AuthDAO ad = new AuthDAO();
