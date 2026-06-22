@@ -1,8 +1,5 @@
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.function.*;
 
 
@@ -445,12 +442,17 @@ public class TypeConversionPractice {
         // Function / .apply()
         // Consumer / .accept()
         // Supplier / .get()
+
+        list.sort((a, b) -> a.length() - b.length()); // sort based on length
+
+        // returns bool
         Predicate<String> longWord = s->s.length()>4;
         System.out.println(longWord.test("example String"));
 
+        //<input type, output type>
         Function<String, Integer> getLength = s -> s.length();
         System.out.println(getLength.apply("Example String"));
-
+    
         Consumer<String> printer = s -> System.out.println(s);
         printer.accept("example String");
 
