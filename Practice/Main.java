@@ -1,5 +1,9 @@
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.*;
 
 
 public class Main {
@@ -211,6 +215,7 @@ public class TypeConversionPractice {
         // ==========================
 
         Collections.sort(list);                   // sort ascending
+        list.sort((a, b) -> a.length() - b.length()); // sort based on length
         Collections.reverse(list);                // reverse order
 
         list.sort(Comparator.comparingInt(String::length)); // sort by length
@@ -440,6 +445,17 @@ public class TypeConversionPractice {
         // Function / .apply()
         // Consumer / .accept()
         // Supplier / .get()
+        Predicate<String> longWord = s->s.length()>4;
+        System.out.println(longWord.test("example String"));
+
+        Function<String, Integer> getLength = s -> s.length();
+        System.out.println(getLength.apply("Example String"));
+
+        Consumer<String> printer = s -> System.out.println(s);
+        printer.accept("example String");
+
+        Supplier<Double> randomNumber = ()->Math.random();
+        System.out.println(randomNumber.get());
 
         try {
 
