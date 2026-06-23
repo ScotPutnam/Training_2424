@@ -10,7 +10,13 @@
         <option value="$PROJECT_DIR$/Week3/pom.xml" />
         <option value="$PROJECT_DIR$/Week3/Day5/pom.xml" />
         <option value="$PROJECT_DIR$/TestModule/pom.xml" />
+        <option value="$PROJECT_DIR$/Week4/Day1/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/Week4/Day1/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_25" default="true" project-jdk-name="liberica-25" project-jdk-type="JavaSDK">
