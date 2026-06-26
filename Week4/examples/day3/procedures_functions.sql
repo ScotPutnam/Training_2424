@@ -1,4 +1,4 @@
-SET SEARCH_PATH TO public;
+SET SEARCH_PATH TO test1;
 
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS customer CASCADE;
@@ -35,8 +35,7 @@ VALUES
 SELECT * FROM orders;
 SELECT * FROM customer;
 
--- Function: Calculate discount
-
+-- FUNCTION: CALCULATE DISCOUNT
 CREATE OR REPLACE FUNCTION calculate_discount_rate(
 	p_customer_id INT)
 RETURNS NUMERIC(5,2)
@@ -51,9 +50,9 @@ BEGIN
 	WHERE customer_id = p_customer_id;
 
 	RETURN CASE
-		WHEN v_total_spent > 10000 THEN 0.20
-		WHEN v_total_spent >= 5000 THEN 0.10
-		WHEN v_total_spent >= 1000  THEN 0.05
+		WHEN v_total_spent >=10000 THEN 0.20
+		WHEN v_total_spent >=5000 THEN 0.10
+		WHEN v_total_spent >=1000 THEN 0.05
 		ELSE 0.00
 	END;
 END;
@@ -61,5 +60,42 @@ $$;
 
 SELECT calculate_discount_rate(2);
 
+-- PROCEDURE: APPLY DISCOUNT TO CUSTOMER
+CREATE OR REPLACE PROCEDURE apply_customer_discount(
+	p_customer_id INT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+	v_discount_rate NUMERIC(5,2);
+	v_exists BOOLEAN;
+BEGIN
+	-- check customer exists
+	SELECT EXISTS (SELECT 1 FROM customer WHERE customer_id=p_customer_id)
+	INTO v_exists;
 
--- Procedure: Apply discount 
+	IF NOT v_exists THEN
+		RAISE NOTICE 'Customer % not found', p_customer_id;
+		RETURN;
+	END IF;
+
+	--calculate discount
+	v_discount_rate := calculate_discount_rate(p_customer_id);
+
+	--update customer
+	UPDATE customer
+	SET current_discount_rate = v_discount_rate,
+		discount_updated_at = CURRENT_TIMESTAMP
+	WHERE customer_id = p_customer_id;
+
+	RAISE NOTICE
+		'Customer % discount updated to %',
+		p_customer_id,
+		v_discount_rate *100;
+END;
+$$;
+
+CALL apply_customer_discount(1);
+CALL apply_customer_discount(2);
+CALL apply_customer_discount(3);
+SELECT * FROM customer;
