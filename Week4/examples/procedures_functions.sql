@@ -1,4 +1,4 @@
-SET SEARCH_PATH TO test1;
+SET SEARCH_PATH TO public;
 
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS customer CASCADE;
@@ -34,3 +34,32 @@ VALUES
 
 SELECT * FROM orders;
 SELECT * FROM customer;
+
+-- Function: Calculate discount
+
+CREATE OR REPLACE FUNCTION calculate_discount_rate(
+	p_customer_id INT)
+RETURNS NUMERIC(5,2)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+	v_total_spent NUMERIC(10,2);
+BEGIN
+	SELECT COALESCE(SUM(total_amount),0)
+	INTO v_total_spent
+	FROM orders
+	WHERE customer_id = p_customer_id;
+
+	RETURN CASE
+		WHEN v_total_spent > 10000 THEN 0.20
+		WHEN v_total_spent >= 5000 THEN 0.10
+		WHEN v_total_spent >= 1000  THEN 0.05
+		ELSE 0.00
+	END;
+END;
+$$;
+
+SELECT calculate_discount_rate(2);
+
+
+-- Procedure: Apply discount 

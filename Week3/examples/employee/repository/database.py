@@ -8,7 +8,7 @@ from typing import Optional
 
 class DatabaseConnection:
     """Handles SQLite database connections and initialization."""
-    
+
     def __init__(self, db_path: Optional[str] = None):
         self.db_path = db_path or os.getenv('DATABASE_PATH', 'expense_manager.db')
         print(os.getenv('DATABASE_PATH'))
