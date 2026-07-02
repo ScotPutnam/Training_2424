@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quiz — Java & SQL</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent-2: #a78bfa;
+    --border: #334155;
+    --success: #22c55e;
+    --success-bg: rgba(34, 197, 94, 0.15);
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.15);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e1b4b);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  header {
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  h1 {
+    margin: 0 0 8px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 32px;
+  }
+  .subtitle { color: var(--muted); margin: 0; }
+  .top-nav { margin-top: 12px; }
+  .top-nav a {
+    color: var(--accent);
+    text-decoration: none;
+    margin: 0 8px;
+    font-size: 14px;
+  }
+  .container {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .setup {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+  .setup label {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    font-size: 15px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .setup select, .setup input {
+    background: #0f172a;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    min-width: 140px;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #0f172a;
+    border: none;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: transform 0.1s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-secondary {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  .btn-secondary:hover { background: var(--border); }
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .quiz-header .progress {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .quiz-header .category {
+    background: rgba(96,165,250,0.15);
+    color: var(--accent);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #0f172a;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.3s;
+  }
+  .question {
+    font-size: 20px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+  .question code, .options code, .explanation code {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+    font-size: 0.9em;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #0f172a;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.4;
+    text-align: left;
+    font-family: inherit;
+  }
+  .option:hover:not(:disabled) {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+  .option:disabled { cursor: default; }
+  .option .letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--border);
+    color: var(--text);
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .option.correct {
+    border-color: var(--success);
+    background: var(--success-bg);
+  }
+  .option.correct .letter { background: var(--success); color: white; }
+  .option.incorrect {
+    border-color: var(--danger);
+    background: var(--danger-bg);
+  }
+  .option.incorrect .letter { background: var(--danger); color: white; }
+  .explanation {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: rgba(96,165,250,0.1);
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    gap: 12px;
+  }
+  .results {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .score {
+    font-size: 72px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1;
+    margin: 10px 0;
+  }
+  .score-detail {
+    color: var(--muted);
+    font-size: 18px;
+    margin-bottom: 24px;
+  }
+  .grade { font-size: 24px; margin-bottom: 24px; }
+  .review-list {
+    text-align: left;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .review-list h3 { margin-top: 0; color: var(--danger); }
+  .review-item {
+    background: #0f172a;
+    border-left: 4px solid var(--danger);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .review-item .q { font-weight: 600; margin-bottom: 8px; }
+  .review-item .wrong { color: var(--danger); font-size: 14px; }
+  .review-item .right { color: var(--success); font-size: 14px; }
+  .review-item .exp { color: var(--muted); font-size: 13px; margin-top: 8px; font-style: italic; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Practice Quiz</h1>
+  <p class="subtitle">Java (Week 3) &amp; SQL (Week 4)</p>
+  <div class="top-nav">
+    <a href="index.html">Home</a> ·
+    <a href="study-guide.html">Study Guide</a> ·
+    <a href="flashcards.html">Flash Cards</a>
+  </div>
+</header>
+
+<div class="container" id="app"></div>
+
+<script>
+const ALL_QUESTIONS = [
+  // ---- JAVA BASICS ----
+  { topic:"java", cat:"Java Basics", q:"Which is <b>NOT</b> a primitive type in Java?",
+    choices:["<code>int</code>","<code>char</code>","<code>String</code>","<code>boolean</code>"], answer:2,
+    exp:"<code>String</code> is a reference type (a class). The 8 primitives are byte, short, int, long, float, double, char, boolean." },
+  { topic:"java", cat:"Java Basics", q:"What is the default value of an instance field of type <code>int</code>?",
+    choices:["null","0","undefined","−1"], answer:1,
+    exp:"Numeric primitive instance fields default to 0 (0L for long, 0.0 for float/double). Local variables have no default." },
+  { topic:"java", cat:"Java Basics", q:"What does the JVM do?",
+    choices:["Compiles .java to .class","Executes Java bytecode","Formats Java source","Installs JAR files"], answer:1,
+    exp:"The JVM runs compiled bytecode. The <code>javac</code> compiler produces the bytecode from source." },
+  { topic:"java", cat:"Java Basics", q:"Which contains the compiler <code>javac</code>?",
+    choices:["JRE","JVM","JDK","JEE"], answer:2,
+    exp:"The JDK (Java Development Kit) includes the compiler and other dev tools plus the JRE." },
+
+  // ---- ARRAYS ----
+  { topic:"java", cat:"Arrays", q:"How do you get the size of an array named <code>arr</code>?",
+    choices:["<code>arr.size()</code>","<code>arr.length()</code>","<code>arr.length</code>","<code>arr.count</code>"], answer:2,
+    exp:"<code>length</code> is a public final <b>field</b>, not a method. <code>size()</code> is used on collections like ArrayList." },
+  { topic:"java", cat:"Arrays", q:"Which is the correct way to compare the CONTENTS of two int arrays?",
+    choices:["<code>a == b</code>","<code>a.equals(b)</code>","<code>Arrays.equals(a, b)</code>","<code>a.compareTo(b)</code>"], answer:2,
+    exp:"<code>==</code> compares references. Arrays don't override equals meaningfully. Use <code>Arrays.equals()</code>." },
+  { topic:"java", cat:"Arrays", q:"What is thrown by <code>int[] a = new int[3]; a[5] = 1;</code>?",
+    choices:["NullPointerException","ArrayIndexOutOfBoundsException","IllegalArgumentException","No exception; array grows"], answer:1,
+    exp:"Arrays are fixed length. Any index outside [0, length-1] throws <code>ArrayIndexOutOfBoundsException</code>." },
+
+  // ---- CLASSES / OBJECTS ----
+  { topic:"java", cat:"Classes", q:"What does <code>super()</code> do inside a constructor?",
+    choices:["Calls the current class constructor","Calls the parent class constructor","Calls the parent's toString","Creates a new parent object"], answer:1,
+    exp:"<code>super()</code> invokes the superclass constructor and must be the first statement in the child constructor (inserted implicitly if omitted)." },
+  { topic:"java", cat:"Classes", q:"A class provides no constructor. What does the compiler do?",
+    choices:["Compilation error","Inserts a default no-arg constructor","Insertion happens only for abstract classes","Instance creation is disabled"], answer:1,
+    exp:"If you write no constructor, the compiler inserts a default public no-arg constructor. Write one and it's no longer generated." },
+
+  // ---- ACCESS MODIFIERS ----
+  { topic:"java", cat:"Modifiers", q:"Which modifier makes a member visible to subclasses in other packages but NOT to unrelated classes?",
+    choices:["public","protected","default (package-private)","private"], answer:1,
+    exp:"<code>protected</code> = same package OR any subclass anywhere. Default is same-package only." },
+  { topic:"java", cat:"Modifiers", q:"A <code>final</code> class means…",
+    choices:["It can't be instantiated","It can't be extended","Its methods can't be overloaded","All fields must be constants"], answer:1,
+    exp:"<code>final</code> on a class forbids extension. On a method: no override. On a variable: no reassignment." },
+  { topic:"java", cat:"Modifiers", q:"Which is TRUE about a <code>static</code> method?",
+    choices:["Can use <code>this</code>","Belongs to the class, not the instance","Can be overridden but not overloaded","Requires an object to invoke"], answer:1,
+    exp:"Static members belong to the class, are called via <code>ClassName.member</code>, and cannot use <code>this</code> or access instance state directly." },
+  { topic:"java", cat:"Modifiers", q:"What does the <code>transient</code> keyword do?",
+    choices:["Marks a variable as read-only","Excludes a field from default serialization","Enables lazy initialization","Prevents thread access"], answer:1,
+    exp:"<code>transient</code> tells the default Serializable mechanism to skip that field." },
+
+  // ---- MEMORY ----
+  { topic:"java", cat:"Memory", q:"Where do Java objects created with <code>new</code> live?",
+    choices:["Stack","Heap","Metaspace","CPU registers"], answer:1,
+    exp:"All objects live on the shared heap. Local variables and references live on the per-thread stack." },
+  { topic:"java", cat:"Memory", q:"What triggers <code>StackOverflowError</code>?",
+    choices:["Allocating huge arrays","Deep/infinite recursion","GC failure","Loading too many classes"], answer:1,
+    exp:"Every method call pushes a frame; if depth exceeds the thread stack size, you get StackOverflowError." },
+  { topic:"java", cat:"Memory", q:"When is an object eligible for garbage collection?",
+    choices:["When you call <code>delete</code> on it","When it goes out of scope","When no live thread can reach it via references","After 60 seconds of inactivity"], answer:2,
+    exp:"An object is GC-eligible once it is unreachable from any GC root (thread stacks, statics, JNI)." },
+
+  // ---- OOP ----
+  { topic:"java", cat:"OOP", q:"Which is NOT one of the four OOP pillars?",
+    choices:["Encapsulation","Abstraction","Composition","Polymorphism"], answer:2,
+    exp:"The four pillars are Encapsulation, Abstraction, Inheritance, Polymorphism. Composition is a related design principle, not a pillar." },
+  { topic:"java", cat:"OOP", q:"Hiding internal state and exposing behavior via methods is…",
+    choices:["Inheritance","Encapsulation","Polymorphism","Abstraction"], answer:1,
+    exp:"Encapsulation bundles data + behavior and controls access with private fields + public accessors." },
+
+  // ---- INHERITANCE / POLYMORPHISM ----
+  { topic:"java", cat:"Overriding", q:"Which is TRUE of method overriding?",
+    choices:["Signature can differ","Resolved at compile time","Runtime dispatches based on actual object type","Return type must be <code>Object</code>"], answer:2,
+    exp:"Overriding requires identical signature and is resolved at runtime based on the actual object's class (dynamic dispatch)." },
+  { topic:"java", cat:"Overriding", q:"Method overloading is resolved…",
+    choices:["At runtime by object type","At compile time by argument types","Only for static methods","Only within the same package"], answer:1,
+    exp:"Overloading is compile-time — the compiler picks the method whose parameter list best matches the call." },
+  { topic:"java", cat:"Casting", q:"Which casting operation requires an explicit cast?",
+    choices:["Upcast (child → parent)","Downcast (parent → child)","Cast between siblings","Cast to itself"], answer:1,
+    exp:"Upcasts are implicit and always safe. Downcasts must be explicit and can throw <code>ClassCastException</code> at runtime." },
+
+  // ---- ABSTRACT / INTERFACE ----
+  { topic:"java", cat:"Abstract vs Interface", q:"Which statement is TRUE?",
+    choices:["A class can extend multiple classes","A class can implement multiple interfaces","An interface can extend a class","Interfaces cannot have method bodies"], answer:1,
+    exp:"Java allows single class inheritance but multiple interface implementation. Interfaces can have default/static methods since Java 8." },
+  { topic:"java", cat:"Abstract vs Interface", q:"Can an abstract class have a constructor?",
+    choices:["No","Yes, called by subclasses via <code>super()</code>","Only if all methods are abstract","Only if <code>static</code>"], answer:1,
+    exp:"Abstract classes can have constructors. Subclass constructors invoke them via <code>super()</code>." },
+
+  // ---- OBJECT / EQUALS ----
+  { topic:"java", cat:"equals/hashCode", q:"If you override <code>equals()</code>, you MUST also override…",
+    choices:["<code>toString()</code>","<code>hashCode()</code>","<code>clone()</code>","<code>compareTo()</code>"], answer:1,
+    exp:"The contract: if <code>a.equals(b)</code>, then <code>a.hashCode() == b.hashCode()</code>. Otherwise HashMap/HashSet break." },
+
+  // ---- EXCEPTIONS ----
+  { topic:"java", cat:"Exceptions", q:"Which is a CHECKED exception?",
+    choices:["NullPointerException","IllegalArgumentException","IOException","ArrayIndexOutOfBoundsException"], answer:2,
+    exp:"IOException extends Exception (checked). The others extend RuntimeException (unchecked)." },
+  { topic:"java", cat:"Exceptions", q:"When does <code>finally</code> NOT run?",
+    choices:["When an exception is thrown","When <code>return</code> is used in try","When <code>System.exit()</code> is called","When the try block completes normally"], answer:2,
+    exp:"<code>finally</code> runs in essentially all normal exit paths. It's skipped only on JVM crash or <code>System.exit()</code>." },
+  { topic:"java", cat:"Exceptions", q:"What is required for try-with-resources?",
+    choices:["Resource must be final","Resource must implement <code>AutoCloseable</code>","There must be a catch block","Resource must be static"], answer:1,
+    exp:"Any object implementing <code>AutoCloseable</code> can be in the try-with-resources header — its <code>close()</code> is invoked automatically." },
+  { topic:"java", cat:"Exceptions", q:"Best base class for a custom UNCHECKED exception?",
+    choices:["Throwable","Error","Exception","RuntimeException"], answer:3,
+    exp:"Extend RuntimeException for unchecked, Exception for checked." },
+
+  // ---- WRAPPERS ----
+  { topic:"java", cat:"Wrappers", q:"Which is TRUE about autoboxing?",
+    choices:["Converts <code>String</code> to <code>Integer</code>","Auto-converts primitive to its wrapper class and back","Boxes objects into arrays","Only works with <code>int</code>"], answer:1,
+    exp:"Autoboxing converts primitive ↔ wrapper (e.g., <code>Integer i = 5;</code>). Unboxing a null wrapper throws NPE." },
+
+  // ---- COLLECTIONS ----
+  { topic:"java", cat:"Collections", q:"Which collection does NOT allow duplicates?",
+    choices:["ArrayList","LinkedList","HashSet","Vector"], answer:2,
+    exp:"Sets (HashSet, TreeSet, LinkedHashSet) reject duplicates. Lists preserve them." },
+  { topic:"java", cat:"Collections", q:"Which offers O(1) random access?",
+    choices:["ArrayList","LinkedList","HashSet","TreeMap"], answer:0,
+    exp:"ArrayList is array-backed → O(1) get(i). LinkedList requires walking the chain → O(n)." },
+  { topic:"java", cat:"Collections", q:"Which map is legacy and fully synchronized?",
+    choices:["HashMap","TreeMap","Hashtable","LinkedHashMap"], answer:2,
+    exp:"Hashtable is legacy and synchronized on every method. Modern concurrent choice: ConcurrentHashMap." },
+  { topic:"java", cat:"Collections", q:"Which map keeps keys in sorted order?",
+    choices:["HashMap","LinkedHashMap","TreeMap","IdentityHashMap"], answer:2,
+    exp:"TreeMap is a red-black tree — O(log n) ops with sorted key iteration. LinkedHashMap preserves insertion order (not sorted)." },
+  { topic:"java", cat:"Collections", q:"What order does <code>PriorityQueue.poll()</code> return elements in?",
+    choices:["Insertion order (FIFO)","LIFO","Least element by natural ordering","Random"], answer:2,
+    exp:"PriorityQueue is a min-heap: poll() returns the smallest element per natural ordering or a supplied Comparator." },
+  { topic:"java", cat:"Collections", q:"Modern replacement for <code>Stack</code>?",
+    choices:["Vector","ArrayDeque","PriorityQueue","LinkedList only via constructor"], answer:1,
+    exp:"Use <code>Deque&lt;T&gt; s = new ArrayDeque&lt;&gt;()</code> — faster, non-legacy, supports push/pop/peek." },
+
+  // ---- LAMBDAS ----
+  { topic:"java", cat:"Lambdas", q:"A functional interface has how many abstract methods?",
+    choices:["Zero","Exactly one","At most one, plus any number of defaults","Two"], answer:1,
+    exp:"Exactly one abstract method (any number of default/static methods allowed). Enforceable with <code>@FunctionalInterface</code>." },
+  { topic:"java", cat:"Lambdas", q:"Which functional interface represents <code>T → boolean</code>?",
+    choices:["Function","Supplier","Predicate","Consumer"], answer:2,
+    exp:"<code>Predicate&lt;T&gt;</code> — <code>boolean test(T t)</code>. Function: T→R, Supplier: ()→T, Consumer: T→void." },
+  { topic:"java", cat:"Lambdas", q:"Which is a valid method reference?",
+    choices:["<code>String.length()</code>","<code>String::length</code>","<code>String.length</code>","<code>String->length</code>"], answer:1,
+    exp:"Method reference syntax uses <code>::</code>. Types: <code>Class::staticMethod</code>, <code>instance::method</code>, <code>Class::instanceMethod</code>, <code>Class::new</code>." },
+
+  // ---- I/O ----
+  { topic:"java", cat:"File I/O", q:"Which modern (NIO.2) method reads all lines of a small text file?",
+    choices:["<code>FileReader.readAll()</code>","<code>Files.readAllLines(path)</code>","<code>Scanner.readAll()</code>","<code>System.in.readAll()</code>"], answer:1,
+    exp:"<code>Files.readAllLines(Paths.get(...))</code> returns a <code>List&lt;String&gt;</code>. For large files, prefer streaming with <code>Files.lines()</code>." },
+
+  // ---- LOGGING ----
+  { topic:"java", cat:"Logging", q:"Which Logback level is the LEAST severe?",
+    choices:["ERROR","WARN","INFO","TRACE"], answer:3,
+    exp:"Order (least → most severe): TRACE < DEBUG < INFO < WARN < ERROR." },
+
+  // ================================================
+  // ================ SQL ===========================
+  // ================================================
+
+  // SQL OVERVIEW
+  { topic:"sql", cat:"SQL Basics", q:"SQL is a…",
+    choices:["Procedural language","Declarative language","Compiled OO language","Markup language"], answer:1,
+    exp:"SQL is declarative — you say what you want; the optimizer decides how to get it." },
+  { topic:"sql", cat:"SQL Basics", q:"Which vendor is embedded and stored in a single file?",
+    choices:["MySQL","SQL Server","SQLite","Oracle"], answer:2,
+    exp:"SQLite is serverless and stores an entire DB in one file — perfect for tests and small apps." },
+
+  // DDL
+  { topic:"sql", cat:"DDL", q:"Which is a DDL statement?",
+    choices:["INSERT","UPDATE","CREATE","SELECT"], answer:2,
+    exp:"DDL = CREATE, ALTER, DROP, TRUNCATE, RENAME. INSERT/UPDATE are DML; SELECT is DQL." },
+  { topic:"sql", cat:"DDL", q:"Which is TRUE about TRUNCATE vs DELETE?",
+    choices:["TRUNCATE removes the table structure","DELETE is a DDL statement","TRUNCATE is faster and usually can't be rolled back","DELETE resets the identity/auto-increment"], answer:2,
+    exp:"TRUNCATE is DDL — bulk-deletes all rows fast, often bypasses triggers and rollback. DELETE is DML with a WHERE clause." },
+  { topic:"sql", cat:"DDL", q:"Which statement removes a table completely (structure + data)?",
+    choices:["DELETE","TRUNCATE","DROP","REMOVE"], answer:2,
+    exp:"DROP removes the entire table object. DELETE/TRUNCATE only remove rows." },
+
+  // DML / DQL
+  { topic:"sql", cat:"DML", q:"You want to update ALL rows in a table. Which query does it?",
+    choices:["<code>UPDATE t SET x = 1;</code>","<code>UPDATE t SET x = 1 WHERE ALL;</code>","<code>UPDATE t SET x = 1 EACH;</code>","You can't"], answer:0,
+    exp:"UPDATE without WHERE affects every row. A common mistake — always double-check the WHERE." },
+  { topic:"sql", cat:"DQL", q:"Which clause filters GROUPS after aggregation?",
+    choices:["WHERE","HAVING","FILTER","GROUP FILTER"], answer:1,
+    exp:"WHERE filters rows before GROUP BY (no aggregates allowed). HAVING filters groups after (aggregates allowed)." },
+  { topic:"sql", cat:"DQL", q:"Logical order of processing?",
+    choices:["SELECT → FROM → WHERE → GROUP BY","FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY","FROM → SELECT → WHERE → ORDER BY","SELECT → WHERE → FROM → GROUP BY"], answer:1,
+    exp:"FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT. That's why you can alias in ORDER BY but usually not in WHERE." },
+
+  // DCL / TCL
+  { topic:"sql", cat:"DCL", q:"Which is a DCL statement?",
+    choices:["COMMIT","GRANT","CREATE","SELECT"], answer:1,
+    exp:"DCL = GRANT and REVOKE (permissions)." },
+  { topic:"sql", cat:"TCL", q:"Which pair are TCL statements?",
+    choices:["CREATE, DROP","GRANT, REVOKE","COMMIT, ROLLBACK","INSERT, UPDATE"], answer:2,
+    exp:"TCL manages transactions: BEGIN, COMMIT, ROLLBACK, SAVEPOINT." },
+  { topic:"sql", cat:"TCL", q:"What does SAVEPOINT allow?",
+    choices:["Commit half a transaction","Rollback part of a transaction","Save a query for reuse","Backup the database"], answer:1,
+    exp:"You can ROLLBACK TO a SAVEPOINT without aborting the entire transaction." },
+
+  // CONSTRAINTS
+  { topic:"sql", cat:"Constraints", q:"A PRIMARY KEY implies which constraints?",
+    choices:["NOT NULL only","UNIQUE only","NOT NULL + UNIQUE","NOT NULL + CHECK"], answer:2,
+    exp:"PRIMARY KEY = NOT NULL + UNIQUE. Only one PK per table." },
+  { topic:"sql", cat:"Constraints", q:"How many NULLs are allowed in a UNIQUE column (standard SQL)?",
+    choices:["Zero","Exactly one","Many (NULLs are not considered equal)","Depends on the primary key"], answer:2,
+    exp:"NULL is not equal to NULL under SQL semantics, so multiple NULLs are allowed in a UNIQUE column (vendors vary slightly)." },
+
+  // NORMALIZATION
+  { topic:"sql", cat:"Normalization", q:"1NF requires that…",
+    choices:["Values are atomic (no lists in a cell)","Every non-key column depends on the whole PK","No transitive dependencies exist","All columns are text"], answer:0,
+    exp:"1NF = atomic values, no repeating groups, each row uniquely identifiable." },
+  { topic:"sql", cat:"Normalization", q:"3NF eliminates which kind of dependency?",
+    choices:["Partial","Multi-valued","Transitive","Circular"], answer:2,
+    exp:"3NF removes transitive dependencies — non-key columns must depend only on the PK, not on other non-key columns." },
+
+  // REFERENTIAL / RELATIONSHIPS
+  { topic:"sql", cat:"Relationships", q:"Which relationship needs a bridge (junction) table?",
+    choices:["One-to-one","One-to-many","Many-to-many","Self-referential"], answer:2,
+    exp:"Many-to-many is modeled with a bridge table holding two FKs, one to each side." },
+  { topic:"sql", cat:"Referential Integrity", q:"What does <code>ON DELETE CASCADE</code> do?",
+    choices:["Blocks deletion of the parent row","Deletes child rows when parent is deleted","Sets child FK to NULL","Copies parent to a log table"], answer:1,
+    exp:"CASCADE propagates the delete to child rows. Alternatives: SET NULL, RESTRICT, NO ACTION." },
+
+  // ACID
+  { topic:"sql", cat:"ACID", q:"Which ACID property guarantees that concurrent transactions don't interfere?",
+    choices:["Atomicity","Consistency","Isolation","Durability"], answer:2,
+    exp:"Isolation controls the visibility of one transaction's changes to others, governed by isolation levels." },
+  { topic:"sql", cat:"ACID", q:"Which isolation level allows dirty reads?",
+    choices:["READ UNCOMMITTED","READ COMMITTED","REPEATABLE READ","SERIALIZABLE"], answer:0,
+    exp:"READ UNCOMMITTED lets you see uncommitted changes — the weakest isolation level." },
+  { topic:"sql", cat:"ACID", q:"Which ACID property ensures committed data survives a crash?",
+    choices:["Atomicity","Consistency","Isolation","Durability"], answer:3,
+    exp:"Durability — once COMMIT succeeds, the change persists (via write-ahead log)." },
+
+  // JOINS
+  { topic:"sql", cat:"Joins", q:"Which join returns ONLY rows matching in both tables?",
+    choices:["LEFT JOIN","RIGHT JOIN","INNER JOIN","FULL JOIN"], answer:2,
+    exp:"INNER JOIN discards non-matches on both sides." },
+  { topic:"sql", cat:"Joins", q:"Which join produces the Cartesian product?",
+    choices:["INNER JOIN","CROSS JOIN","LEFT JOIN","SELF JOIN"], answer:1,
+    exp:"CROSS JOIN combines every row of the left table with every row of the right — no ON clause." },
+  { topic:"sql", cat:"Joins", q:"<code>SELECT * FROM A LEFT JOIN B ON A.id=B.a_id;</code> returns…",
+    choices:["Only matching rows","All A rows + matched B rows (NULL where no match)","All B rows + matched A rows","A × B (Cartesian)"], answer:1,
+    exp:"LEFT JOIN keeps every row from the left (A), filling unmatched right columns with NULL." },
+
+  // SET OPS
+  { topic:"sql", cat:"Set Ops", q:"Which is FASTER because it doesn't deduplicate?",
+    choices:["UNION","UNION ALL","INTERSECT","EXCEPT"], answer:1,
+    exp:"UNION ALL keeps duplicates and skips the sort/hash step, so it's faster than UNION." },
+  { topic:"sql", cat:"Set Ops", q:"EXCEPT (or MINUS) returns…",
+    choices:["Rows in either set","Rows in both sets","Rows in the first but not the second","Rows unique to the second"], answer:2,
+    exp:"EXCEPT gives the set difference — rows in the first result that don't appear in the second." },
+
+  // INDEXES
+  { topic:"sql", cat:"Indexes", q:"Main trade-off of adding an index?",
+    choices:["Faster reads, slower writes + more disk","Faster writes, slower reads","Only affects security","No trade-off — always add them"], answer:0,
+    exp:"Every INSERT/UPDATE/DELETE must maintain each index, and indexes consume storage. Add only where reads benefit." },
+  { topic:"sql", cat:"Indexes", q:"How many CLUSTERED indexes can a table have?",
+    choices:["Zero","One","One per column","Unlimited"], answer:1,
+    exp:"A table can have at most one clustered index because it defines the physical row order. Non-clustered indexes can be many." },
+  { topic:"sql", cat:"Indexes", q:"A composite index on <code>(a, b, c)</code> best supports which query?",
+    choices:["WHERE b = 1","WHERE c = 1","WHERE a = 1 AND b = 2","WHERE b = 1 AND c = 2"], answer:2,
+    exp:"Leftmost-prefix rule: the index helps queries filtering on <code>a</code>, or <code>a</code> and <code>b</code>, etc. Skipping the leading column disqualifies use." },
+
+  // VIEWS
+  { topic:"sql", cat:"Views", q:"A regular (non-materialized) view…",
+    choices:["Stores a copy of the data","Re-executes the underlying query each time","Is faster than a table","Is only for admin access"], answer:1,
+    exp:"A view is a stored SELECT — no data stored. Materialized views cache results and need refreshing." },
+  { topic:"sql", cat:"Views", q:"A benefit of views is…",
+    choices:["They speed up writes","They allow security by granting on the view instead of tables","They replace indexes","They enforce constraints"], answer:1,
+    exp:"Views provide abstraction and security — expose only certain columns/rows and grant privileges on the view." },
+
+  // STORED PROC
+  { topic:"sql", cat:"Stored Procedures", q:"Which is TRUE of a stored procedure vs a function?",
+    choices:["Procedures return values in SQL expressions","Procedures are invoked with CALL and can manage transactions","Functions can't return anything","Procedures aren't compiled"], answer:1,
+    exp:"Procedures are invoked with CALL and can perform TCL (COMMIT/ROLLBACK). Functions must return a value and are used within SQL expressions." },
+
+  // JDBC
+  { topic:"sql", cat:"JDBC", q:"What does JDBC stand for?",
+    choices:["Java Database Connectivity","Java Direct Byte Code","Joint Database Cluster","Java Distributed Backend Container"], answer:0,
+    exp:"Java Database Connectivity — the standard API (in <code>java.sql</code>) for talking to relational databases." },
+  { topic:"sql", cat:"JDBC", q:"How do you obtain a Connection?",
+    choices:["<code>new Connection(url)</code>","<code>DriverManager.getConnection(url, user, pass)</code>","<code>Connection.create(url)</code>","<code>Database.connect(url)</code>"], answer:1,
+    exp:"<code>DriverManager.getConnection</code> is the standard entry point; modern apps typically use a DataSource / connection pool." },
+  { topic:"sql", cat:"JDBC", q:"Which JDBC method executes a SELECT?",
+    choices:["<code>executeUpdate()</code>","<code>executeQuery()</code>","<code>execute()</code> always","<code>runSelect()</code>"], answer:1,
+    exp:"<code>executeQuery()</code> returns a ResultSet. <code>executeUpdate()</code> is for DML/DDL and returns a row count." },
+  { topic:"sql", cat:"JDBC", q:"How do you iterate over a ResultSet?",
+    choices:["<code>for (Row r : rs)</code>","<code>rs.forEach(...)</code>","<code>while (rs.next()) { ... }</code>","<code>rs.iterator()</code>"], answer:2,
+    exp:"ResultSet is a forward cursor. Call <code>next()</code> to advance; it returns false when exhausted." },
+  { topic:"sql", cat:"JDBC", q:"Which exception do JDBC methods throw?",
+    choices:["IOException","SQLException (checked)","DatabaseException (unchecked)","RuntimeException"], answer:1,
+    exp:"<code>SQLException</code> is a checked exception, so callers must handle or declare it." },
+
+  // PREPARED STMT
+  { topic:"sql", cat:"PreparedStatement", q:"Best defense against SQL injection?",
+    choices:["Filter input for quotes","Use <code>PreparedStatement</code> with parameters","Use <code>Statement</code> with escaped strings","Reject any input containing keywords"], answer:1,
+    exp:"PreparedStatement sends SQL and parameters separately, so user input is never treated as SQL." },
+  { topic:"sql", cat:"PreparedStatement", q:"How do you set the first parameter of a PreparedStatement to <code>42</code>?",
+    choices:["<code>ps.set(0, 42)</code>","<code>ps.setInt(0, 42)</code>","<code>ps.setInt(1, 42)</code>","<code>ps.set(\"1\", 42)</code>"], answer:2,
+    exp:"PreparedStatement parameter indices are 1-based." },
+
+  // DAO
+  { topic:"sql", cat:"DAO", q:"The DAO pattern's main purpose is to…",
+    choices:["Encrypt data","Isolate persistence logic behind an interface","Provide caching","Manage transactions"], answer:1,
+    exp:"Data Access Object hides persistence details so business code isn't coupled to JDBC/JPA/etc., making it swappable and testable." },
+
+  // SQLAlchemy
+  { topic:"sql", cat:"SQLAlchemy", q:"In SQLAlchemy ORM, what tracks pending changes as a unit of work?",
+    choices:["Engine","Session","Base","Query"], answer:1,
+    exp:"The Session tracks object changes and flushes them as a single transaction on commit()." },
+];
+
+let questions = [];
+let idx = 0;
+let answers = [];  // {answered:bool, chosen:number, correct:bool}
+let filter = "all";
+let count = 20;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderSetup() {
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="setup">
+      <h2 style="text-align:center; margin-top:0;">Configure Your Quiz</h2>
+      <label>Topic: <select id="filterSel">
+        <option value="all">All (Java + SQL)</option>
+        <option value="java">Java only</option>
+        <option value="sql">SQL only</option>
+      </select></label>
+      <label># Questions: <select id="countSel">
+        <option value="10">10</option>
+        <option value="20" selected>20</option>
+        <option value="40">40</option>
+        <option value="0">All available</option>
+      </select></label>
+      <button class="btn-primary" onclick="startQuiz()">Start Quiz →</button>
+    </div>`;
+}
+
+function startQuiz() {
+  filter = document.getElementById("filterSel").value;
+  count = parseInt(document.getElementById("countSel").value, 10);
+  let pool = ALL_QUESTIONS.filter(q => filter === "all" || q.topic === filter);
+  shuffle(pool);
+  questions = count > 0 ? pool.slice(0, count) : pool;
+  idx = 0;
+  answers = questions.map(() => ({ answered: false, chosen: -1, correct: false }));
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[idx];
+  const state = answers[idx];
+  const app = document.getElementById("app");
+  const progress = ((idx + 1) / questions.length) * 100;
+  app.innerHTML = `
+    <div class="quiz-header">
+      <div class="progress">Question ${idx + 1} of ${questions.length}</div>
+      <div class="category">${q.cat}</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+    <div class="question">${q.q}</div>
+    <div class="options" id="options"></div>
+    <div id="explanationSlot"></div>
+    <div class="actions">
+      <button class="btn-secondary" onclick="prev()" ${idx === 0 ? "disabled" : ""}>← Prev</button>
+      <button class="btn-secondary" onclick="next()">${idx === questions.length - 1 ? "Finish →" : "Next →"}</button>
+    </div>`;
+
+  const container = document.getElementById("options");
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.innerHTML = `<span class="letter">${String.fromCharCode(65 + i)}</span><span>${c}</span>`;
+    btn.onclick = () => choose(i);
+    if (state.answered) {
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add("correct");
+      else if (i === state.chosen) btn.classList.add("incorrect");
+    }
+    container.appendChild(btn);
+  });
+  if (state.answered) showExplanation();
+}
+
+function choose(i) {
+  const q = questions[idx];
+  const state = answers[idx];
+  state.answered = true;
+  state.chosen = i;
+  state.correct = (i === q.answer);
+  renderQuestion();
+}
+
+function showExplanation() {
+  const q = questions[idx];
+  const state = answers[idx];
+  const slot = document.getElementById("explanationSlot");
+  const header = state.correct
+    ? `<b style="color:var(--success)">✓ Correct!</b> `
+    : `<b style="color:var(--danger)">✗ Not quite.</b> `;
+  slot.innerHTML = `<div class="explanation">${header}${q.exp}</div>`;
+}
+
+function next() {
+  if (idx < questions.length - 1) { idx++; renderQuestion(); }
+  else finish();
+}
+function prev() {
+  if (idx > 0) { idx--; renderQuestion(); }
+}
+
+function finish() {
+  const correct = answers.filter(a => a.correct).length;
+  const total = questions.length;
+  const pct = Math.round((correct / total) * 100);
+  const grade = pct >= 90 ? "🏆 Outstanding"
+             : pct >= 80 ? "🎯 Great job"
+             : pct >= 70 ? "👍 Solid"
+             : pct >= 60 ? "📖 Keep studying"
+                         : "🔁 Review time";
+
+  const wrongItems = questions
+    .map((q, i) => ({ q, i, a: answers[i] }))
+    .filter(x => !x.a.correct)
+    .map(x => {
+      const chosen = x.a.chosen >= 0 ? x.q.choices[x.a.chosen] : "(unanswered)";
+      const right = x.q.choices[x.q.answer];
+      return `
+        <div class="review-item">
+          <div class="q">Q${x.i + 1}. ${x.q.q}</div>
+          <div class="wrong">Your answer: ${chosen}</div>
+          <div class="right">Correct: ${right}</div>
+          <div class="exp">${x.q.exp}</div>
+        </div>`;
+    }).join("");
+
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="results">
+      <div class="score">${pct}%</div>
+      <div class="score-detail">${correct} of ${total} correct</div>
+      <div class="grade">${grade}</div>
+      <button class="btn-primary" onclick="renderSetup()">Try Again</button>
+      ${wrongItems ? `<div class="review-list"><h3>Review these:</h3>${wrongItems}</div>` : ""}
+    </div>`;
+}
+
+renderSetup();
+</script>
+</body>
+</html>

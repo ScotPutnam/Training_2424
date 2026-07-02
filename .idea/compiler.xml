@@ -9,6 +9,7 @@
         <module name="Day5" />
         <module name="demo-maven" />
         <module name="TestModule" />
+        <module name="demo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

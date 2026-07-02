@@ -6,7 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="week4-sql-jdbc-pair" />
         <module name="Day1" />
+        <module name="Day4JDBC" />
+        <module name="day4jdbc (1) (com.revature)" />
+        <module name="chrDemo" />
       </profile>
     </annotationProcessing>
   </component>

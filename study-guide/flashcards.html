@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flash Cards — Java & SQL</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent-2: #a78bfa;
+    --border: #334155;
+    --success: #22c55e;
+    --danger: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e1b4b);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+    max-width: 800px;
+    width: 100%;
+  }
+  h1 {
+    margin: 0 0 8px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 32px;
+  }
+  .subtitle { color: var(--muted); margin: 0; }
+  .top-nav { margin-top: 16px; }
+  .top-nav a {
+    color: var(--accent);
+    text-decoration: none;
+    margin: 0 8px;
+    font-size: 14px;
+  }
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  .controls button, .controls select {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .controls button:hover { background: var(--border); }
+  .controls select { padding-right: 32px; }
+  .deck-btn.active {
+    background: var(--accent);
+    color: #0f172a;
+    border-color: var(--accent);
+  }
+  .progress-bar {
+    width: 100%;
+    max-width: 700px;
+    height: 6px;
+    background: var(--panel);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.3s;
+  }
+  .card-wrapper {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 700px;
+    height: 380px;
+    margin-bottom: 20px;
+  }
+  .card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    cursor: pointer;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    overflow-y: auto;
+  }
+  .card-face.back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, #1e293b, #312e81);
+  }
+  .card-face .label {
+    position: absolute;
+    top: 16px;
+    left: 20px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .card-face .category {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(96, 165, 250, 0.15);
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .card-face .content {
+    font-size: 20px;
+    line-height: 1.5;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+  .card-face code {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+    font-size: 0.9em;
+  }
+  .card-face pre {
+    background: rgba(0,0,0,0.4);
+    padding: 12px;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 13px;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .nav-btns {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .nav-btns button {
+    background: var(--accent);
+    color: #0f172a;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .nav-btns button:hover { transform: translateY(-2px); }
+  .nav-btns button:disabled {
+    background: var(--border);
+    color: var(--muted);
+    cursor: not-allowed;
+    transform: none;
+  }
+  .rating-btns {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .rating-btns button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .rating-btns .again { background: var(--danger); color: white; }
+  .rating-btns .good { background: var(--success); color: white; }
+  .status {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .stats {
+    display: flex;
+    gap: 24px;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+  .stats .stat { color: var(--muted); }
+  .stats .known { color: var(--success); }
+  .stats .review { color: var(--danger); }
+  .hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Flash Cards</h1>
+  <p class="subtitle">Java (Week 3) &amp; SQL (Week 4)</p>
+  <div class="top-nav">
+    <a href="index.html">Home</a> ·
+    <a href="study-guide.html">Study Guide</a> ·
+    <a href="quiz.html">Quiz</a>
+  </div>
+</header>
+
+<div class="controls">
+  <button class="deck-btn active" data-deck="all">All</button>
+  <button class="deck-btn" data-deck="java">Java Only</button>
+  <button class="deck-btn" data-deck="sql">SQL Only</button>
+  <button id="shuffleBtn">🔀 Shuffle</button>
+  <button id="resetBtn">↻ Reset</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="card-wrapper">
+  <div class="card" id="card">
+    <div class="card-face front">
+      <span class="label">Question</span>
+      <span class="category" id="frontCategory"></span>
+      <div class="content" id="frontContent"></div>
+    </div>
+    <div class="card-face back">
+      <span class="label">Answer</span>
+      <span class="category" id="backCategory"></span>
+      <div class="content" id="backContent"></div>
+    </div>
+  </div>
+</div>
+
+<div class="rating-btns" id="ratingBtns" style="display:none;">
+  <button class="again" onclick="rate('again')">Need Review</button>
+  <button class="good" onclick="rate('good')">Got It ✓</button>
+</div>
+
+<div class="nav-btns">
+  <button id="prevBtn" onclick="prev()">← Prev</button>
+  <button id="flipBtn" onclick="flip()">Flip</button>
+  <button id="nextBtn" onclick="next()">Next →</button>
+</div>
+
+<div class="status" id="status">Card 1 of ?</div>
+<div class="stats">
+  <span class="stat known">Known: <span id="knownCount">0</span></span>
+  <span class="stat review">To review: <span id="reviewCount">0</span></span>
+</div>
+<p class="hint">Tip: press <b>Space</b> to flip, <b>←/→</b> to navigate, <b>1</b> to mark review, <b>2</b> to mark known.</p>
+
+<script>
+const CARDS = [
+  // ===== JAVA — BASICS =====
+  { deck:"java", cat:"Java Basics", q:"What is the JVM?", a:"Java Virtual Machine — executes compiled Java bytecode (<code>.class</code>) on any platform." },
+  { deck:"java", cat:"Java Basics", q:"JDK vs JRE vs JVM?", a:"<b>JDK</b> = compiler + tools + JRE. <b>JRE</b> = JVM + core libraries. <b>JVM</b> = runs bytecode." },
+  { deck:"java", cat:"Java Basics", q:"How many primitive types does Java have?", a:"8: <code>byte, short, int, long, float, double, char, boolean</code>." },
+  { deck:"java", cat:"Java Basics", q:"Default value of a <code>boolean</code> instance field?", a:"<code>false</code>. Local variables have no default and must be assigned before use." },
+  { deck:"java", cat:"Java Basics", q:"Difference between <code>==</code> and <code>.equals()</code>?", a:"<code>==</code> compares references (or primitives). <code>.equals()</code> compares logical/value equality when properly overridden." },
+
+  // ===== JAVA — ARRAYS =====
+  { deck:"java", cat:"Arrays", q:"How do you get the length of an array?", a:"<code>arr.length</code> — a public final <b>field</b>, not a method. Cannot be reassigned." },
+  { deck:"java", cat:"Arrays", q:"Can an array be resized once created?", a:"No. Length is fixed at creation. Use <code>ArrayList</code> for a growable list." },
+  { deck:"java", cat:"Arrays", q:"How do you correctly compare the contents of two arrays?", a:"<code>Arrays.equals(a, b)</code>. Using <code>==</code> only compares references." },
+  { deck:"java", cat:"Arrays", q:"What happens at <code>arr[arr.length]</code>?", a:"Throws <code>ArrayIndexOutOfBoundsException</code>. Valid indices are 0 to length−1." },
+
+  // ===== JAVA — OOP =====
+  { deck:"java", cat:"OOP", q:"Name the 4 pillars of OOP.", a:"<b>Encapsulation, Abstraction, Inheritance, Polymorphism.</b>" },
+  { deck:"java", cat:"OOP", q:"What is encapsulation?", a:"Bundling data with the methods that operate on it, and hiding internal state behind accessors (private fields + public getters/setters)." },
+  { deck:"java", cat:"OOP", q:"What is abstraction?", a:"Exposing <i>what</i> an object does while hiding <i>how</i>. In Java, achieved via interfaces and abstract classes." },
+  { deck:"java", cat:"OOP", q:"What is inheritance?", a:"An 'is-a' relationship where a subclass inherits members of its superclass. Java: single-class inheritance via <code>extends</code>." },
+  { deck:"java", cat:"OOP", q:"What is polymorphism?", a:"One interface, many implementations. Compile-time (overloading) or runtime (overriding / dynamic dispatch)." },
+
+  // ===== JAVA — MODIFIERS =====
+  { deck:"java", cat:"Modifiers", q:"List the 4 access levels in Java (widest → narrowest).", a:"<code>public</code> → <code>protected</code> → default/package-private → <code>private</code>." },
+  { deck:"java", cat:"Modifiers", q:"Which classes can see a <code>protected</code> member?", a:"Anything in the same package + any subclass in any package." },
+  { deck:"java", cat:"Modifiers", q:"What does <code>final</code> mean on a variable, method, and class?", a:"Variable: value cannot change (constant). Method: cannot be overridden. Class: cannot be extended." },
+  { deck:"java", cat:"Modifiers", q:"What does <code>static</code> mean?", a:"Member belongs to the class itself, not to any instance. Shared by all instances. Called via <code>ClassName.member</code>." },
+  { deck:"java", cat:"Modifiers", q:"What does <code>transient</code> do?", a:"Marks a field to be skipped by default Java serialization." },
+
+  // ===== JAVA — MEMORY =====
+  { deck:"java", cat:"Memory", q:"Where do objects live in the JVM?", a:"On the <b>heap</b>, shared across threads, managed by the garbage collector." },
+  { deck:"java", cat:"Memory", q:"Where do local variables and method call frames live?", a:"On the <b>stack</b> — one stack per thread, LIFO." },
+  { deck:"java", cat:"Memory", q:"What causes <code>StackOverflowError</code>?", a:"Too-deep (usually infinite) recursion pushing more frames than the thread stack can hold." },
+  { deck:"java", cat:"Memory", q:"When is an object eligible for garbage collection?", a:"When there are no reachable references to it from any GC root (thread stacks, statics, JNI handles)." },
+  { deck:"java", cat:"Memory", q:"Can you force garbage collection?", a:"No. <code>System.gc()</code> is only a <i>hint</i>. The JVM decides when to run." },
+
+  // ===== JAVA — CLASSES =====
+  { deck:"java", cat:"Classes", q:"Class vs Object?", a:"A <b>class</b> is a blueprint/template. An <b>object</b> is a concrete instance created with <code>new</code>." },
+  { deck:"java", cat:"Classes", q:"What is a constructor?", a:"A special method with no return type, same name as the class, used to initialize new objects. Default no-arg constructor is generated only if you write none." },
+  { deck:"java", cat:"Classes", q:"What does <code>super()</code> do?", a:"Calls the superclass constructor. Must be the first statement in a child constructor; inserted implicitly if omitted." },
+
+  // ===== JAVA — INHERITANCE / POLYMORPHISM =====
+  { deck:"java", cat:"Overriding", q:"Overloading vs Overriding — one-line difference?", a:"<b>Overloading</b>: same method name, different parameters, same class, resolved at compile time. <b>Overriding</b>: same signature, subclass, resolved at runtime." },
+  { deck:"java", cat:"Overriding", q:"What does <code>@Override</code> do?", a:"Compiler check — fails the build if the method doesn't actually override a parent method. Optional but strongly recommended." },
+  { deck:"java", cat:"Casting", q:"Upcast vs downcast — which needs an explicit cast?", a:"Upcast (child → parent) is implicit and always safe. Downcast (parent → child) is explicit and can throw <code>ClassCastException</code>." },
+  { deck:"java", cat:"Casting", q:"How can you safely downcast?", a:"Test first: <code>if (a instanceof Dog d) d.fetch();</code> (Java 16+ pattern matching)." },
+
+  // ===== JAVA — ABSTRACT / INTERFACE =====
+  { deck:"java", cat:"Abstract vs Interface", q:"Abstract class vs interface — main difference?", a:"Abstract classes can have state and constructors; a class extends only one. Interfaces are pure contracts (only <code>public static final</code> state); a class can implement many." },
+  { deck:"java", cat:"Abstract vs Interface", q:"Can an interface have method bodies?", a:"Yes — since Java 8, <code>default</code> and <code>static</code> methods; since Java 9, <code>private</code> helpers." },
+  { deck:"java", cat:"Abstract vs Interface", q:"Can you instantiate an abstract class?", a:"No. You can only instantiate a concrete subclass. But you can hold a reference of the abstract type." },
+
+  // ===== JAVA — OBJECT / EQUALS =====
+  { deck:"java", cat:"Object class", q:"What's the parent of every Java class?", a:"<code>java.lang.Object</code>." },
+  { deck:"java", cat:"Object class", q:"The equals/hashCode contract?", a:"If <code>a.equals(b)</code> is true, then <code>a.hashCode() == b.hashCode()</code>. Violating this breaks hash-based collections." },
+  { deck:"java", cat:"Object class", q:"Name three methods every Java object has.", a:"<code>equals(), hashCode(), toString()</code> (also <code>getClass, clone, wait, notify</code>)." },
+
+  // ===== JAVA — EXCEPTIONS =====
+  { deck:"java", cat:"Exceptions", q:"Checked vs unchecked exception?", a:"<b>Checked</b> extends <code>Exception</code> — must be declared or handled. <b>Unchecked</b> extends <code>RuntimeException</code> — no such requirement." },
+  { deck:"java", cat:"Exceptions", q:"Give 3 unchecked (runtime) exceptions.", a:"<code>NullPointerException</code>, <code>IllegalArgumentException</code>, <code>ClassCastException</code>, <code>ArrayIndexOutOfBoundsException</code>, <code>ArithmeticException</code>." },
+  { deck:"java", cat:"Exceptions", q:"Exception vs Error?", a:"<b>Exception</b> — recoverable, application-level. <b>Error</b> — serious JVM/system-level (<code>OutOfMemoryError</code>, <code>StackOverflowError</code>); don't catch." },
+  { deck:"java", cat:"Exceptions", q:"When does the <code>finally</code> block run?", a:"Always — whether or not an exception was thrown, and even after a <code>return</code> in try/catch. (Skipped only on JVM crash or <code>System.exit()</code>.)" },
+  { deck:"java", cat:"Exceptions", q:"What is try-with-resources?", a:"<code>try (Resource r = ...) { ... }</code> — automatically calls <code>close()</code> on any resource implementing <code>AutoCloseable</code>." },
+  { deck:"java", cat:"Exceptions", q:"How do you create a custom checked exception?", a:"Extend <code>Exception</code>. For unchecked, extend <code>RuntimeException</code>. Add a constructor that delegates to super." },
+
+  // ===== JAVA — WRAPPERS =====
+  { deck:"java", cat:"Wrappers", q:"Why do wrapper classes exist?", a:"Generics only work with reference types (<code>List&lt;int&gt;</code> is illegal). Wrappers let primitives participate in the collections framework." },
+  { deck:"java", cat:"Wrappers", q:"What is autoboxing?", a:"Automatic conversion between a primitive and its wrapper: <code>Integer i = 5;</code> and <code>int x = i;</code>." },
+  { deck:"java", cat:"Wrappers", q:"Gotcha comparing boxed Integers with <code>==</code>?", a:"Integer cache is only [−128, 127]. Outside that range, <code>Integer.valueOf(200) == Integer.valueOf(200)</code> is <code>false</code>. Use <code>.equals()</code>." },
+
+  // ===== JAVA — COLLECTIONS =====
+  { deck:"java", cat:"Collections", q:"Root interface of the collections framework?", a:"<code>java.util.Collection</code>. <code>Map</code> is a <i>separate</i> hierarchy, not a Collection." },
+  { deck:"java", cat:"Collections", q:"Three main sub-interfaces of Collection?", a:"<code>List</code> (ordered, duplicates), <code>Set</code> (no duplicates), <code>Queue</code> (FIFO/priority)." },
+  { deck:"java", cat:"Collections", q:"ArrayList vs LinkedList — random access?", a:"ArrayList: O(1) random access. LinkedList: O(n) — must walk the chain." },
+  { deck:"java", cat:"Collections", q:"ArrayList vs LinkedList — insertion in the middle?", a:"ArrayList: O(n) to shift elements. LinkedList: O(n) to find + O(1) to rewire." },
+  { deck:"java", cat:"Collections", q:"HashMap vs Hashtable?", a:"HashMap: not synchronized, allows one null key + null values. Hashtable: legacy synchronized, no nulls. For concurrency use <code>ConcurrentHashMap</code>." },
+  { deck:"java", cat:"Collections", q:"HashSet vs TreeSet?", a:"HashSet: unordered, O(1) add/contains, allows one null. TreeSet: sorted, O(log n), no nulls." },
+  { deck:"java", cat:"Collections", q:"What's a PriorityQueue?", a:"A min-heap based queue where <code>poll()</code> always returns the smallest element per natural ordering or a supplied <code>Comparator</code>. Not FIFO, not sorted iteration." },
+  { deck:"java", cat:"Collections", q:"What's the modern replacement for <code>Stack</code>?", a:"<code>Deque&lt;T&gt; stack = new ArrayDeque&lt;&gt;();</code> — use <code>push/pop/peek</code>. Faster and non-legacy." },
+  { deck:"java", cat:"Collections", q:"Big-O of <code>HashMap.get()</code>?", a:"O(1) average, O(log n) worst case (Java 8+ converts long collision chains to a red-black tree)." },
+
+  // ===== JAVA — LAMBDAS =====
+  { deck:"java", cat:"Lambdas", q:"What is a functional interface?", a:"An interface with exactly one abstract method (<code>@FunctionalInterface</code>). It can be implemented with a lambda." },
+  { deck:"java", cat:"Lambdas", q:"Functional interface for T → R?", a:"<code>Function&lt;T,R&gt;</code> — <code>R apply(T t)</code>." },
+  { deck:"java", cat:"Lambdas", q:"Functional interface for T → boolean?", a:"<code>Predicate&lt;T&gt;</code> — <code>boolean test(T t)</code>." },
+  { deck:"java", cat:"Lambdas", q:"Functional interface for T → void?", a:"<code>Consumer&lt;T&gt;</code> — <code>void accept(T t)</code>." },
+  { deck:"java", cat:"Lambdas", q:"Functional interface for () → T?", a:"<code>Supplier&lt;T&gt;</code> — <code>T get()</code>." },
+  { deck:"java", cat:"Lambdas", q:"Give an example of a method reference.", a:"<code>String::length</code>, <code>System.out::println</code>, <code>ArrayList::new</code>." },
+
+  // ===== JAVA — I/O =====
+  { deck:"java", cat:"File I/O", q:"Modern way to read all lines of a small file?", a:"<code>Files.readAllLines(Paths.get(\"data.txt\"));</code>" },
+  { deck:"java", cat:"File I/O", q:"Best way to read a large file line-by-line?", a:"Stream it: <code>try (Stream&lt;String&gt; s = Files.lines(path)) { s.forEach(...); }</code>" },
+
+  // ===== JAVA — LOGGING =====
+  { deck:"java", cat:"Logging", q:"Logback levels from least to most severe?", a:"<b>TRACE, DEBUG, INFO, WARN, ERROR</b>." },
+  { deck:"java", cat:"Logging", q:"Why use parameterized log messages <code>log.info(\"user {}\", id)</code>?", a:"SLF4J skips the string concatenation if that level is disabled — much cheaper than <code>\"user \" + id</code>." },
+
+  // ================================================
+  // ============== SQL =============================
+  // ================================================
+  { deck:"sql", cat:"SQL Basics", q:"What does SQL stand for?", a:"<b>Structured Query Language</b> — the declarative language for relational databases." },
+  { deck:"sql", cat:"SQL Basics", q:"What are the 5 categories of SQL statements?", a:"<b>DDL, DML, DQL, DCL, TCL</b> (Definition, Manipulation, Query, Control, Transaction)." },
+  { deck:"sql", cat:"SQL Basics", q:"Give an example of a database vendor known for JSON/extensibility.", a:"<b>PostgreSQL</b> — rich types (JSONB, arrays, ranges), extensions, standards-compliant." },
+  { deck:"sql", cat:"SQL Basics", q:"Which database is embedded (single file, no server)?", a:"<b>SQLite</b>." },
+
+  // ===== DDL =====
+  { deck:"sql", cat:"DDL", q:"Name the DDL keywords.", a:"<code>CREATE, ALTER, DROP, TRUNCATE, RENAME</code>." },
+  { deck:"sql", cat:"DDL", q:"DELETE vs TRUNCATE vs DROP — table structure survives?", a:"DELETE: yes (removes rows). TRUNCATE: yes (removes all rows fast). DROP: no (removes table itself)." },
+  { deck:"sql", cat:"DDL", q:"Which category is TRUNCATE?", a:"<b>DDL</b>. That's why it usually can't be rolled back and doesn't fire row triggers." },
+
+  // ===== DML =====
+  { deck:"sql", cat:"DML", q:"Name the DML keywords.", a:"<code>INSERT, UPDATE, DELETE, MERGE</code>." },
+  { deck:"sql", cat:"DML", q:"What must you always include on UPDATE/DELETE (unless intended)?", a:"A <code>WHERE</code> clause — otherwise you affect every row." },
+
+  // ===== DQL / SELECT =====
+  { deck:"sql", cat:"DQL", q:"Logical order of SELECT clauses?", a:"FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT." },
+  { deck:"sql", cat:"DQL", q:"WHERE vs HAVING?", a:"WHERE filters <i>rows</i> before grouping (no aggregates). HAVING filters <i>groups</i> after GROUP BY (aggregates allowed)." },
+  { deck:"sql", cat:"DQL", q:"How do you get distinct values?", a:"<code>SELECT DISTINCT column FROM table;</code>" },
+  { deck:"sql", cat:"DQL", q:"Common aggregate functions?", a:"<code>COUNT(), SUM(), AVG(), MIN(), MAX()</code>." },
+
+  // ===== DCL / TCL =====
+  { deck:"sql", cat:"DCL", q:"Name the DCL keywords.", a:"<code>GRANT</code> and <code>REVOKE</code>." },
+  { deck:"sql", cat:"TCL", q:"Name the TCL keywords.", a:"<code>BEGIN/START TRANSACTION, COMMIT, ROLLBACK, SAVEPOINT</code>." },
+  { deck:"sql", cat:"TCL", q:"What does SAVEPOINT let you do?", a:"Mark a point inside a transaction you can <code>ROLLBACK TO</code> without aborting the entire transaction." },
+
+  // ===== CONSTRAINTS =====
+  { deck:"sql", cat:"Constraints", q:"List the six main SQL constraints.", a:"<b>NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, CHECK, DEFAULT.</b>" },
+  { deck:"sql", cat:"Constraints", q:"What does PRIMARY KEY imply?", a:"NOT NULL + UNIQUE + only one per table. Identifies each row uniquely." },
+  { deck:"sql", cat:"Constraints", q:"Difference between UNIQUE and PRIMARY KEY?", a:"UNIQUE allows one NULL and there can be multiple UNIQUE constraints. PRIMARY KEY disallows NULL and there's only one per table." },
+
+  // ===== NORMALIZATION =====
+  { deck:"sql", cat:"Normalization", q:"What is 1NF?", a:"Atomic column values (no repeating groups / lists in a cell) and each row uniquely identifiable." },
+  { deck:"sql", cat:"Normalization", q:"What is 2NF?", a:"1NF + every non-key column depends on the <i>entire</i> primary key (no partial dependencies on composite keys)." },
+  { deck:"sql", cat:"Normalization", q:"What is 3NF?", a:"2NF + no transitive dependencies — non-key columns must depend only on the key, not on other non-key columns." },
+  { deck:"sql", cat:"Normalization", q:"Why normalize?", a:"Reduce redundancy, prevent update/insert/delete anomalies, keep data consistent." },
+
+  // ===== RELATIONSHIPS =====
+  { deck:"sql", cat:"Relationships", q:"How do you model a many-to-many relationship?", a:"With a <b>junction (bridge) table</b> holding foreign keys to both sides." },
+  { deck:"sql", cat:"Relationships", q:"In one-to-many, which side holds the foreign key?", a:"The <b>many</b> side. E.g., <code>employee.department_id → department.id</code>." },
+  { deck:"sql", cat:"Referential Integrity", q:"What does ON DELETE CASCADE do?", a:"When the referenced parent row is deleted, matching child rows are automatically deleted too." },
+
+  // ===== ACID =====
+  { deck:"sql", cat:"ACID", q:"What does ACID stand for?", a:"<b>Atomicity, Consistency, Isolation, Durability.</b>" },
+  { deck:"sql", cat:"ACID", q:"What is Atomicity?", a:"All statements in a transaction succeed together, or none do." },
+  { deck:"sql", cat:"ACID", q:"What is Isolation?", a:"Concurrent transactions don't interfere with each other. Governed by isolation levels." },
+  { deck:"sql", cat:"ACID", q:"What is Durability?", a:"Once a transaction commits, its changes survive crashes (typically via a write-ahead log)." },
+  { deck:"sql", cat:"ACID", q:"Highest and lowest SQL isolation levels?", a:"Lowest: <code>READ UNCOMMITTED</code>. Highest: <code>SERIALIZABLE</code>." },
+  { deck:"sql", cat:"ACID", q:"What is a dirty read?", a:"Reading uncommitted data from another transaction that may later roll back." },
+
+  // ===== JOINS =====
+  { deck:"sql", cat:"Joins", q:"INNER JOIN — what does it return?", a:"Only rows with a match in <b>both</b> tables." },
+  { deck:"sql", cat:"Joins", q:"LEFT JOIN — what does it return?", a:"All rows from the left table + matching right rows (or NULLs where none matched)." },
+  { deck:"sql", cat:"Joins", q:"CROSS JOIN — what does it return?", a:"The Cartesian product — every row from the left combined with every row from the right. No ON clause." },
+  { deck:"sql", cat:"Joins", q:"FULL OUTER JOIN — what does it return?", a:"All rows from both tables; NULLs on either side where no match." },
+  { deck:"sql", cat:"Joins", q:"What's a self-join?", a:"Joining a table to itself, using table aliases. Useful for hierarchical data (e.g., employee → manager)." },
+
+  // ===== SET OPS =====
+  { deck:"sql", cat:"Set Ops", q:"UNION vs UNION ALL?", a:"UNION removes duplicates (extra sort/hash). UNION ALL keeps them (faster)." },
+  { deck:"sql", cat:"Set Ops", q:"What does INTERSECT return?", a:"Only rows appearing in both result sets." },
+  { deck:"sql", cat:"Set Ops", q:"What does EXCEPT (MINUS) return?", a:"Rows in the first result set that are <b>not</b> in the second." },
+
+  // ===== INDEXES =====
+  { deck:"sql", cat:"Indexes", q:"What is a database index?", a:"An auxiliary data structure (usually B-tree) that speeds up lookups on indexed columns at the cost of extra storage and slower writes." },
+  { deck:"sql", cat:"Indexes", q:"Trade-off of adding an index?", a:"Faster SELECTs but slower INSERT/UPDATE/DELETE (index must be maintained) and extra disk space." },
+  { deck:"sql", cat:"Indexes", q:"Clustered vs non-clustered index?", a:"<b>Clustered</b>: rows physically stored in index order (one per table). <b>Non-clustered</b>: separate structure pointing to rows (many allowed)." },
+  { deck:"sql", cat:"Indexes", q:"What's a composite index and the leftmost-prefix rule?", a:"An index on multiple columns. Queries can only use it if they filter on a leading prefix of those columns (e.g., <code>(a,b,c)</code> helps queries on <code>a</code> or <code>a,b</code> — not on <code>b</code> alone)." },
+
+  // ===== VIEWS =====
+  { deck:"sql", cat:"Views", q:"What is a view?", a:"A stored SELECT query treated as a virtual table. It doesn't store data — it re-runs the query when queried." },
+  { deck:"sql", cat:"Views", q:"Advantages of a view?", a:"Query reuse, abstraction from schema, security (grant on view instead of raw tables), simpler API to callers." },
+  { deck:"sql", cat:"Views", q:"View vs materialized view?", a:"Regular view: re-executes each time. Materialized view: caches rows and needs REFRESH — faster reads, staler data." },
+
+  // ===== STORED PROC =====
+  { deck:"sql", cat:"Stored Procedures", q:"What is a stored procedure?", a:"Server-side compiled routine, called with <code>CALL</code>, can take parameters, encapsulate logic, and manage transactions." },
+  { deck:"sql", cat:"Stored Procedures", q:"Function vs procedure?", a:"A function must return a value and is usable inside SQL expressions. A procedure is invoked via CALL and can perform TCL (COMMIT/ROLLBACK)." },
+
+  // ===== JDBC =====
+  { deck:"sql", cat:"JDBC", q:"What does JDBC stand for?", a:"<b>Java Database Connectivity</b> — standard API in <code>java.sql</code> for talking to relational DBs." },
+  { deck:"sql", cat:"JDBC", q:"Name the core JDBC interfaces.", a:"<code>DriverManager, Connection, Statement, PreparedStatement, CallableStatement, ResultSet, SQLException</code>." },
+  { deck:"sql", cat:"JDBC", q:"How do you get a JDBC Connection?", a:"<code>DriverManager.getConnection(url, user, pass);</code>" },
+  { deck:"sql", cat:"JDBC", q:"Which JDBC method for a SELECT?", a:"<code>executeQuery()</code> — returns a <code>ResultSet</code>." },
+  { deck:"sql", cat:"JDBC", q:"Which JDBC method for INSERT/UPDATE/DELETE?", a:"<code>executeUpdate()</code> — returns the row count." },
+  { deck:"sql", cat:"JDBC", q:"How do you iterate a ResultSet?", a:"<code>while (rs.next()) { rs.getInt(\"id\"); ... }</code>" },
+  { deck:"sql", cat:"JDBC", q:"Why use try-with-resources with JDBC?", a:"Connection, Statement, and ResultSet all implement AutoCloseable — auto-closing prevents leaked DB handles." },
+  { deck:"sql", cat:"JDBC", q:"Which exception do JDBC methods throw?", a:"<code>SQLException</code> — a <b>checked</b> exception." },
+
+  // ===== PREPARED STMT =====
+  { deck:"sql", cat:"PreparedStatement", q:"Statement vs PreparedStatement — SQL injection?", a:"Statement concatenates strings — vulnerable. PreparedStatement uses <code>?</code> placeholders + setXxx() — safe." },
+  { deck:"sql", cat:"PreparedStatement", q:"How do you bind parameters to a PreparedStatement?", a:"<code>ps.setInt(1, 42); ps.setString(2, \"Alice\");</code> — 1-based index." },
+  { deck:"sql", cat:"PreparedStatement", q:"Why is PreparedStatement faster in a loop?", a:"The SQL is parsed and compiled once by the DB, then re-executed with different parameters." },
+
+  // ===== DAO =====
+  { deck:"sql", cat:"DAO Pattern", q:"What is the DAO pattern?", a:"<b>Data Access Object</b> — an interface abstracting persistence so business code doesn't touch JDBC directly." },
+  { deck:"sql", cat:"DAO Pattern", q:"Benefit of DAO?", a:"Swappable persistence implementations (JDBC, JPA, in-memory for tests), single place for SQL, testable business layer." },
+
+  // ===== SQLite / SQLAlchemy =====
+  { deck:"sql", cat:"SQLite3", q:"What is SQLite?", a:"An embedded, serverless RDBMS stored in a single file. Great for tests, mobile apps, and small tools." },
+  { deck:"sql", cat:"SQLAlchemy", q:"What are the two layers of SQLAlchemy?", a:"<b>Core</b> (SQL Expression Language) and <b>ORM</b> (map classes to tables)." },
+  { deck:"sql", cat:"SQLAlchemy", q:"What is a Session in SQLAlchemy?", a:"The ORM's unit-of-work — tracks changes to objects and flushes them as a single transaction on commit." },
+];
+
+let deck = "all";
+let cards = [];
+let idx = 0;
+let known = new Set();
+let review = new Set();
+
+function activeCards() {
+  return CARDS.filter(c => deck === "all" || c.deck === deck);
+}
+
+function loadDeck() {
+  cards = activeCards().slice();
+  idx = 0;
+  known.clear();
+  review.clear();
+  updateCounts();
+  render();
+}
+
+function render() {
+  if (cards.length === 0) return;
+  const c = cards[idx];
+  document.getElementById("frontContent").innerHTML = c.q;
+  document.getElementById("backContent").innerHTML = c.a;
+  document.getElementById("frontCategory").textContent = c.cat;
+  document.getElementById("backCategory").textContent = c.cat;
+  document.getElementById("card").classList.remove("flipped");
+  document.getElementById("status").textContent = `Card ${idx + 1} of ${cards.length}`;
+  document.getElementById("progressFill").style.width = ((idx + 1) / cards.length * 100) + "%";
+  document.getElementById("prevBtn").disabled = idx === 0;
+  document.getElementById("nextBtn").disabled = idx === cards.length - 1;
+  document.getElementById("ratingBtns").style.display = "none";
+}
+
+function flip() {
+  const card = document.getElementById("card");
+  card.classList.toggle("flipped");
+  if (card.classList.contains("flipped")) {
+    document.getElementById("ratingBtns").style.display = "flex";
+  }
+}
+
+function next() {
+  if (idx < cards.length - 1) { idx++; render(); }
+}
+function prev() {
+  if (idx > 0) { idx--; render(); }
+}
+function rate(r) {
+  const c = cards[idx];
+  const key = c.q;
+  if (r === "good") { known.add(key); review.delete(key); }
+  else { review.add(key); known.delete(key); }
+  updateCounts();
+  if (idx < cards.length - 1) { idx++; render(); }
+}
+function updateCounts() {
+  document.getElementById("knownCount").textContent = known.size;
+  document.getElementById("reviewCount").textContent = review.size;
+}
+
+document.getElementById("card").addEventListener("click", flip);
+document.getElementById("shuffleBtn").addEventListener("click", () => {
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  idx = 0;
+  render();
+});
+document.getElementById("resetBtn").addEventListener("click", loadDeck);
+document.querySelectorAll(".deck-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".deck-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    deck = btn.dataset.deck;
+    loadDeck();
+  });
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space") { e.preventDefault(); flip(); }
+  else if (e.code === "ArrowLeft") prev();
+  else if (e.code === "ArrowRight") next();
+  else if (e.key === "1") rate("again");
+  else if (e.key === "2") rate("good");
+});
+
+loadDeck();
+</script>
+</body>
+</html>

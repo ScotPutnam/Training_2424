@@ -3,5 +3,13 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Day1/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Day1/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Day1_demo/chrDemo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Day1_demo/chrDemo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Day4JDBC/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Day4JDBC/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/day4jdbc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/day4jdbc/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/exercise/4-thursday/starter_code/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/exercise/4-thursday/starter_code/src/main/resources" charset="UTF-8" />
   </component>
 </project>

@@ -3,9 +3,13 @@
 ## Five sub languages
 
 ### DQL - Data query language
+SELECT FROM WHERE GROUPBY HAVING
+
 
 ### DDL - Data definition language
+CREATE TABLE
 
 ### DCL - Data control language
+- Grant / Revoke role assignments
 
 ### DML - Data manipulation language
