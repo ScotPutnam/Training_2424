@@ -11,10 +11,6 @@ returns a string result indicating eligibility or the first disqualifying condit
 encountered (short-circuit evaluation)
 """
 
-# def assess_loan(age, income):
-#     if age>= 18 and income >=25000:
-#         return "ELIGIBLE"
-#     return "INELIGIBLE"
 
 def assess_loan(age: int, income: float, credit_score: int, employed: bool)-> str:
     """Assess a loan application against eligibility criteria.
@@ -23,7 +19,11 @@ def assess_loan(age: int, income: float, credit_score: int, employed: bool)-> st
         'ELIGIBLE','INELIGIBLE_AGE','INELIGIBLE_INCOME', 'INELIGIBLE_CREDIT',or 'INELIGIBLE_EMPLOYMENT'
         """
     
-    if age <18 or age>65:
+    # if age <18 or age>65:
+    #     return "INELIGIBLE_AGE"
+    if age <18:
+        return "INELIGIBLE_AGE"
+    if age>65:
         return "INELIGIBLE_AGE"
     if income <25000:
         return "INELIGIBLE_INCOME"
@@ -33,3 +33,5 @@ def assess_loan(age: int, income: float, credit_score: int, employed: bool)-> st
         return 'INELIGIBLE_EMPLOYMENT'
     else:
         return 'ELIGIBLE'
+    
+
