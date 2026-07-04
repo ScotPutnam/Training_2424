@@ -45,7 +45,7 @@ def create_app():
     
     # Add basic health check endpoint
     @app.route('/health')
-    def health_check():
+    def health_check():h
         return {'status': 'healthy', 'message': 'Employee Expense Management API is running'}
     
     # Add basic API info endpoint

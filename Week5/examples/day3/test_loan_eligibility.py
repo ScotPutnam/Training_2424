@@ -7,3 +7,13 @@ def test_happy_path_eligible():
 
 # def test_happy_path_eligible():
 #     assert assess_loan(age=30,income=30000) == "ELIGIBLE"
+
+@pytest.mark.parametrize("age, expected", [
+    (17, "INELIGIBLE_AGE"),
+    (18, "ELIGIBLE"),
+    (65, "ELIGIBLE"),
+    (66, "INELIGIBLE_AGE"),
+])
+
+def test_age_boundaries(age, expected):
+    assert assess_loan(age, income=30000, credit_score=700, employed=True) == expected
