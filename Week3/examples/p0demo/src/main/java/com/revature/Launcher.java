@@ -42,9 +42,5 @@ public class Launcher {
 
         }).start(3000);
 
-
-
-
-
     }
 }
