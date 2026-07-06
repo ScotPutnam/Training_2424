@@ -3,27 +3,28 @@ package com.revature.unittest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-// provides human readable test name for reports
-@DisplayName("Basic unit tests")
-public class Junit6_demo_basics {
-    // AAA pattern - Arrange, Act, Assert
-    // System under test
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+//@DisplayName provides human-readable test names in reports
+@DisplayName("Calculator Basic Tests - JUnit6 Fundamentals")
+class Junit6_demo_basics {
+    // The System Under Test (SUT)
     private final Calculator calculator = new Calculator();
 
+    //Basic Test Structure
+
     @Test
-    @DisplayName("Adding two positive numbers"){
-        // ARRANGE - Set up the test data
-        int a = 1;
-        int b = 2;
+    @DisplayName("Adding two positive numbers returns their sum")
+    void add_twoPositiveNumbers_returnsSum(){
+        //ARRANGE - Set up the test data
+        int a = 5;
+        int b = 3;
 
-        // ACT - Execute the method under test
-        int result = calculator.add(a, b);
+        //ACT - Execute the method under test
+        int result = calculator.add(a,b);
 
-        // ASSERT -
-        assertEquals()
+        //ASSERT - Verify the outcome
+        assertEquals(8, result, "5+3 should equal 8");
     }
-
 
 }
