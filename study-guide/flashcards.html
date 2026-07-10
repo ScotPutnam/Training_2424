@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Flash Cards — Java & SQL</title>
+<title>Flash Cards — QEA Exam (Weeks 1–5)</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -228,7 +228,7 @@
 
 <header>
   <h1>Flash Cards</h1>
-  <p class="subtitle">Java (Week 3) &amp; SQL (Week 4)</p>
+  <p class="subtitle">Weeks 1–5 · Java · Python · SQL · QEA</p>
   <div class="top-nav">
     <a href="index.html">Home</a> ·
     <a href="study-guide.html">Study Guide</a> ·
@@ -238,8 +238,10 @@
 
 <div class="controls">
   <button class="deck-btn active" data-deck="all">All</button>
-  <button class="deck-btn" data-deck="java">Java Only</button>
-  <button class="deck-btn" data-deck="sql">SQL Only</button>
+  <button class="deck-btn" data-deck="java">Java</button>
+  <button class="deck-btn" data-deck="python">Python</button>
+  <button class="deck-btn" data-deck="sql">SQL</button>
+  <button class="deck-btn" data-deck="qea">QEA</button>
   <button id="shuffleBtn">🔀 Shuffle</button>
   <button id="resetBtn">↻ Reset</button>
 </div>
@@ -376,6 +378,26 @@ const CARDS = [
   { deck:"java", cat:"Logging", q:"Logback levels from least to most severe?", a:"<b>TRACE, DEBUG, INFO, WARN, ERROR</b>." },
   { deck:"java", cat:"Logging", q:"Why use parameterized log messages <code>log.info(\"user {}\", id)</code>?", a:"SLF4J skips the string concatenation if that level is disabled — much cheaper than <code>\"user \" + id</code>." },
 
+  // ===== JAVA — WEEK 2 FOUNDATIONS =====
+  { deck:"java", cat:"Compilation", q:"What does <code>javac</code> produce from a <code>.java</code> file?", a:"<b>Bytecode</b> in a <code>.class</code> file, which the JVM loads and executes — the basis of 'write once, run anywhere'." },
+  { deck:"java", cat:"Compilation", q:"Write the exact signature of the Java entry point.", a:"<code>public static void main(String[] args)</code> — public so the JVM can call it, static so no object is needed, void return, String array of CLI args." },
+  { deck:"java", cat:"Maven", q:"What file configures a Maven project?", a:"<code>pom.xml</code> — the <b>Project Object Model</b>: coordinates, dependencies, plugins, build config." },
+  { deck:"java", cat:"Maven", q:"What are Maven coordinates?", a:"<code>groupId : artifactId : version</code> — uniquely identify an artifact in a repository (e.g. Maven Central)." },
+  { deck:"java", cat:"Maven", q:"Order of the main Maven default lifecycle phases?", a:"<b>validate → compile → test → package → verify → install → deploy</b>. Running a phase runs all earlier ones too." },
+  { deck:"java", cat:"Maven", q:"Where does production code vs test code live in a Maven project?", a:"<code>src/main/java</code> for production, <code>src/test/java</code> for tests. Build output goes to <code>target/</code>." },
+  { deck:"java", cat:"Strings", q:"Why does <code>\"hi\" == \"hi\"</code> return true but <code>new String(\"hi\") == \"hi\"</code> return false?", a:"String <b>literals</b> are interned in the string pool (same object). <code>new</code> forces a separate heap object. Always compare with <code>.equals()</code>." },
+  { deck:"java", cat:"Strings", q:"What does it mean that String is immutable?", a:"Its characters can never change — methods like <code>toUpperCase()</code> return a <b>new</b> String. Enables pooling, thread-safety, and safe map keys." },
+  { deck:"java", cat:"Strings", q:"Best tool for building a String in a loop?", a:"<code>StringBuilder</code> — <code>append()</code> then <code>toString()</code>. Repeated <code>+</code> creates a new String each iteration (O(n²))." },
+  { deck:"java", cat:"Scanner", q:"Classic Scanner gotcha after <code>nextInt()</code>?", a:"It leaves the newline in the buffer, so a following <code>nextLine()</code> returns \"\". Fix: add an extra <code>nextLine()</code> after numeric reads." },
+  { deck:"java", cat:"Algorithms", q:"Time complexity of linear vs binary search?", a:"Linear: <b>O(n)</b>, works on anything. Binary: <b>O(log n)</b>, requires <b>sorted</b> data." },
+  { deck:"java", cat:"Algorithms", q:"What does binary search do each iteration?", a:"Compares the target to the middle element and discards half the remaining range (adjust lo/hi around mid)." },
+  { deck:"java", cat:"Algorithms", q:"Order these fastest → slowest: O(n²), O(1), O(n log n), O(log n), O(n)", a:"<b>O(1) → O(log n) → O(n) → O(n log n) → O(n²)</b>." },
+  { deck:"java", cat:"SOLID", q:"What does SOLID stand for?", a:"<b>S</b>ingle Responsibility, <b>O</b>pen/Closed, <b>L</b>iskov Substitution, <b>I</b>nterface Segregation, <b>D</b>ependency Inversion." },
+  { deck:"java", cat:"SOLID", q:"State the Open/Closed principle.", a:"Software entities should be <b>open for extension but closed for modification</b> — add behavior via new subclasses/implementations, not by editing working code." },
+  { deck:"java", cat:"SOLID", q:"State the Liskov Substitution principle.", a:"A subclass must be usable anywhere its parent type is expected without breaking behavior." },
+  { deck:"java", cat:"Debugging", q:"How do you read a stack trace?", a:"Top line = exception + message. Read frames top-down; the first frame in <b>your</b> package is usually the culprit. <code>Caused by:</code> shows the root cause." },
+  { deck:"java", cat:"Debugging", q:"Step over vs step into?", a:"<b>Step over</b> executes the current line and stops at the next. <b>Step into</b> enters the method being called on that line." },
+
   // ================================================
   // ============== SQL =============================
   // ================================================
@@ -478,6 +500,101 @@ const CARDS = [
   { deck:"sql", cat:"SQLite3", q:"What is SQLite?", a:"An embedded, serverless RDBMS stored in a single file. Great for tests, mobile apps, and small tools." },
   { deck:"sql", cat:"SQLAlchemy", q:"What are the two layers of SQLAlchemy?", a:"<b>Core</b> (SQL Expression Language) and <b>ORM</b> (map classes to tables)." },
   { deck:"sql", cat:"SQLAlchemy", q:"What is a Session in SQLAlchemy?", a:"The ORM's unit-of-work — tracks changes to objects and flushes them as a single transaction on commit." },
+
+  // ================================================
+  // ============== PYTHON (WEEKS 1–2) ==============
+  // ================================================
+  { deck:"python", cat:"Basics", q:"Is Python compiled or interpreted? Statically or dynamically typed?", a:"<b>Interpreted</b> (source → bytecode → Python VM) and <b>dynamically typed</b> — types are checked at runtime and variables can be rebound to any type." },
+  { deck:"python", cat:"Collections", q:"List vs tuple — key difference?", a:"Lists are <b>mutable</b>, tuples are <b>immutable</b> (so tuples can be dict keys / set members). Tuple of one element needs a comma: <code>(5,)</code>." },
+  { deck:"python", cat:"Collections", q:"What does a set give you that a list doesn't?", a:"<b>No duplicates</b> and O(1) membership tests. Unordered. Create an empty one with <code>set()</code> — <code>{}</code> is an empty <b>dict</b>." },
+  { deck:"python", cat:"Collections", q:"How do you read a dict key without risking KeyError?", a:"<code>d.get(\"key\", default)</code> — returns the default (None if omitted) when the key is missing. <code>d[\"key\"]</code> raises KeyError." },
+  { deck:"python", cat:"Collections", q:"What does <code>nums[-1]</code> and <code>nums[1:3]</code> return?", a:"<code>[-1]</code> = last element. <code>[1:3]</code> = slice of indices 1 and 2 (end exclusive). Slicing also works on strings." },
+  { deck:"python", cat:"Collections", q:"Name three useful members of the <code>collections</code> module.", a:"<code>deque</code> (O(1) append/pop both ends), <code>Counter</code> (frequency map), <code>defaultdict</code> (auto-default for missing keys)." },
+  { deck:"python", cat:"Basics", q:"Which values are falsy in Python?", a:"<code>False, None, 0, 0.0, \"\", [], (), {}, set()</code> — empty containers and zero. Everything else is truthy." },
+  { deck:"python", cat:"Comprehensions", q:"Write a list comprehension for the squares of even numbers 0–9.", a:"<code>[x**2 for x in range(10) if x % 2 == 0]</code> — pattern: expression <b>for</b> item <b>in</b> iterable <b>if</b> condition." },
+  { deck:"python", cat:"Comprehensions", q:"What's the difference between <code>[x*2 for x in data]</code> and <code>(x*2 for x in data)</code>?", a:"Brackets build the whole <b>list</b> in memory now; parentheses create a lazy <b>generator expression</b> that yields values on demand." },
+  { deck:"python", cat:"Functions", q:"What do <code>*args</code> and <code>**kwargs</code> collect?", a:"<code>*args</code> — extra positional arguments as a <b>tuple</b>. <code>**kwargs</code> — extra keyword arguments as a <b>dict</b>." },
+  { deck:"python", cat:"Functions", q:"Syntax and limits of a lambda?", a:"<code>lambda a, b: a + b</code> — anonymous function containing a <b>single expression</b> (no statements). Common as key functions: <code>sorted(words, key=lambda w: len(w))</code>." },
+  { deck:"python", cat:"Functions", q:"What is LEGB?", a:"Name-resolution order: <b>L</b>ocal → <b>E</b>nclosing → <b>G</b>lobal → <b>B</b>uilt-in. Use <code>global</code>/<code>nonlocal</code> to assign to outer scopes." },
+  { deck:"python", cat:"Functions", q:"Why is <code>def f(items=[])</code> a bug?", a:"Default values are created <b>once</b> at definition time — the same list is shared across all calls. Use <code>items=None</code> and create inside." },
+  { deck:"python", cat:"Functional", q:"What do map() and filter() return?", a:"Lazy <b>iterators</b>, not lists — wrap with <code>list()</code> to materialize. <code>map(fn, xs)</code> transforms; <code>filter(pred, xs)</code> keeps matches." },
+  { deck:"python", cat:"Functional", q:"Where does reduce live and what does it do?", a:"<code>from functools import reduce</code> — folds a sequence to one value: <code>reduce(lambda a,b: a+b, nums, 0)</code>." },
+  { deck:"python", cat:"Functional", q:"What does <code>zip([1,2], \"ab\")</code> produce?", a:"An iterator of pairs: <code>(1, 'a'), (2, 'b')</code> — stops at the shorter input. Great for building dicts: <code>dict(zip(keys, vals))</code>." },
+  { deck:"python", cat:"OOP", q:"What is <code>self</code>?", a:"The instance the method was called on — passed automatically as the first parameter of instance methods." },
+  { deck:"python", cat:"OOP", q:"Class attribute vs instance attribute?", a:"Class attribute: defined on the class, <b>shared</b> by all instances. Instance attribute: set on <code>self</code> (usually in <code>__init__</code>), per-object." },
+  { deck:"python", cat:"OOP", q:"Which dunder methods control print(), ==, and len()?", a:"<code>__str__</code> (and <code>__repr__</code> for debugging), <code>__eq__</code>, <code>__len__</code>. <code>__init__</code> is the constructor." },
+  { deck:"python", cat:"OOP", q:"How does Python do 'private' fields?", a:"By <b>convention</b>: <code>_name</code> = internal, <code>__name</code> = name-mangled to <code>_Class__name</code>. Nothing is enforced like Java's <code>private</code>." },
+  { deck:"python", cat:"OOP", q:"How do you call the parent constructor in a subclass?", a:"<code>super().__init__(args)</code> inside the child's <code>__init__</code>." },
+  { deck:"python", cat:"Exceptions", q:"Order of try/except/else/finally — when does each run?", a:"<code>try</code> runs; on matching error → <code>except</code>; <code>else</code> only if NO exception; <code>finally</code> <b>always</b>." },
+  { deck:"python", cat:"Exceptions", q:"How do you define and raise a custom exception?", a:"<code>class InsufficientFundsError(Exception): pass</code> then <code>raise InsufficientFundsError(\"msg\")</code>. All Python exceptions are unchecked." },
+  { deck:"python", cat:"Generators", q:"What makes a function a generator?", a:"Containing <code>yield</code>. Calling it returns a lazy generator; each <code>next()</code> runs to the next yield. Ends by raising <code>StopIteration</code>." },
+  { deck:"python", cat:"Generators", q:"Iterable vs iterator?", a:"<b>Iterable</b> can produce an iterator (<code>__iter__</code>). <b>Iterator</b> yields items via <code>__next__</code> until <code>StopIteration</code>. <code>for</code> handles both automatically." },
+  { deck:"python", cat:"Decorators", q:"What is a decorator?", a:"A function that takes a function and returns a wrapped version. <code>@timer</code> above <code>def f</code> means <code>f = timer(f)</code>. Flask routes use this pattern." },
+  { deck:"python", cat:"Logging", q:"Python logging levels, least → most severe?", a:"<b>DEBUG → INFO → WARNING → ERROR → CRITICAL</b>. Root default is WARNING — configure with <code>logging.basicConfig(level=...)</code>." },
+
+  { deck:"python", cat:"Files", q:"Difference between file modes <code>w</code> and <code>a</code>?", a:"<code>w</code> <b>truncates</b> (erases) existing content before writing. <code>a</code> appends to the end. Both create the file if missing." },
+  { deck:"python", cat:"Files", q:"Which file mode errors if the file already exists?", a:"<code>x</code> — exclusive creation. Raises <code>FileExistsError</code> if the file is there." },
+  { deck:"python", cat:"Files", q:"read() vs readline() vs readlines()?", a:"<code>read()</code> — whole file as one string. <code>readline()</code> — one line. <code>readlines()</code> — list of all lines. Or iterate the file object line-by-line." },
+  { deck:"python", cat:"Files", q:"What guarantee does <code>with open(...) as f:</code> give?", a:"The file's <code>__exit__</code> (context manager) closes it when the block ends — <b>even if an exception is raised</b>." },
+  { deck:"python", cat:"Pickling", q:"What is pickling?", a:"Serializing a Python object to a <b>binary</b> byte stream (<code>pickle.dump(obj, f)</code>) and restoring it (<code>pickle.load(f)</code>). Files must be opened in <code>wb</code>/<code>rb</code>." },
+  { deck:"python", cat:"Pickling", q:"Security rule for pickle?", a:"<b>Never unpickle untrusted data</b> — loading a pickle can execute arbitrary code. Use JSON for data exchange." },
+  { deck:"python", cat:"HTTP", q:"Which HTTP methods map to CRUD?", a:"Create → <b>POST</b>, Read → <b>GET</b>, Update → <b>PUT/PATCH</b>, Delete → <b>DELETE</b>." },
+  { deck:"python", cat:"HTTP", q:"What do status codes 200, 201, 400, 404, 500 mean?", a:"<b>200</b> OK · <b>201</b> Created · <b>400</b> Bad Request (client's fault) · <b>404</b> Not Found · <b>500</b> Internal Server Error (server's fault)." },
+  { deck:"python", cat:"HTTP", q:"What does it mean that HTTP is stateless?", a:"Each request is independent — the server keeps no memory of previous requests. State is added via cookies, sessions, or tokens." },
+  { deck:"python", cat:"Flask", q:"How do you bind a URL to a function in Flask?", a:"A route decorator: <code>@app.get(\"/items\")</code> or <code>@app.route(\"/items\", methods=[\"POST\"])</code> above a view function. Flask turns its return value into the response." },
+  { deck:"python", cat:"Flask", q:"How do you read the JSON body of a POST in Flask?", a:"<code>data = request.get_json()</code> (import <code>request</code> from flask). Query params: <code>request.args.get(\"q\")</code>." },
+  { deck:"python", cat:"Flask", q:"How do you return a specific status code from a Flask view?", a:"Return a tuple: <code>return jsonify(item), 201</code>." },
+  { deck:"python", cat:"Flask", q:"Default host/port for <code>app.run()</code>?", a:"<code>http://127.0.0.1:5000</code>." },
+  { deck:"python", cat:"sqlite3", q:"Basic sqlite3 workflow in Python?", a:"<code>connect()</code> → <code>cursor()</code> → <code>execute(sql, params)</code> → <code>commit()</code> (for DML) → <code>fetchone()/fetchall()</code> → <code>close()</code>." },
+  { deck:"python", cat:"sqlite3", q:"How do you pass parameters safely to sqlite3?", a:"<code>?</code> placeholders with a tuple: <code>cur.execute(\"... WHERE name = ?\", (name,))</code> — never f-strings (SQL injection)." },
+  { deck:"python", cat:"sqlite3", q:"You INSERTed but the row isn't in the DB. Why?", a:"You forgot <code>conn.commit()</code> — sqlite3 runs in a transaction; uncommitted changes are lost on close." },
+  { deck:"python", cat:"pytest", q:"How does pytest discover tests?", a:"Files named <code>test_*.py</code> (or <code>*_test.py</code>), functions named <code>test_*</code>. Assertions use plain <code>assert</code>." },
+  { deck:"python", cat:"pytest", q:"How do you assert that code raises an exception in pytest?", a:"<code>with pytest.raises(ValueError): shipping_cost(0)</code>" },
+  { deck:"python", cat:"pytest", q:"What does statement coverage measure?", a:"The % of code lines executed by the tests (<code>coverage run -m pytest</code> then <code>coverage report</code>). 100% coverage ≠ bug-free." },
+
+  // ================================================
+  // ============== QEA (WEEK 5) ====================
+  // ================================================
+  { deck:"qea", cat:"SDLC", q:"Name the SDLC phases in order.", a:"<b>Planning → Requirements → Design → Implementation → Testing → Deployment → Maintenance</b>." },
+  { deck:"qea", cat:"SDLC", q:"Key weakness of Waterfall?", a:"Testing and feedback come <b>late</b>; change is expensive because each phase must finish before the next starts. Best for stable, well-defined, regulated projects." },
+  { deck:"qea", cat:"SDLC", q:"Roughly how does the cost of a bug grow by phase?", a:"Requirements $1 → Development $10 → Testing $100 → Production $1000+. Hence <b>shift-left</b>: test early." },
+  { deck:"qea", cat:"Agile", q:"The 4 Agile Manifesto values?", a:"Individuals &amp; interactions <b>over</b> processes &amp; tools · Working software <b>over</b> docs · Customer collaboration <b>over</b> contracts · Responding to change <b>over</b> following a plan." },
+  { deck:"qea", cat:"Scrum", q:"The 3 Scrum roles?", a:"<b>Product Owner</b> (owns/orders the backlog), <b>Scrum Master</b> (facilitates, removes impediments), <b>Developers</b> (build the increment — includes testers)." },
+  { deck:"qea", cat:"Scrum", q:"The 5 Scrum events?", a:"<b>The Sprint</b> (container), <b>Sprint Planning</b>, <b>Daily Scrum</b>, <b>Sprint Review</b>, <b>Sprint Retrospective</b>." },
+  { deck:"qea", cat:"Scrum", q:"Timebox of the Daily Scrum, and its purpose?", a:"<b>15 minutes</b> — inspect progress toward the Sprint Goal and adapt the plan. Not a status report to management." },
+  { deck:"qea", cat:"Scrum", q:"Sprint Review vs Sprint Retrospective?", a:"<b>Review</b>: inspect the <i>product</i> with stakeholders, adapt the Product Backlog. <b>Retrospective</b>: inspect the <i>process</i>, commit to 1–3 improvements." },
+  { deck:"qea", cat:"Scrum", q:"The 3 Scrum artifacts?", a:"<b>Product Backlog</b>, <b>Sprint Backlog</b>, <b>Increment</b> (meeting the Definition of Done)." },
+  { deck:"qea", cat:"Stories", q:"Standard user story format?", a:"\"As a <b>&lt;role&gt;</b>, I want <b>&lt;feature&gt;</b>, so that <b>&lt;benefit&gt;</b>\" — plus testable <b>acceptance criteria</b>." },
+  { deck:"qea", cat:"Stories", q:"What are story points?", a:"<b>Relative</b> estimates of effort/complexity (often Fibonacci 1,2,3,5,8,13) — not hours. Completed points per sprint = <b>velocity</b>." },
+  { deck:"qea", cat:"Stories", q:"On a burndown chart, what does the actual line ABOVE the ideal line mean?", a:"The team is <b>behind schedule</b> — more work remains than planned at that point in the sprint." },
+  { deck:"qea", cat:"QA vs QC", q:"QA vs QC in one line each?", a:"<b>QA</b>: process-oriented, <b>prevents</b> defects (standards, reviews). <b>QC</b>: product-oriented, <b>detects</b> defects (testing, inspection)." },
+  { deck:"qea", cat:"V&V", q:"Verification vs Validation?", a:"<b>Verification</b>: are we building the product <b>right</b>? (against specs — reviews, static). <b>Validation</b>: are we building the <b>right</b> product? (against user needs — dynamic testing)." },
+  { deck:"qea", cat:"Levels", q:"The 4 testing levels, bottom to top?", a:"<b>Unit → Integration → System → Acceptance (UAT)</b>. The pyramid: many unit tests, fewer integration, few E2E." },
+  { deck:"qea", cat:"Levels", q:"Regression vs smoke testing?", a:"<b>Regression</b>: re-run existing tests after changes to catch new breakage. <b>Smoke</b>: quick critical-path check that a new build is testable at all." },
+  { deck:"qea", cat:"Principles", q:"Testing principle #1?", a:"Testing shows the <b>presence</b> of defects, not their absence — passing tests never prove the software is bug-free." },
+  { deck:"qea", cat:"Principles", q:"What is the pesticide paradox?", a:"Re-running the same tests stops finding new bugs — tests must be reviewed and refreshed regularly." },
+  { deck:"qea", cat:"Principles", q:"What is defect clustering?", a:"A small number of modules contain most of the defects (Pareto 80/20) — focus testing where bugs concentrate." },
+  { deck:"qea", cat:"Principles", q:"What is the absence-of-errors fallacy?", a:"A 99% bug-free system still fails if it doesn't meet user needs — finding/fixing defects alone doesn't guarantee success." },
+  { deck:"qea", cat:"Terminology", q:"Error vs defect vs failure?", a:"<b>Error</b>: human mistake → <b>Defect</b> (bug/fault): flaw in the code → <b>Failure</b>: observable wrong behavior when the defect executes." },
+  { deck:"qea", cat:"Box Testing", q:"Black-box vs white-box testing?", a:"<b>Black-box</b>: spec-based, no code knowledge (EP, BVA, decision tables). <b>White-box</b>: structure-based, uses code knowledge (statement/branch coverage)." },
+  { deck:"qea", cat:"Box Testing", q:"Statement vs branch coverage — which is stronger?", a:"<b>Branch</b> — 100% branch coverage implies 100% statement coverage, not vice versa. Branch requires every decision to go both true and false." },
+  { deck:"qea", cat:"Techniques", q:"Equivalence partitioning for an age field accepting 18–65?", a:"Three partitions: &lt;18 (invalid), 18–65 (valid), &gt;65 (invalid) — test <b>one value from each</b>." },
+  { deck:"qea", cat:"Techniques", q:"Boundary values (2-value) for a field accepting 18–65?", a:"<b>17, 18, 65, 66</b> — the values on each side of both boundaries, because bugs live at the edges." },
+  { deck:"qea", cat:"Techniques", q:"When do you use decision table testing?", a:"When behavior depends on <b>combinations of conditions</b> (business rules). Each column = one rule = one test. n binary conditions → up to 2ⁿ rules." },
+  { deck:"qea", cat:"Techniques", q:"When do you use state transition testing?", a:"When behavior depends on <b>history/state</b> (login lockout, order status, cart). Model states, events, transitions; test valid AND invalid transitions." },
+  { deck:"qea", cat:"Techniques", q:"What is error guessing?", a:"Experience-based attack on likely weak spots: null/empty input, 0, negatives, boundaries, huge values, special characters." },
+  { deck:"qea", cat:"Techniques", q:"What is exploratory testing?", a:"Simultaneous <b>learning, test design, and execution</b> — unscripted but purposeful, often timeboxed into sessions with a charter." },
+  { deck:"qea", cat:"Techniques", q:"Positive vs negative testing?", a:"<b>Positive</b>: valid input behaves as specified. <b>Negative</b>: invalid input is rejected gracefully (no crash, clear error)." },
+  { deck:"qea", cat:"Artifacts", q:"What is an RTM and why keep one?", a:"<b>Requirements Traceability Matrix</b> — maps each requirement to its test cases. Proves coverage and shows which tests to re-run when a requirement changes." },
+  { deck:"qea", cat:"Artifacts", q:"Essential fields of a test case?", a:"ID, title, preconditions, test data, <b>steps</b>, <b>expected result</b>, actual result, pass/fail status, priority." },
+  { deck:"qea", cat:"Artifacts", q:"What is data-driven testing?", a:"One parameterized test script executed against a <b>table of inputs and expected outputs</b> (e.g., CSV of coupon codes)." },
+  { deck:"qea", cat:"Defects", q:"Minimal defect lifecycle?", a:"<b>New → Assigned → Fixed → Retest → Closed</b>, with <b>Reopened</b> if retest fails. Other exits: Duplicate, Cannot reproduce, Won't fix, Not a defect." },
+  { deck:"qea", cat:"Defects", q:"Severity vs priority?", a:"<b>Severity</b> = technical impact (set by tester). <b>Priority</b> = business urgency (set by PO at triage). They're independent." },
+  { deck:"qea", cat:"Defects", q:"Example of LOW severity but HIGH priority?", a:"Broken company logo on the homepage right before a public launch — trivial functionally, urgent for the business." },
+  { deck:"qea", cat:"Defects", q:"Example of HIGH severity but LOW priority?", a:"Server crash in an internal admin tool that only staff can trigger via input already blocked in the UI." },
+  { deck:"qea", cat:"Manual vs Auto", q:"What should you automate first?", a:"Stable, high-repetition paths: regression suites, smoke tests, data-driven cases. Keep exploratory/usability testing manual." },
+  { deck:"qea", cat:"Jira", q:"Jira issue-type hierarchy?", a:"<b>Epic → Story / Task / Bug → Sub-task</b>." },
+  { deck:"qea", cat:"Jira", q:"What is a Jira workflow?", a:"The set of <b>statuses</b> (To Do → In Progress → In Review → Done) and <b>transitions</b> an issue moves through; visualized on Scrum/Kanban boards." },
 ];
 
 let deck = "all";
