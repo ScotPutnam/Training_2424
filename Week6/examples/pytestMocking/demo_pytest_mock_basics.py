@@ -24,3 +24,12 @@ def test_mocker_creates_mocks(mocker):
 
     assert result == 42
     mock_func.assert_called_once()
+
+def test_mocker_mock_with_spec(mocker):
+
+    mock_repo = mocker.Mock(spec=UserRepository)
+
+    mock_repo.find_by_id.return_value = User(1, "John", "john@test.com")
+
+    user = mock_repo.find_by_id(1)
+    assert user.name == "John"
