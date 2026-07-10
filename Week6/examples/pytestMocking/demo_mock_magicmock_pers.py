@@ -59,5 +59,3 @@ def test_magic_mock_context_manager():
 
 # create autospec
 
-def test_autospec_with_mocker(mocker):
-    """ 
