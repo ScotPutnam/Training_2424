@@ -7,6 +7,7 @@
 
 import os
 import pytest
+import os
 from services import UserService, User, UserRepository, EmailClient
 
 #basic mock creation
