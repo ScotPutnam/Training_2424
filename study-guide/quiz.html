@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Quiz — QEA Exam (Weeks 1–5)</title>
+<title>Quiz — QEA Interview (Weeks 1–6)</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -258,7 +258,7 @@
 
 <header>
   <h1>Practice Quiz</h1>
-  <p class="subtitle">Weeks 1–5 · Java · Python · SQL · QEA</p>
+  <p class="subtitle">Weeks 1–6 · Java · Python · SQL · QEA · Unit Testing</p>
   <div class="top-nav">
     <a href="index.html">Home</a> ·
     <a href="study-guide.html">Study Guide</a> ·
@@ -818,6 +818,145 @@ const ALL_QUESTIONS = [
   { topic:"qea", cat:"Jira", q:"In Jira, statuses like 'In Progress' connected by transitions form a…",
     choices:["Backlog","Workflow","Burndown","Roadmap"], answer:1,
     exp:"A workflow defines the statuses an issue moves through — visualized as board columns." },
+
+  // ================================================
+  // ========== UNIT TESTING (WEEK 6) ===============
+  // ================================================
+  { topic:"testing", cat:"Unit Testing", q:"In FIRST, the 'R' stands for…",
+    choices:["Reliable","Repeatable","Robust","Reviewed"], answer:1,
+    exp:"Repeatable — same result every time, in any environment. F=Fast, I=Isolated, S=Self-validating, T=Timely." },
+  { topic:"testing", cat:"Unit Testing", q:"A unit test that queries a live database violates which FIRST principles most directly?",
+    choices:["Fast and Isolated","Self-validating and Timely","Repeatable and Timely","Only Timely"], answer:0,
+    exp:"External dependencies make tests slow and non-isolated (and often non-repeatable). Mock the database instead." },
+  { topic:"testing", cat:"Unit Testing", q:"A test asserts against <code>LocalDate.now()</code> and fails on weekdays. Best fix?",
+    choices:["Run tests only on weekends","Use a fixed date like <code>LocalDate.of(2024,1,6)</code>","Add a retry loop","Mark it @Disabled"], answer:1,
+    exp:"Deterministic inputs restore the Repeatable principle — fixed dates or an injectable clock." },
+  { topic:"testing", cat:"TDD/BDD", q:"The TDD cycle is…",
+    choices:["Code → Test → Deploy","Red → Green → Refactor","Plan → Do → Check","Arrange → Act → Assert"], answer:1,
+    exp:"Write a failing test (red), write minimal code to pass (green), then refactor. Arrange-Act-Assert is the structure of a single test, not the TDD cycle." },
+  { topic:"testing", cat:"TDD/BDD", q:"Given/When/Then scenarios readable by business stakeholders are the hallmark of…",
+    choices:["TDD","BDD","OAT","Exploratory testing"], answer:1,
+    exp:"BDD (e.g., Cucumber/Gherkin) expresses behavior in natural language so the whole team can collaborate." },
+  { topic:"testing", cat:"JUnit 5", q:"Which JUnit 5 annotation runs ONCE before all tests in a class?",
+    choices:["@BeforeEach","@BeforeAll","@Before","@Setup"], answer:1,
+    exp:"@BeforeAll runs once and must be static (unless PER_CLASS lifecycle). @BeforeEach runs before every test." },
+  { topic:"testing", cat:"JUnit 5", q:"A JUnit 5 @BeforeAll method must normally be…",
+    choices:["private","static","final","abstract"], answer:1,
+    exp:"Like JUnit 4's @BeforeClass, @BeforeAll runs before any instance exists, so it must be static (unless @TestInstance(PER_CLASS))." },
+  { topic:"testing", cat:"JUnit 5", q:"With 3 tests in a class, how many times does @BeforeEach run?",
+    choices:["Once","Twice","Three times","Zero — it's deprecated"], answer:2,
+    exp:"@BeforeEach runs before every test method: @BeforeAll → (@BeforeEach → @Test → @AfterEach) × 3 → @AfterAll." },
+  { topic:"testing", cat:"JUnit 5", q:"The JUnit 4 equivalent of @Disabled is…",
+    choices:["@Skip","@Ignore","@Off","@Exclude"], answer:1,
+    exp:"@Ignore (JUnit 4) / @Disabled (JUnit 5) skip a test method or a whole class, optionally with a reason." },
+  { topic:"testing", cat:"JUnit 5", q:"What does <code>assertThrows(ValueError.class, ...)</code>-style testing return in JUnit?",
+    choices:["void","true/false","The thrown exception, for further assertions","A stack trace string"], answer:2,
+    exp:"assertThrows returns the caught exception so you can assert on its message: assertEquals(\"...\", e.getMessage())." },
+  { topic:"testing", cat:"JUnit 5", q:"Why use assertAll() instead of sequential asserts?",
+    choices:["It's faster","It reports ALL failures instead of stopping at the first","It retries flaky assertions","It runs asserts in parallel threads"], answer:1,
+    exp:"assertAll is a soft assertion — every grouped assertion executes, so you see all broken properties at once." },
+  { topic:"testing", cat:"JUnit 5", q:"A hard assert differs from a soft assert because it…",
+    choices:["Only works on primitives","Stops the test at the first failure","Requires a message","Cannot compare objects"], answer:1,
+    exp:"Hard asserts abort immediately (assertEquals). Soft asserts (assertAll) collect all failures and report together." },
+  { topic:"testing", cat:"JUnit 5", q:"Which annotation drives a data-driven test in JUnit 5?",
+    choices:["@DataTest","@ParameterizedTest with @CsvSource/@ValueSource","@RepeatedTest","@TestFactory only"], answer:1,
+    exp:"@ParameterizedTest runs once per data row from a source annotation. JUnit 4 used @RunWith(Parameterized.class)." },
+  { topic:"testing", cat:"Mockito", q:"In Mockito, calling an UNstubbed method on a mock returns…",
+    choices:["The real implementation's result","A default value (null/0/false/empty)","An exception is always thrown","A random value"], answer:1,
+    exp:"Mocks are complete fakes — without stubbing, methods return type defaults. A SPY would call the real method." },
+  { topic:"testing", cat:"Mockito", q:"Which object executes REAL methods unless specifically stubbed?",
+    choices:["Mock","Stub","Spy","Dummy"], answer:2,
+    exp:"A spy wraps a real instance — spy(new ArrayList<>()).add(\"x\") really adds. Mocks do nothing unless stubbed." },
+  { topic:"testing", cat:"Mockito", q:"Correct Mockito stubbing syntax?",
+    choices:["<code>stub(mock.method()).returns(x)</code>","<code>when(mock.method()).thenReturn(x)</code>","<code>mock.method().willReturn(x)</code>","<code>expect(mock.method(), x)</code>"], answer:1,
+    exp:"The when/then pattern: when(repo.findById(1L)).thenReturn(user); thenThrow for exceptions; doNothing() for voids." },
+  { topic:"testing", cat:"Mockito", q:"You stubbed <code>when(g.greet(\"Ted\"))</code> but call <code>g.greet(\"Bob\")</code>. Result?",
+    choices:["\"Hello Ted\" anyway","The default value for the return type","MockitoException","The real method runs"], answer:1,
+    exp:"Stub arguments are tracked — non-matching arguments fall through to defaults. Use anyString()/eq() matchers to loosen." },
+  { topic:"testing", cat:"Mockito", q:"@InjectMocks tries injection strategies in which order?",
+    choices:["Field → setter → constructor","Constructor → setter → field","Setter → field → constructor","Random"], answer:1,
+    exp:"Mockito attempts constructor injection first, then property setters, then direct field injection." },
+  { topic:"testing", cat:"Mockito", q:"How do you confirm a mock's method was called exactly twice?",
+    choices:["<code>assertCalls(mock, 2)</code>","<code>verify(mock, times(2)).method(args)</code>","<code>mock.calls == 2</code>","<code>expect(mock).twice()</code>"], answer:1,
+    exp:"verify(mock, times(n)); also never(), atLeast(n), atMost(n). Plain verify(mock).method() means exactly once." },
+  { topic:"testing", cat:"Regression", q:"Re-running previously FAILED tests after a bug fix is…",
+    choices:["Regression testing","Re-testing (confirmation)","Smoke testing","Sanity testing"], answer:1,
+    exp:"Re-testing confirms the specific fix works. Regression testing re-runs the existing suite to catch new breakage." },
+  { topic:"testing", cat:"Regression", q:"After fixing a login bug, running the ENTIRE suite to check nothing else broke is…",
+    choices:["Re-testing","Regression testing","Acceptance testing","Endurance testing"], answer:1,
+    exp:"Regression = guarding previously working features against unintended side effects of new changes." },
+  { topic:"testing", cat:"pytest", q:"Which is TRUE of pytest vs unittest?",
+    choices:["unittest uses plain assert","pytest requires TestCase classes","pytest uses plain assert and auto-discovers test_* files","unittest has better plugins"], answer:2,
+    exp:"pytest: plain assert, automatic discovery, optional classes, fixtures, rich plugins — why most Python projects prefer it." },
+  { topic:"testing", cat:"pytest", q:"Which fixture scope creates the resource ONCE for the whole test run?",
+    choices:["function","class","module","session"], answer:3,
+    exp:"session scope suits expensive resources (DB engine/schema). function (default) gives fresh state per test." },
+  { topic:"testing", cat:"pytest", q:"In a fixture, code AFTER <code>yield</code>…",
+    choices:["Never runs","Runs as teardown, even if the test fails","Runs only on failure","Is a syntax error"], answer:1,
+    exp:"yield hands the value to the test; the remainder is teardown — pytest guarantees it runs." },
+  { topic:"testing", cat:"pytest", q:"1000 DB tests need isolation but schema creation is slow. Best strategy?",
+    choices:["Recreate schema per test","Session-scoped schema + function-scoped transaction rollback","One giant test","Share one session across all tests"], answer:1,
+    exp:"Create the schema once (session scope); wrap each test in a transaction rolled back after — isolation at almost no cost." },
+  { topic:"testing", cat:"pytest", q:"Where should fixtures shared across many test files live?",
+    choices:["fixtures.py","conftest.py","__init__.py","pytest.ini"], answer:1,
+    exp:"pytest auto-discovers conftest.py; its fixtures are available to the whole directory tree without imports." },
+  { topic:"testing", cat:"Python Mock", q:"<code>len(some_mock)</code> raises TypeError. some_mock is a…",
+    choices:["MagicMock","Mock","patched function","spy"], answer:1,
+    exp:"Plain Mock lacks magic methods. MagicMock pre-configures __len__, __iter__, __getitem__ etc. — len(MagicMock()) → 0." },
+  { topic:"testing", cat:"Python Mock", q:"How do you make a mock raise an exception when called?",
+    choices:["<code>m.return_value = Exception()</code>","<code>m.side_effect = TimeoutError(\"down\")</code>","<code>m.raises(TimeoutError)</code>","<code>m.throw = True</code>"], answer:1,
+    exp:"side_effect set to an exception (class or instance) raises it. A list gives successive return values; a function computes from args." },
+  { topic:"testing", cat:"Python Mock", q:"<code>m.side_effect = [1, 2, 3]</code> means…",
+    choices:["m() always returns the list","Successive calls return 1, then 2, then 3","m() returns a random element","TypeError"], answer:1,
+    exp:"A list side_effect is consumed call by call — a fourth call raises StopIteration." },
+  { topic:"testing", cat:"Patching", q:"mymodule.py has <code>from external_lib import api_client</code>. To test my_function, patch…",
+    choices:["<code>external_lib.api_client</code>","<code>mymodule.api_client</code>","<code>api_client</code> globally","Both — order doesn't matter"], answer:1,
+    exp:"Patch where it's USED: the import created a local reference in mymodule's namespace; patching the original doesn't touch it." },
+  { topic:"testing", cat:"Patching", q:"With stacked @patch decorators, mocks are passed to the test…",
+    choices:["Top-down","Bottom-up (closest decorator = first parameter)","Alphabetically","In random order"], answer:1,
+    exp:"Decorators apply inside-out, so the bottom @patch maps to the first mock argument." },
+  { topic:"testing", cat:"Patching", q:"The <code>mocker</code> fixture comes from…",
+    choices:["unittest.mock","pytest-mock plugin","pytest core","mockito-python"], answer:1,
+    exp:"pytest-mock wraps unittest.mock's patching with automatic per-test cleanup: mocker.patch(\"mymodule.api\")." },
+  { topic:"testing", cat:"Allure", q:"Which Allure command is right for CI/CD pipelines?",
+    choices:["<code>allure serve</code>","<code>allure generate ... --clean</code>","<code>allure watch</code>","<code>allure open --ci</code>"], answer:1,
+    exp:"generate produces static HTML that can be archived/published. serve starts a blocking local server — fine for dev only." },
+  { topic:"testing", cat:"Allure", q:"How do you produce Allure results from a pytest run?",
+    choices:["<code>pytest --allure</code>","<code>pytest --alluredir=allure-results</code>","<code>allure run pytest</code>","<code>pytest -o allure</code>"], answer:1,
+    exp:"The allure-pytest plugin writes raw JSON results to the directory given by --alluredir; allure then renders them." },
+  { topic:"testing", cat:"Allure", q:"Allure 'results' vs 'report'?",
+    choices:["Same thing","Results = raw JSON from the run; report = generated interactive HTML","Results = HTML; report = JSON","Results only exist in Java"], answer:1,
+    exp:"Tests write allure-results/ (JSON + attachments); allure generate/serve turns them into the HTML report." },
+  { topic:"testing", cat:"Acceptance", q:"Internal employees (not testers) trying the app before wider release is…",
+    choices:["Beta testing","Alpha testing","UAT","OAT"], answer:1,
+    exp:"Alpha = internal first round. Beta = limited release to external end users for real-world feedback." },
+  { topic:"testing", cat:"Acceptance", q:"Verifying backups, log generation, and install/uninstall belongs to…",
+    choices:["Usability testing","Operational Acceptance Testing (OAT)","Regulatory testing","Sanity testing"], answer:1,
+    exp:"OAT checks the operational/administrative side of a service, including security vulnerabilities." },
+  { topic:"testing", cat:"Acceptance", q:"An SEC auditor witnessing that financial records can't be illegally edited is…",
+    choices:["Beta testing","Contractual/Regulatory acceptance testing","Penetration testing","Endurance testing"], answer:1,
+    exp:"Regulatory acceptance testing verifies legal/contract compliance, often witnessed by an authority." },
+  { topic:"testing", cat:"Non-Functional", q:"Continually INCREASING load until the app breaks is…",
+    choices:["Load testing","Endurance testing","Stress testing","Performance testing"], answer:2,
+    exp:"Stress testing finds the breaking point. Load = varying levels; endurance = normal load over a long period." },
+  { topic:"testing", cat:"Non-Functional", q:"Memory leaks that only appear after days of normal load are found by…",
+    choices:["Stress testing","Endurance (soak) testing","Smoke testing","Compatibility testing"], answer:1,
+    exp:"Endurance testing sustains normal load over extended time — surfacing leaks and log-management issues." },
+  { topic:"testing", cat:"Non-Functional", q:"Performance testing commitments are typically written into…",
+    choices:["The RTM","SLAs (Service Level Agreements)","The Sprint Backlog","The defect report"], answer:1,
+    exp:"Companies promise responsiveness/throughput levels in SLAs; performance testing verifies they're met." },
+  { topic:"testing", cat:"Test Team", q:"Who acts as the bridge between business and technical teams?",
+    choices:["Test Manager","Business Analyst","Scrum Master","Stakeholder"], answer:1,
+    exp:"BAs combine business understanding with technical knowledge to clarify requirements and clear misunderstandings." },
+  { topic:"testing", cat:"Test Docs", q:"Which document maps requirements to the test cases that cover them?",
+    choices:["Test Plan","SRS","RTM","Test Summary Report"], answer:2,
+    exp:"The Requirements Traceability Matrix proves coverage and can also track defects revealed by testing." },
+  { topic:"testing", cat:"Test Docs", q:"Aggregated results per test cycle, compared against exit criteria, appear in the…",
+    choices:["Test Progress Report","Test Summary Report","Test Strategy","Defect Report"], answer:1,
+    exp:"Summary reports aggregate a run/cycle's results at milestones; progress reports track ongoing status." },
+  { topic:"testing", cat:"STLC", q:"Which STLC phase comes immediately after Test Planning?",
+    choices:["Test Execution","Test Case Development","Requirement Analysis","Test Cycle Closure"], answer:1,
+    exp:"Requirement Analysis → Test Planning → Test Case Development (parallel with Environment Setup) → Execution → Closure." },
 ];
 
 let questions = [];
@@ -845,6 +984,7 @@ function renderSetup() {
         <option value="python">Python only</option>
         <option value="sql">SQL only</option>
         <option value="qea">QEA only</option>
+        <option value="testing">Unit Testing (Week 6) only</option>
       </select></label>
       <label># Questions: <select id="countSel">
         <option value="10">10</option>

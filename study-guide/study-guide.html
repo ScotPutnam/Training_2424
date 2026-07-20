@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Study Guide — QEA Exam (Weeks 1–5)</title>
+<title>Study Guide — QEA Interview (Weeks 1–6)</title>
 <style>
   :root {
     --bg: #f7f8fa;
@@ -250,12 +250,34 @@
   <a href="#severity-priority">Severity vs Priority</a>
   <a href="#manual-auto">Manual vs Automated</a>
   <a href="#jira">Jira</a>
+
+  <h2>Unit Testing (Week 6)</h2>
+  <a href="#unit-first">Unit Tests &amp; FIRST</a>
+  <a href="#tdd-bdd">TDD vs BDD</a>
+  <a href="#junit">JUnit 5</a>
+  <a href="#junit-assert">Assertions &amp; assertThrows</a>
+  <a href="#junit-param">Parameterized, Disabled &amp; Suites</a>
+  <a href="#mockito">Mockito — Mocks, Stubs, Spies</a>
+  <a href="#mockito-verify">Verifying Method Calls</a>
+  <a href="#regression-retest">Regression vs Re-testing</a>
+  <a href="#pytest6">pytest — Fixtures &amp; Parametrize</a>
+  <a href="#unittest">Python unittest</a>
+  <a href="#pymock">Mock &amp; MagicMock</a>
+  <a href="#patching">Patching &amp; pytest-mock</a>
+  <a href="#allure">Allure Reporting</a>
+  <a href="#acceptance">Acceptance Testing Types</a>
+  <a href="#nonfunctional">Non-Functional Testing</a>
+  <a href="#test-team">Test Team &amp; Documents</a>
+  <a href="#stlc">STLC</a>
+
+  <h2>Interview Prep</h2>
+  <a href="#behavioral">Behavioral Questions</a>
 </nav>
 
 <main>
   <header class="hero">
-    <h1>QEA Exam Study Guide</h1>
-    <p>Weeks 1–5: Java · Python · SQL · QEA — compiled from your training notes.</p>
+    <h1>QEA Interview Study Guide</h1>
+    <p>Weeks 1–6: Java · Python · SQL · QEA · Unit Testing — compiled from your training notes and interview question banks.</p>
     <div class="tools">
       <a href="flashcards.html">Flash Cards →</a>
       <a href="quiz.html">Quiz →</a>
@@ -1496,8 +1518,389 @@ with Session() as s:
     </div>
   </section>
 
+  <!-- ============== UNIT TESTING (WEEK 6) ============== -->
+  <section id="unit-testing">
+    <h1>Part 5 — Unit Testing (Week 6)</h1>
+
+    <div class="topic-card" id="unit-first">
+      <h2>Unit Tests &amp; the FIRST Principles</h2>
+      <p>A <strong>unit test</strong> verifies the behavior of a small, isolated piece of code — typically a single method or function — <em>without external dependencies</em>. Unit tests are fast (milliseconds), form the <strong>base of the testing pyramid</strong>, and pinpoint defects with more precision than higher-level tests.</p>
+      <p><strong>FIRST</strong> — qualities of a good unit test:</p>
+      <ul>
+        <li><strong>F — Fast:</strong> milliseconds; slow tests don't get run.</li>
+        <li><strong>I — Isolated/Independent:</strong> no dependence on other tests or shared state.</li>
+        <li><strong>R — Repeatable:</strong> same result every time, in any environment (no <code>LocalDate.now()</code>, no live network calls — use fixed data and mocks).</li>
+        <li><strong>S — Self-validating:</strong> pass/fail via assertions, no manual inspection.</li>
+        <li><strong>T — Timely:</strong> written close in time to the code (ideally first — TDD).</li>
+      </ul>
+      <div class="tip"><strong>Typical defects unit tests catch:</strong> flow-control failures, improper logic, wrong variables used, malformed environment variables, misconfigured properties.</div>
+      <div class="warn"><strong>Interview scenario:</strong> a test that passes locally but fails in CI because it checks today's date violates <strong>Repeatable</strong> — fix it with a fixed date (<code>LocalDate.of(2024,1,6)</code>) or an injectable clock.</div>
+    </div>
+
+    <div class="topic-card" id="tdd-bdd">
+      <h2>TDD vs BDD</h2>
+      <p><strong>Test-Driven Development:</strong> write the tests <em>first</em>, then code to pass them. Cycle: <strong>Red → Green → Refactor</strong> (write a failing test → write the minimum code to pass → clean up). Benefits: clear goals for developers, requirements covered by tests from day one, testers and developers stay on the same page.</p>
+      <p><strong>Behavior-Driven Development:</strong> extends TDD by describing behavior in business-readable language — <strong>Given / When / Then</strong> (Gherkin syntax, run by tools like <strong>Cucumber</strong>). Non-technical stakeholders can read and help write the specifications.</p>
+      <table>
+        <tr><th></th><th>TDD</th><th>BDD</th></tr>
+        <tr><td>Focus</td><td>Code units behave correctly</td><td>System behavior meets business expectations</td></tr>
+        <tr><td>Written in</td><td>Code (JUnit, pytest)</td><td>Natural language scenarios (Gherkin)</td></tr>
+        <tr><td>Audience</td><td>Developers</td><td>Whole team incl. business</td></tr>
+      </table>
+    </div>
+
+    <div class="topic-card" id="junit">
+      <h2>JUnit 5 — Annotations &amp; Lifecycle</h2>
+      <p>JUnit is Java's standard testing framework. A method annotated <code>@Test</code> is a test case; by default it <strong>passes if no unhandled exception is thrown</strong> — assertions are what make it meaningful.</p>
+      <table>
+        <tr><th>JUnit 5</th><th>JUnit 4</th><th>Runs</th></tr>
+        <tr><td><code>@BeforeAll</code> (static)</td><td><code>@BeforeClass</code></td><td>Once, before all tests — expensive shared setup</td></tr>
+        <tr><td><code>@BeforeEach</code></td><td><code>@Before</code></td><td>Before <em>every</em> test — fresh state per test</td></tr>
+        <tr><td><code>@Test</code></td><td><code>@Test</code></td><td>The test itself</td></tr>
+        <tr><td><code>@AfterEach</code></td><td><code>@After</code></td><td>After every test — cleanup</td></tr>
+        <tr><td><code>@AfterAll</code> (static)</td><td><code>@AfterClass</code></td><td>Once, after all tests</td></tr>
+        <tr><td><code>@Disabled("why")</code></td><td><code>@Ignore</code></td><td>Skip test (or whole class)</td></tr>
+      </table>
+<pre><code>class CalculatorTest {
+    Calculator calc;
+
+    @BeforeAll  static void oneTimeSetup()  { /* once */ }
+    @BeforeEach void setup()                { calc = new Calculator(); }
+
+    @Test
+    @DisplayName("adds two positive numbers")
+    void add_twoPositives_returnsSum() {
+        assertEquals(5, calc.add(2, 3));
+    }
+
+    @AfterEach  void tearDown()             { /* per test */ }
+    @AfterAll   static void oneTimeTearDown() { /* once */ }
+}</code></pre>
+      <div class="tip"><strong>Execution order:</strong> <code>@BeforeAll</code> → (<code>@BeforeEach</code> → <code>@Test</code> → <code>@AfterEach</code>) × N → <code>@AfterAll</code>. <code>@BeforeAll/@AfterAll</code> must be <code>static</code> (unless <code>@TestInstance(PER_CLASS)</code>). Parent-class setup methods run before the child's.</div>
+    </div>
+
+    <div class="topic-card" id="junit-assert">
+      <h2>Assertions, assertThrows &amp; assertAll</h2>
+<pre><code>assertEquals(expected, actual);      // order matters: expected FIRST
+assertTrue(cond);  assertFalse(cond);
+assertNull(x);     assertNotNull(x);
+assertArrayEquals(expA, actA);
+fail("should not reach here");</code></pre>
+      <h3>Testing exceptions</h3>
+<pre><code>IndexOutOfBoundsException e = assertThrows(
+    IndexOutOfBoundsException.class,
+    () -&gt; new ArrayList&lt;Integer&gt;().add(1, 1));   // lambda that should throw
+assertEquals("Index: 1, Size: 0", e.getMessage()); // further checks on it</code></pre>
+      <h3>Grouped assertions — assertAll</h3>
+<pre><code>assertAll("user properties",
+    () -&gt; assertEquals("John", user.getFirstName()),
+    () -&gt; assertEquals("Doe",  user.getLastName()),
+    () -&gt; assertEquals(30,     user.getAge()));</code></pre>
+      <p><code>assertAll</code> runs <strong>every</strong> assertion and reports <strong>all</strong> failures instead of stopping at the first — this is JUnit's <strong>soft assertion</strong>.</p>
+      <div class="tip"><strong>Hard vs soft asserts (interview favorite):</strong> a <em>hard</em> assert stops the test at the first failure (plain <code>assertEquals</code>); a <em>soft</em> assert collects all failures and reports them together at the end (<code>assertAll</code>).</div>
+    </div>
+
+    <div class="topic-card" id="junit-param">
+      <h2>Parameterized Tests, Skipping &amp; Suites</h2>
+      <p>Run one test method against many data sets — the heart of <strong>data-driven testing</strong> (test data can even come from a CSV).</p>
+<pre><code>// JUnit 5
+@ParameterizedTest
+@ValueSource(ints = {2, 4, 6})
+void isEven_true(int n) { assertTrue(calc.isEven(n)); }
+
+@ParameterizedTest
+@CsvSource({"10,true", "9,false"})          // or @CsvFileSource(resources="/data.csv")
+void isEven(int n, boolean expected) {
+    assertEquals(expected, calc.isEven(n));
+}</code></pre>
+<pre><code>// JUnit 4 style
+@RunWith(Parameterized.class)
+public class EvenTest {
+    @Parameters public static Collection&lt;Object[]&gt; inputs() {
+        return Arrays.asList(new Object[][]{ {10, true}, {9, false} });
+    }
+    @Parameter      public int number;      // index 0
+    @Parameter(1)   public boolean isEven;  // index 1
+    @Test public void check() { assertEquals(isEven, number % 2 == 0); }
+}</code></pre>
+      <p><strong>Skipping:</strong> <code>@Disabled("reason")</code> (JUnit 5) / <code>@Ignore</code> (JUnit 4) on a method or the whole class — for broken, obsolete, or in-refactor tests.</p>
+      <p><strong>Suites:</strong> group related test classes so they run together (JUnit 4: <code>@RunWith(Suite.class)</code> + <code>@Suite.SuiteClasses({A.class, B.class})</code>) — keeps build/test scripts lean.</p>
+    </div>
+
+    <div class="topic-card" id="mockito">
+      <h2>Mockito — Mocks, Stubs &amp; Spies</h2>
+      <p>When the class under test has dependencies (service → repository → DB), <strong>Mockito</strong> replaces them with fakes so the unit stays isolated.</p>
+      <ul>
+        <li><strong>Mock</strong> — a complete fake: every method returns defaults (null / 0 / false / empty) until stubbed. Full isolation.</li>
+        <li><strong>Stub</strong> — a predefined answer for a specific call: the when/then pattern.</li>
+        <li><strong>Spy</strong> — a <em>real object</em> with selective stubbing: unstubbed methods run the real implementation.</li>
+      </ul>
+<pre><code>List&lt;String&gt; mockList = mock(List.class);
+mockList.add("item");                  // does nothing, returns default
+
+List&lt;String&gt; spyList = spy(new ArrayList&lt;&gt;());
+spyList.add("item");                   // REALLY adds — real behavior</code></pre>
+      <h3>Stubbing — when / then</h3>
+<pre><code>when(repo.findById(1L)).thenReturn(new User("John"));
+when(repo.findById(-1L)).thenThrow(new IllegalArgumentException());
+doNothing().when(mock).voidMethod();   // for void methods</code></pre>
+      <div class="warn"><strong>Arguments are tracked:</strong> <code>when(greeter.greet("Ted")).thenReturn("Hello Ted")</code> only fires for <code>"Ted"</code> — any other argument returns the default value. Matchers like <code>anyInt()</code>, <code>anyString()</code>, <code>eq(x)</code> loosen this.</div>
+      <h3>Annotations</h3>
+<pre><code>@ExtendWith(MockitoExtension.class)    // JUnit 5 (or MockitoAnnotations.openMocks(this))
+class PaymentServiceTest {
+    @Mock        PaymentGateway gateway;   // fake dependency
+    @InjectMocks PaymentService service;   // real object, mock injected
+
+    @Test void processPayment_validCard_succeeds() {
+        when(gateway.charge(anyDouble())).thenReturn(new PaymentResult(true, "TXN1"));
+        assertTrue(service.processPayment(99.99).isSuccess());
+        verify(gateway).charge(99.99);
+    }
+}</code></pre>
+      <div class="tip"><code>@InjectMocks</code> tries <strong>constructor → setter → field</strong> injection, in that order. Test structure: <strong>Arrange</strong> (stub) → <strong>Act</strong> (call) → <strong>Assert</strong> (result) → <strong>Verify</strong> (interactions).</div>
+    </div>
+
+    <div class="topic-card" id="mockito-verify">
+      <h2>Verifying Method Calls</h2>
+      <p>Assertions check the <em>result</em>; <code>verify()</code> checks the <em>path</em> — that the code under test actually interacted with its dependencies correctly (e.g., input really was validated, save really was called).</p>
+<pre><code>verify(mock).method(args);                    // exactly once (default)
+verify(mock, times(2)).addContent(5, 5);      // exactly twice
+verify(mock, never()).delete(any());          // never called
+verify(mock, atLeast(1)).addContent(5, 5);
+verify(mock, atMost(2)).addContent(5, 5);</code></pre>
+    </div>
+
+    <div class="topic-card" id="regression-retest">
+      <h2>Regression Testing vs Re-testing</h2>
+      <table>
+        <tr><th></th><th>Regression Testing</th><th>Re-testing (confirmation)</th></tr>
+        <tr><td>Question</td><td>Did <strong>new code break old features</strong>?</td><td>Did the <strong>bug fix actually work</strong>?</td></tr>
+        <tr><td>What runs</td><td>Existing (previously passing) suite after changes</td><td>The previously <em>failing</em> tests after a fix</td></tr>
+        <tr><td>Defects found</td><td>Novel — need fresh triage (severity/priority)</td><td>Known — already categorized</td></tr>
+      </table>
+      <p>Example: a developer fixes a login bug → <em>re-test</em> the login (confirm the fix), then run the whole suite to make sure the fix broke nothing else (<em>regression</em>). A robust unit-test suite makes both cheap.</p>
+    </div>
+
+    <div class="topic-card" id="pytest6">
+      <h2>pytest — Fixtures, Parametrize, Skipping</h2>
+      <p>pytest vs <code>unittest</code>: plain <code>assert</code> instead of <code>self.assertEqual()</code>, automatic discovery (<code>test_*.py</code> / <code>test_*</code> functions), no required classes, flexible fixtures, rich plugin ecosystem — the preferred Python test framework.</p>
+      <h3>Fixtures — setup via dependency injection</h3>
+<pre><code>import pytest
+
+@pytest.fixture                       # default scope="function"
+def cart():
+    c = Cart()                        # setup
+    yield c                           # value handed to the test
+    c.clear()                         # teardown — runs even if the test fails
+
+def test_add_item(cart):              # request by parameter name
+    cart.add("apple")
+    assert cart.count() == 1</code></pre>
+      <table>
+        <tr><th>Scope</th><th>Created</th><th>Use for</th></tr>
+        <tr><td><code>function</code> (default)</td><td>Each test</td><td>Fresh state per test</td></tr>
+        <tr><td><code>class</code></td><td>Once per class</td><td>Shared within a class</td></tr>
+        <tr><td><code>module</code></td><td>Once per file</td><td>Shared within a file</td></tr>
+        <tr><td><code>session</code></td><td>Once per run</td><td>Expensive resources (DB engine/schema)</td></tr>
+      </table>
+      <div class="tip">Shared fixtures live in <code>conftest.py</code>. Classic strategy: <strong>session-scoped</strong> engine + schema, <strong>function-scoped</strong> transaction that <strong>rolls back</strong> after each test — one schema creation, full isolation.</div>
+      <h3>Parametrize &amp; skip</h3>
+<pre><code>@pytest.mark.parametrize("n,expected", [(2, True), (3, False)])
+def test_is_even(n, expected):
+    assert is_even(n) == expected
+
+@pytest.mark.skip(reason="not implemented")
+@pytest.mark.skipif(sys.platform == "win32", reason="posix only")
+@pytest.mark.xfail(reason="known bug")        # expected failure</code></pre>
+    </div>
+
+    <div class="topic-card" id="unittest">
+      <h2>Python unittest (built-in)</h2>
+      <p>Java-style xUnit framework in the standard library: tests are methods on a class extending <code>unittest.TestCase</code>, assertions are methods on <code>self</code>.</p>
+<pre><code>import unittest
+
+class CartTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls): ...          # once, like @BeforeAll
+
+    def setUp(self):                  # before EACH test, like @BeforeEach
+        self.cart = Cart()
+
+    def test_add(self):
+        self.cart.add("apple")
+        self.assertEqual(self.cart.count(), 1)
+        self.assertTrue(self.cart.has("apple"))
+        with self.assertRaises(ValueError):
+            self.cart.add(None)
+
+    def tearDown(self): ...           # after each test
+
+if __name__ == "__main__":
+    unittest.main()</code></pre>
+      <p>Key asserts: <code>assertEqual, assertTrue/False, assertIsNone, assertIn, assertRaises</code>. Run with <code>python -m unittest</code>. pytest can also discover and run unittest classes.</p>
+    </div>
+
+    <div class="topic-card" id="pymock">
+      <h2>Mock &amp; MagicMock (unittest.mock)</h2>
+      <p>A <strong>Mock</strong> accepts any attribute/method call and records how it was used. <strong>MagicMock</strong> = Mock + pre-configured <strong>magic (dunder) methods</strong>.</p>
+<pre><code>from unittest.mock import Mock, MagicMock
+
+m = Mock()
+m.get_user.return_value = {"name": "John"}   # stub a return value
+m.get_user(1)                                 # {'name': 'John'}
+m.get_user.assert_called_once_with(1)         # verify the call
+m.call_count; m.called                        # inspection
+
+magic = MagicMock()
+len(magic)      # 0 — works (__len__)
+magic[0]        # works (__getitem__)
+# len(Mock()) → TypeError! Plain Mock has no magic methods</code></pre>
+      <h3>side_effect — beyond simple returns</h3>
+<pre><code>m.fetch.side_effect = TimeoutError("down")        # raise an exception
+m.fetch.side_effect = [1, 2, 3]                   # successive calls → 1, then 2, then 3
+m.fetch.side_effect = lambda x: x * 2             # computed from arguments</code></pre>
+      <div class="tip">Rule of thumb: use <strong>MagicMock</strong> by default; <code>side_effect</code> beats <code>return_value</code> when you need exceptions, sequences, or input-dependent answers.</div>
+    </div>
+
+    <div class="topic-card" id="patching">
+      <h2>Patching &amp; pytest-mock</h2>
+      <p><code>patch</code> temporarily replaces a real object with a mock for the duration of a test, then restores it.</p>
+<pre><code>from unittest.mock import patch
+
+@patch("mymodule.api_client")            # decorator — mock passed as argument
+def test_call(mock_client):
+    mock_client.call.return_value = {"ok": True}
+    assert my_function() == {"ok": True}
+
+with patch("mymodule.api_client") as mock_client:   # context manager
+    ...</code></pre>
+      <div class="warn"><strong>Golden rule: patch where it's USED, not where it's defined.</strong> <code>from external_lib import api_client</code> creates a <em>local reference</em> in <code>mymodule</code> — patching <code>external_lib.api_client</code> changes the original, but <code>mymodule</code> keeps its own reference. Patch <code>mymodule.api_client</code>.</div>
+      <p>Multiple <code>@patch</code> decorators inject <strong>bottom-up</strong> (closest decorator = first parameter). <strong>pytest-mock</strong> wraps all this in a <code>mocker</code> fixture with automatic cleanup:</p>
+<pre><code>def test_call(mocker):                    # pytest-mock plugin
+    mock_client = mocker.patch("mymodule.api_client")
+    mock_client.call.return_value = {"ok": True}
+    assert my_function() == {"ok": True}</code></pre>
+    </div>
+
+    <div class="topic-card" id="allure">
+      <h2>Allure Reporting</h2>
+      <p>Allure turns raw test output into an interactive HTML report. Two-step model: tests write <strong>results</strong> (raw JSON in <code>allure-results/</code>), which are then rendered into a <strong>report</strong> (HTML in <code>allure-report/</code>).</p>
+<pre><code># Python: pip install allure-pytest
+pytest --alluredir=allure-results
+
+allure serve allure-results                # local: temp server + browser, auto-opens
+allure generate allure-results -o allure-report --clean   # static HTML for CI/CD</code></pre>
+      <table>
+        <tr><th></th><th>allure serve</th><th>allure generate</th></tr>
+        <tr><td>Output</td><td>Temporary local web server</td><td>Static HTML files</td></tr>
+        <tr><td>Best for</td><td>Local development / quick review</td><td>CI/CD — archive as artifact, publish to GitHub Pages</td></tr>
+      </table>
+      <p><strong>Report sections:</strong> Overview (pass/fail pie, trend), Categories (failures grouped: product defects vs test defects vs infrastructure vs flaky), Suites, Graphs, Timeline, Behaviors (BDD epic/feature/story).</p>
+<pre><code>import allure
+
+@allure.feature("Registration")
+@allure.severity(allure.severity_level.CRITICAL)
+def test_signup():
+    with allure.step("Fill registration form"):
+        ...
+    allure.attach("user@example.com", name="Email",
+                  attachment_type=allure.attachment_type.TEXT)</code></pre>
+      <p>Java side: <code>allure-junit5</code> Maven dependency + AspectJ; annotations <code>@Step</code>, <code>@Severity</code>, <code>@Feature</code>, <code>@Attachment</code>. Links (<code>@allure.issue</code>/<code>@Link</code>) tie tests to Jira issues and TMS cases.</p>
+    </div>
+
+    <div class="topic-card" id="acceptance">
+      <h2>Acceptance Testing Types</h2>
+      <p><strong>Acceptance testing</strong> validates the application meets the owner's and end users' requirements — the confidence gate before release.</p>
+      <ul>
+        <li><strong>UAT</strong> — end users confirm the system meets their needs; hard to automate (subjective).</li>
+        <li><strong>Usability testing</strong> — is it natural and intuitive? Multiple users struggling in the same place = design defect.</li>
+        <li><strong>Alpha testing</strong> — first round, by <em>internal</em> personnel (not testers), before wider release.</li>
+        <li><strong>Beta testing</strong> — limited release to <em>external</em> end users for real-world feedback.</li>
+        <li><strong>Contractual / Regulatory</strong> — verify legal &amp; contract compliance, often witnessed by an authority (e.g., SEC auditor).</li>
+        <li><strong>Operational (OAT)</strong> — admin concerns: backups, log generation, install/uninstall, security vulnerabilities.</li>
+      </ul>
+      <table>
+        <tr><th></th><th>Smoke testing</th><th>Sanity testing</th></tr>
+        <tr><td>What</td><td>Basic/critical functionality of the <em>whole build</em> ("does it even turn on?")</td><td>Focused check that a <em>specific new feature/fix</em> behaves — a subset of regression</td></tr>
+        <tr><td>When</td><td>First thing on a new build</td><td>After a change, before deeper regression</td></tr>
+      </table>
+    </div>
+
+    <div class="topic-card" id="nonfunctional">
+      <h2>Non-Functional Testing</h2>
+      <p>System-level testing of <em>how well</em> the app works rather than <em>what</em> it does. Tied to <strong>SLAs</strong> — promised performance levels.</p>
+      <table>
+        <tr><th>Type</th><th>Question it answers</th></tr>
+        <tr><td><strong>Performance</strong></td><td>Does it meet responsiveness &amp; throughput expectations?</td></tr>
+        <tr><td><strong>Load</strong></td><td>How does it behave under <em>varying</em> traffic levels (auto-scaling)?</td></tr>
+        <tr><td><strong>Stress</strong></td><td>Keep increasing load — where is the <em>breaking point</em>?</td></tr>
+        <tr><td><strong>Endurance (soak)</strong></td><td>Can it sustain normal load over a <em>long time</em>? (finds memory leaks, log bloat)</td></tr>
+        <tr><td><strong>Compatibility</strong></td><td>Consistent across browsers, OSes, devices?</td></tr>
+        <tr><td><strong>Penetration</strong></td><td>Does security hold against known attacks?</td></tr>
+      </table>
+      <div class="tip">Distinguish the trio: <strong>load</strong> = varying levels, <strong>stress</strong> = beyond limits to find the break, <strong>endurance</strong> = normal load for a long duration.</div>
+    </div>
+
+    <div class="topic-card" id="test-team">
+      <h2>Test Team Roles &amp; Documents</h2>
+      <h3>Roles</h3>
+      <ul>
+        <li><strong>Test Manager</strong> — owns the test process: strategy, team, resources, coordination.</li>
+        <li><strong>Tester</strong> — writes/executes test cases, reports bugs, verifies fixes.</li>
+        <li><strong>Business Analyst</strong> — bridge between business and technical teams; clears up requirement misunderstandings.</li>
+        <li><strong>Stakeholders</strong> — provide requirements and feedback, review results, decide.</li>
+      </ul>
+      <div class="tip"><strong>Tester independence:</strong> testers assume "this app has defects and I'll find them" (pessimistic); developers assume "it works, build on it" (optimistic). Independent testers make defect detection unbiased — but quality is <em>everyone's</em> responsibility.</div>
+      <h3>Documents</h3>
+      <ul>
+        <li><strong>Test Plan</strong> — master document: strategy, objectives, schedule, estimates, deliverables.</li>
+        <li><strong>Test Strategy</strong> — the approaches/techniques (part of the plan), with effort &amp; cost estimates.</li>
+        <li><strong>Test Schedule</strong> — timeline of testing activities; a living document in Agile.</li>
+        <li><strong>SRS</strong> — Software Requirements Specification: functional + non-functional requirements; basis for validation.</li>
+        <li><strong>RTM</strong> — maps requirements/user stories → test cases (→ defects); proves coverage.</li>
+        <li><strong>Test Progress Report</strong> — ongoing status: executed / passed / failed / defects.</li>
+        <li><strong>Test Summary Report</strong> — aggregated results per test run/cycle, compared against exit criteria.</li>
+        <li><strong>Defect Report</strong> — severity, priority, environment, steps to reproduce.</li>
+      </ul>
+    </div>
+
+    <div class="topic-card" id="stlc">
+      <h2>Software Testing Life Cycle (STLC)</h2>
+      <ol>
+        <li><strong>Requirement Analysis</strong> — study requirements (functional &amp; non-functional); draft the RTM.</li>
+        <li><strong>Test Planning</strong> — test manager drafts the plan, effort/cost estimates, resources &amp; environment needs.</li>
+        <li><strong>Test Case Development</strong> — write test cases, scripts, and test data (parallel with environment setup).</li>
+        <li><strong>Environment Setup</strong> — replicate production conditions; smoke-test the environment.</li>
+        <li><strong>Test Execution</strong> — run scripts, log defects, retest, report; track defects to closure.</li>
+        <li><strong>Test Cycle Closure</strong> — analyze results and artifacts; capture lessons learned; client sign-off.</li>
+      </ol>
+      <div class="tip">Each phase has entry/exit criteria — e.g., execution can't start until the environment is ready and planned test cases exist; closure requires all tests executed and defects tracked to closure.</div>
+    </div>
+  </section>
+
+  <!-- ============== INTERVIEW PREP ============== -->
+  <section id="interview-prep">
+    <h1>Part 6 — Final Interview Prep</h1>
+
+    <div class="topic-card" id="behavioral">
+      <h2>Behavioral Questions (asked in previous finals)</h2>
+      <p>Prepare a 60–90-second answer for each — use STAR (Situation, Task, Action, Result) and tie back to your training projects.</p>
+      <ul>
+        <li>Tell me about yourself / walk me through your projects.</li>
+        <li>How do you go about learning a new technology?</li>
+        <li>How do you communicate effectively with remote coworkers and your team?</li>
+        <li>What would you do if coworkers were learning faster than you and you weren't sure how to present information to a client?</li>
+        <li>Do you like quality engineering and testing? Why? / Why are you interested in QE?</li>
+        <li>How do you deal with criticism? How do you go about debugging?</li>
+        <li>How did you get into tech?</li>
+      </ul>
+      <div class="tip"><strong>Technical areas that came up in previous final interviews:</strong> Python (list vs tuple, generators, decorators, lambda, modules vs packages, pulling even/odd from a list, 2nd largest number, word frequency on a whiteboard, Pandas joins/NULL replacement, SQLAlchemy) · Java (exceptions &amp; throws, abstract vs interface, overloading vs overriding, collections, static/final, wrappers, StringBuilder, constructors, lambdas, OOP pillars in your project) · SQL (joins, unions, PK/FK, outer joins, highest-salary query across two tables, safe data practices with JDBC) · Testing (TDD vs BDD, test plan, test scripts, system vs integration testing, SDLC, functional vs non-functional, defect lifecycle, deferred defects, test case fields, API testing, regression, hard vs soft asserts, high-severity/low-priority example, why automate).</div>
+      <p>Every one of those topics is covered in Parts 1–5 — drill the matching flash-card decks the night before.</p>
+    </div>
+  </section>
+
   <footer style="text-align:center; padding:40px 0; color:var(--muted);">
-    <p>Built for the Weeks 2–5 QEA exam · <a href="flashcards.html">Flash Cards</a> · <a href="quiz.html">Quiz</a></p>
+    <p>Built for the Weeks 1–6 QEA final interview · <a href="flashcards.html">Flash Cards</a> · <a href="quiz.html">Quiz</a></p>
   </footer>
 </main>
 </body>

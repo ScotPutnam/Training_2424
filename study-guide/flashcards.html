@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Flash Cards — QEA Exam (Weeks 1–5)</title>
+<title>Flash Cards — QEA Interview (Weeks 1–6)</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -228,7 +228,7 @@
 
 <header>
   <h1>Flash Cards</h1>
-  <p class="subtitle">Weeks 1–5 · Java · Python · SQL · QEA</p>
+  <p class="subtitle">Weeks 1–6 · Java · Python · SQL · QEA · Unit Testing</p>
   <div class="top-nav">
     <a href="index.html">Home</a> ·
     <a href="study-guide.html">Study Guide</a> ·
@@ -242,6 +242,7 @@
   <button class="deck-btn" data-deck="python">Python</button>
   <button class="deck-btn" data-deck="sql">SQL</button>
   <button class="deck-btn" data-deck="qea">QEA</button>
+  <button class="deck-btn" data-deck="testing">Testing (W6)</button>
   <button id="shuffleBtn">🔀 Shuffle</button>
   <button id="resetBtn">↻ Reset</button>
 </div>
@@ -595,6 +596,65 @@ const CARDS = [
   { deck:"qea", cat:"Manual vs Auto", q:"What should you automate first?", a:"Stable, high-repetition paths: regression suites, smoke tests, data-driven cases. Keep exploratory/usability testing manual." },
   { deck:"qea", cat:"Jira", q:"Jira issue-type hierarchy?", a:"<b>Epic → Story / Task / Bug → Sub-task</b>." },
   { deck:"qea", cat:"Jira", q:"What is a Jira workflow?", a:"The set of <b>statuses</b> (To Do → In Progress → In Review → Done) and <b>transitions</b> an issue moves through; visualized on Scrum/Kanban boards." },
+
+  // ================================================
+  // ========== UNIT TESTING (WEEK 6) ===============
+  // ================================================
+  { deck:"testing", cat:"Unit Testing", q:"What is a unit test?", a:"A test verifying a small, <b>isolated</b> piece of code — typically one method/function — with no external dependencies. Fast (milliseconds) and the base of the testing pyramid." },
+  { deck:"testing", cat:"Unit Testing", q:"What does FIRST stand for?", a:"<b>F</b>ast · <b>I</b>solated/Independent · <b>R</b>epeatable · <b>S</b>elf-validating · <b>T</b>imely." },
+  { deck:"testing", cat:"Unit Testing", q:"A test uses <code>LocalDate.now()</code> and fails in CI on weekdays. Which FIRST principle is violated?", a:"<b>Repeatable</b> — the result depends on when it runs. Fix: use a fixed date like <code>LocalDate.of(2024,1,6)</code> or inject a controllable clock." },
+  { deck:"testing", cat:"Unit Testing", q:"What kinds of defects are unit tests best at catching?", a:"Common developer errors: flow-control failures, improper logic, wrong variables, malformed environment variables, misconfigured properties." },
+  { deck:"testing", cat:"TDD/BDD", q:"What is TDD and its cycle?", a:"<b>Test-Driven Development</b>: write tests first, then code to pass them. Cycle: <b>Red → Green → Refactor</b> (failing test → minimal code to pass → clean up)." },
+  { deck:"testing", cat:"TDD/BDD", q:"TDD vs BDD?", a:"<b>TDD</b>: code-level tests written first by developers. <b>BDD</b>: behavior described in business-readable <b>Given/When/Then</b> (Gherkin, Cucumber) so non-technical stakeholders participate." },
+  { deck:"testing", cat:"JUnit 5", q:"@BeforeEach vs @BeforeAll?", a:"<code>@BeforeEach</code> runs before <b>every</b> test (fresh state). <code>@BeforeAll</code> runs <b>once</b> before all tests, must be <b>static</b> — for expensive shared setup." },
+  { deck:"testing", cat:"JUnit 5", q:"JUnit lifecycle execution order?", a:"<code>@BeforeAll</code> → (<code>@BeforeEach</code> → <code>@Test</code> → <code>@AfterEach</code>) × N tests → <code>@AfterAll</code>." },
+  { deck:"testing", cat:"JUnit 5", q:"JUnit 4 equivalents of @BeforeEach, @BeforeAll, @Disabled?", a:"<code>@Before</code>, <code>@BeforeClass</code>, <code>@Ignore</code>. (After side: <code>@After</code>/<code>@AfterClass</code> ↔ <code>@AfterEach</code>/<code>@AfterAll</code>.)" },
+  { deck:"testing", cat:"JUnit 5", q:"By default, when does a JUnit @Test method pass?", a:"When it completes <b>without throwing an unhandled exception</b> — which is why assertions are needed to actually validate behavior." },
+  { deck:"testing", cat:"JUnit 5", q:"In <code>assertEquals(a, b)</code>, which argument is which?", a:"<b>Expected first, actual second</b>: <code>assertEquals(expected, actual)</code>. Swapping them makes failure messages misleading." },
+  { deck:"testing", cat:"JUnit 5", q:"How do you test that code throws an exception in JUnit?", a:"<code>assertThrows(MyException.class, () -&gt; code())</code> — returns the exception so you can assert on its message. (Older style: try/catch + <code>fail()</code> at the end of try.)" },
+  { deck:"testing", cat:"JUnit 5", q:"What does assertAll() do?", a:"Runs <b>all</b> grouped assertions and reports <b>every</b> failure instead of stopping at the first — JUnit's soft assertion." },
+  { deck:"testing", cat:"JUnit 5", q:"Hard vs soft asserts?", a:"<b>Hard</b>: test stops at the first failed assertion (plain <code>assertEquals</code>). <b>Soft</b>: all assertions run and failures are reported together (<code>assertAll</code>)." },
+  { deck:"testing", cat:"JUnit 5", q:"How do you run one test method against many data sets?", a:"<code>@ParameterizedTest</code> with a source: <code>@ValueSource(ints={2,4})</code>, <code>@CsvSource({\"10,true\"})</code>, or <code>@CsvFileSource</code> — the basis of data-driven testing. JUnit 4: <code>@RunWith(Parameterized.class)</code>." },
+  { deck:"testing", cat:"JUnit 5", q:"How do you skip a test and why might you?", a:"<code>@Disabled(\"reason\")</code> (JUnit 5) / <code>@Ignore</code> (JUnit 4) on the method or class — for broken tests, unfinished refactoring, or obsolete cases." },
+  { deck:"testing", cat:"JUnit 5", q:"What is a test suite?", a:"A container class that groups related test classes to run together — JUnit 4: <code>@RunWith(Suite.class)</code> + <code>@Suite.SuiteClasses({...})</code>." },
+  { deck:"testing", cat:"Mockito", q:"Mock vs Stub?", a:"<b>Mock</b>: the fake object that can stub methods and verify interactions. <b>Stub</b>: a method programmed to return a predefined result (<code>when...thenReturn</code>)." },
+  { deck:"testing", cat:"Mockito", q:"Mock vs Spy in Mockito?", a:"<b>Mock</b>: complete fake — unstubbed methods return defaults (null/0/false/empty). <b>Spy</b>: wraps a <b>real object</b> — unstubbed methods run the real implementation." },
+  { deck:"testing", cat:"Mockito", q:"How do you stub a return value and an exception?", a:"<code>when(mock.method(args)).thenReturn(value)</code> and <code>when(mock.method(args)).thenThrow(new RuntimeException())</code>. Void methods: <code>doNothing().when(mock).voidMethod()</code>." },
+  { deck:"testing", cat:"Mockito", q:"You stubbed <code>greet(\"Ted\")</code> but the test calls <code>greet(\"Bob\")</code>. What happens?", a:"The stub does NOT fire — Mockito tracks arguments, so the call returns the <b>default value</b> for the return type. Use matchers (<code>anyString()</code>) to loosen matching." },
+  { deck:"testing", cat:"Mockito", q:"What do @Mock and @InjectMocks do?", a:"<code>@Mock</code> creates the fake dependency; <code>@InjectMocks</code> creates the real object under test and injects the mocks into it — trying <b>constructor → setter → field</b> injection." },
+  { deck:"testing", cat:"Mockito", q:"How do you enable Mockito annotations in JUnit 5?", a:"<code>@ExtendWith(MockitoExtension.class)</code> on the class (or call <code>MockitoAnnotations.openMocks(this)</code> in setup)." },
+  { deck:"testing", cat:"Mockito", q:"How do you verify a method was called exactly twice? Never?", a:"<code>verify(mock, times(2)).method(args)</code> · <code>verify(mock, never()).method(args)</code>. Also <code>atLeast(n)</code> / <code>atMost(n)</code>. Plain <code>verify(mock).method()</code> = exactly once." },
+  { deck:"testing", cat:"Mockito", q:"Why use verify() when you already assert the result?", a:"Assertions check the <b>result</b>; verify checks the <b>path of execution</b> — e.g., that input validation or a save call really happened on the dependency." },
+  { deck:"testing", cat:"Regression", q:"Regression testing vs re-testing?", a:"<b>Regression</b>: re-run existing tests after new code to catch broken old features (novel defects). <b>Re-testing</b>: re-run previously <b>failed</b> tests after a fix to confirm the defect is resolved (known defects)." },
+  { deck:"testing", cat:"pytest", q:"Main differences: pytest vs unittest?", a:"pytest uses plain <code>assert</code>, auto-discovery, optional classes, flexible <b>fixtures</b>, rich plugins. unittest needs <code>TestCase</code> classes, <code>self.assertEqual()</code>, rigid setUp/tearDown." },
+  { deck:"testing", cat:"pytest", q:"What is a pytest fixture?", a:"Setup/teardown via <b>dependency injection</b>: <code>@pytest.fixture</code> function whose name a test takes as a parameter. <code>yield</code> hands over the value; code after yield is teardown (runs even on failure)." },
+  { deck:"testing", cat:"pytest", q:"Name the four pytest fixture scopes.", a:"<code>function</code> (default, per test) · <code>class</code> · <code>module</code> · <code>session</code> (once per run — expensive resources like DB engines)." },
+  { deck:"testing", cat:"pytest", q:"Efficient fixture strategy for 1000 DB tests?", a:"<b>Session-scoped</b> engine + schema creation (once) + <b>function-scoped</b> transaction <b>rolled back</b> after each test — isolation without 1000 schema creations." },
+  { deck:"testing", cat:"pytest", q:"Where do shared fixtures live?", a:"<code>conftest.py</code> — pytest auto-discovers it; fixtures there are available to all tests in that directory tree without imports." },
+  { deck:"testing", cat:"pytest", q:"How do you parameterize a pytest test?", a:"<code>@pytest.mark.parametrize(\"n,expected\", [(2,True),(3,False)])</code> — the test runs once per tuple." },
+  { deck:"testing", cat:"pytest", q:"How do you skip tests in pytest?", a:"<code>@pytest.mark.skip(reason=...)</code>, conditional <code>@pytest.mark.skipif(cond, reason=...)</code>, or <code>@pytest.mark.xfail</code> for expected failures." },
+  { deck:"testing", cat:"unittest", q:"Basic structure of a unittest test?", a:"Class extends <code>unittest.TestCase</code>; methods named <code>test_*</code>; <code>setUp()</code>/<code>tearDown()</code> per test; asserts like <code>self.assertEqual()</code>; run via <code>unittest.main()</code>." },
+  { deck:"testing", cat:"unittest", q:"unittest equivalents of @BeforeEach and @BeforeAll?", a:"<code>setUp(self)</code> per test, and <code>setUpClass(cls)</code> (a <code>@classmethod</code>) once per class." },
+  { deck:"testing", cat:"Python Mock", q:"Mock vs MagicMock?", a:"<b>MagicMock</b> = Mock + pre-configured <b>magic methods</b> (<code>__len__, __iter__, __getitem__</code>…). <code>len(Mock())</code> → TypeError; <code>len(MagicMock())</code> → 0. Default to MagicMock." },
+  { deck:"testing", cat:"Python Mock", q:"How do you stub a return value on a Python mock?", a:"<code>m.get_user.return_value = {\"name\": \"John\"}</code> — every call to <code>m.get_user()</code> now returns that dict." },
+  { deck:"testing", cat:"Python Mock", q:"Three things side_effect can do that return_value can't?", a:"1) <b>Raise</b> an exception, 2) return a <b>sequence</b> of values on successive calls (list), 3) <b>compute</b> the result from arguments (function)." },
+  { deck:"testing", cat:"Python Mock", q:"How do you verify calls on a Python mock?", a:"<code>m.assert_called_once_with(args)</code>, <code>m.assert_called_with(args)</code>, <code>m.assert_not_called()</code>; inspect <code>m.called</code> / <code>m.call_count</code>." },
+  { deck:"testing", cat:"Patching", q:"The golden rule of @patch?", a:"Patch where the object is <b>used</b>, not where it's defined — <code>from lib import client</code> creates a local reference in your module, so patch <code>mymodule.client</code>, not <code>lib.client</code>." },
+  { deck:"testing", cat:"Patching", q:"Two ways to apply patch()?", a:"Decorator: <code>@patch(\"mymodule.api\")</code> (mock injected as test argument, stacked decorators inject <b>bottom-up</b>) or context manager: <code>with patch(\"mymodule.api\") as m:</code>." },
+  { deck:"testing", cat:"Patching", q:"What does pytest-mock give you?", a:"The <code>mocker</code> fixture — <code>mocker.patch(\"mymodule.api\")</code> with <b>automatic cleanup</b> after the test; no decorator stacking or with-blocks." },
+  { deck:"testing", cat:"Allure", q:"Allure results vs Allure report?", a:"<b>Results</b>: raw JSON written by the test run (<code>allure-results/</code>). <b>Report</b>: interactive HTML generated from them (<code>allure-report/</code>)." },
+  { deck:"testing", cat:"Allure", q:"allure serve vs allure generate?", a:"<code>serve</code>: temp local server + browser — quick local review. <code>generate ... -o allure-report --clean</code>: static HTML — right for <b>CI/CD</b> (archive as artifact, publish to Pages)." },
+  { deck:"testing", cat:"Allure", q:"How do you produce Allure results from pytest?", a:"<code>pip install allure-pytest</code> then <code>pytest --alluredir=allure-results</code>." },
+  { deck:"testing", cat:"Allure", q:"Name Allure features beyond pass/fail counts.", a:"<b>Steps</b> (<code>@allure.step</code>/with-blocks), <b>attachments</b> (screenshots, logs), <b>links</b> (Jira/TMS), <b>severity</b>, <b>categories</b> (product defect vs test defect vs infrastructure vs flaky), trend graphs, timeline, BDD behaviors." },
+  { deck:"testing", cat:"Acceptance", q:"Alpha vs beta testing?", a:"<b>Alpha</b>: first acceptance round by <b>internal</b> personnel (not testers). <b>Beta</b>: limited release to <b>external</b> end users for real-world feedback." },
+  { deck:"testing", cat:"Acceptance", q:"What does Operational Acceptance Testing (OAT) cover?", a:"Admin/auxiliary concerns: backups, log generation, install/uninstall processes, and security vulnerabilities." },
+  { deck:"testing", cat:"Acceptance", q:"Smoke vs sanity testing?", a:"<b>Smoke</b>: critical-path health check of the whole build, run first. <b>Sanity</b>: focused regression subset on a specific new feature/fix." },
+  { deck:"testing", cat:"Non-Functional", q:"Load vs stress vs endurance testing?", a:"<b>Load</b>: performance under <i>varying</i> traffic. <b>Stress</b>: increase load until the <i>breaking point</i>. <b>Endurance (soak)</b>: <i>normal</i> load over a long time — finds memory leaks and log bloat." },
+  { deck:"testing", cat:"Non-Functional", q:"What does performance testing measure and what agreement is it tied to?", a:"<b>Responsiveness</b> (how fast it responds) and <b>throughput</b> (how much it processes per unit time) — validating <b>SLA</b> commitments." },
+  { deck:"testing", cat:"Test Team", q:"Why should testers be independent of developers?", a:"Testers assume the app <i>has</i> defects (pessimistic); developers assume it works (optimistic). Independence removes bias and improves defect detection — but quality is everyone's job." },
+  { deck:"testing", cat:"Test Docs", q:"Test plan vs test strategy?", a:"<b>Plan</b>: master document — objectives, schedule, estimates, deliverables. <b>Strategy</b>: the component describing testing <i>approaches/techniques</i> and effort estimates." },
+  { deck:"testing", cat:"Test Docs", q:"Test progress report vs test summary report?", a:"<b>Progress</b>: ongoing status during testing (executed/passed/failed/defects). <b>Summary</b>: aggregated results per run/cycle, compared against <b>exit criteria</b> at milestones." },
+  { deck:"testing", cat:"STLC", q:"Name the STLC phases in order.", a:"<b>Requirement Analysis → Test Planning → Test Case Development (∥ Environment Setup) → Test Execution → Test Cycle Closure</b>." },
 ];
 
 let deck = "all";
