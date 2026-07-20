@@ -7,8 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *  Demo Selenium interactions
@@ -67,13 +66,13 @@ public class SeleniumElementTests {
         assertEquals(elementsBefore + 1, elementsAfter);
     }
 
-    @Disabled("fix form auth")
+    //    @Disabled("fix form auth")
     @Test
     @DisplayName("click() - Link nav")
     void click_linkNavigation(){
-        driver.get(BASE_URL + "/login");
+        driver.get(BASE_URL);
 
-        WebElement link = driver.findElement(By.linkText("Form Authorization"));
+        WebElement link = driver.findElement(By.linkText("Form Authentication"));
         link.click();
         assertTrue(driver.getCurrentUrl().contains("login"));
     }
@@ -112,7 +111,7 @@ public class SeleniumElementTests {
         WebElement passwordInput = driver.findElement(By.id("password"));
 
         // tab moves to next input field
-        usernameInput.sendKeys("johnsmith");
+        usernameInput.sendKeys("tomsmith");
         usernameInput.sendKeys(Keys.TAB);
 
         passwordInput.sendKeys("SuperSecretPassword");
@@ -120,5 +119,47 @@ public class SeleniumElementTests {
 
         System.out.println("URL after login: " + driver.getCurrentUrl());
 
+    }
+    @Test
+    @DisplayName("getText() - get visible text field")
+    void getText_demo(){
+        driver.get(BASE_URL + "/login");
+
+        WebElement heading = driver.findElement(By.tagName("h2"));
+        String headingText = heading.getText();
+
+        assertEquals("Login Page", headingText);
+        System.out.println("Header: " + headingText);
+
+        WebElement subheading = driver.findElement(By.tagName("h4"));
+        System.out.println("Subheading: " + subheading);
+
+
+    }
+
+    @Test
+    @DisplayName("getAttribute() - Get Attribute values")
+    void getAttribute_getAttributeValues(){
+        /*
+        *  getAttribute retrieves HTML attribute values
+        *  Common attributes: id, class, name, href, value, placeholder
+         */
+
+
+        driver.get(BASE_URL + "/login");
+        // xpath can index multiple instances of HTML tag
+        WebElement usernameInput = driver.findElement(By.id("username"));
+
+        // get attributes
+        String id = usernameInput.getAttribute("id");
+        String type = usernameInput.getAttribute("type");
+        String name = usernameInput.getAttribute("name");
+        System.out.println("Id: " + id);
+        System.out.println("Type: " + type);
+        System.out.println("Name: " + name);
+
+        assertAll(()->assertEquals("username", id),
+                ()->assertEquals("text", type),
+                ()->assertEquals("username", name));
     }
 }
