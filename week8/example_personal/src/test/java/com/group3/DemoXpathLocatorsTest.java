@@ -125,19 +125,19 @@ public class DemoXpathLocatorsTest {
     @Test
     @DisplayName("contains() - Partial text match")
     void xpathContains_partialMatch(){
-        driver.get(BASE_URL + "/login");
+        driver.get(BASE_URL);
 
         /*
         * contains matches with attributes/text CONTAINS the value
         * Great for dynamic IDs or partial class names
          */
 
-        WebElement formLinks = driver.findElement(By.xpath("//a[contains(text(), 'Form')]"));
-        System.out.println("Found Link: " + formLinks.getText());
+        WebElement formLink = driver.findElement(By.xpath("//a[contains(text(), 'Form')]"));
+        System.out.println("Found Link: " + formLink.getText());
 
-        assertTrue(formLinks.getText().contains("Form"));
+        assertTrue(formLink.getText().contains("Form"));
 
-        WebElement heading = driver.findElement(By.xpath("//*[contains(text(), 'heading')]"));
+        WebElement heading = driver.findElement(By.xpath("//*[contains(@class, 'heading')]"));
 
         System.out.println("Heading: " + heading.getText());
 

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="CalculatorTests" time="0.041" tests="12" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="25"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\scoty\Desktop\Career\Revature\Dev\Training_2424\Week6\1-monday\exercises\exercise_first_junit_tests\starter_code\target\test-classes;C:\Users\scoty\Desktop\Career\Revature\Dev\Training_2424\Week6\1-monday\exercises\exercise_first_junit_tests\starter_code\target\classes;C:\Users\scoty\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.0\junit-jupiter-5.10.0.jar;C:\Users\scoty\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\scoty\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\scoty\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\scoty\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\scoty\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.0\junit-jupiter-params-5.10.0.jar;C:\Users\scoty\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\scoty\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;"/>
+    <property name="java.vm.vendor" value="BellSoft"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://bell-sw.com/"/>
+    <property name="user.timezone" value="America/Chicago"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="25"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\BellSoft\LibericaJDK-25\bin"/>
+    <property name="sun.java.command" value="C:\Users\scoty\AppData\Local\Temp\surefire14724712366344792284\surefirebooter-20260720164452836_3.jar C:\Users\scoty\AppData\Local\Temp\surefire14724712366344792284 2026-07-20T16-44-52_757-jvmRun1 surefire-20260720164452836_1tmp surefire_0-20260720164452836_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\scoty\Desktop\Career\Revature\Dev\Training_2424\Week6\1-monday\exercises\exercise_first_junit_tests\starter_code\target\test-classes;C:\Users\scoty\Desktop\Career\Revature\Dev\Training_2424\Week6\1-monday\exercises\exercise_first_junit_tests\starter_code\target\classes;C:\Users\scoty\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.0\junit-jupiter-5.10.0.jar;C:\Users\scoty\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.0\junit-jupiter-api-5.10.0.jar;C:\Users\scoty\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\scoty\.m2\repository\org\junit\platform\junit-platform-commons\1.10.0\junit-platform-commons-1.10.0.jar;C:\Users\scoty\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\scoty\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.0\junit-jupiter-params-5.10.0.jar;C:\Users\scoty\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.0\junit-jupiter-engine-5.10.0.jar;C:\Users\scoty\.m2\repository\org\junit\platform\junit-platform-engine\1.10.0\junit-platform-engine-1.10.0.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\scoty"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2026-01-20"/>
+    <property name="java.home" value="C:\Program Files\BellSoft\LibericaJDK-25"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\scoty\Desktop\Career\Revature\Dev\Training_2424\Week6\1-monday\exercises\exercise_first_junit_tests\starter_code"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\scoty\AppData\Local\Temp\surefire14724712366344792284\surefirebooter-20260720164452836_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="25.0.2+12-LTS"/>
+    <property name="user.name" value="scoty"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\scoty\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bell-sw.com/support"/>
+    <property name="java.io.tmpdir" value="C:\Users\scoty\AppData\Local\Temp\"/>
+    <property name="java.version" value="25.0.2"/>
+    <property name="user.dir" value="C:\Users\scoty\Desktop\Career\Revature\Dev\Training_2424\Week6\1-monday\exercises\exercise_first_junit_tests\starter_code"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\BellSoft\LibericaJDK-25\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\BellSoft\LibericaJDK-25\bin\;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\PuTTY\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Git\cmd;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Users\scoty\AppData\Local\Programs\Python\Launcher\;C:\Users\scoty\AppData\Local\Microsoft\WindowsApps;C:\Users\scoty\.dotnet\tools;C:\Users\scoty\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\nodejs\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Amazon\AWSCLIV2\;C:\apache-maven-3.9.12\bin;C:\Program Files\dotnet\;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\scoty\AppData\Local\Programs\Python\Launcher\;C:\Users\scoty\AppData\Local\Microsoft\WindowsApps;C:\Users\scoty\AppData\Roaming\npm;C:\opencv\opencv\build\x64\vc16\bin;C:\Users\scoty\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\scoty\AppData\Local\GitHubDesktop\bin;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="BellSoft"/>
+    <property name="java.vm.version" value="25.0.2+12-LTS"/>
+    <property name="stdin.encoding" value="Cp1252"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="69.0"/>
+  </properties>
+  <testcase name="subtract_basicSubtractionNegative_returnsNegative" classname="CalculatorTests" time="0.015"/>
+  <testcase name="add_twoNegativeNumbers_returnsSum" classname="CalculatorTests" time="0.001"/>
+  <testcase name="isEven_negativeEvenNumber_returnTrue" classname="CalculatorTests" time="0.002"/>
+  <testcase name="add_valuePlusZero_returnsSum" classname="CalculatorTests" time="0.0"/>
+  <testcase name="add_twoPositiveNumbers_returnsSum" classname="CalculatorTests" time="0.0"/>
+  <testcase name="isEven_positiveOddNumbers_throwsArithmeticError" classname="CalculatorTests" time="0.001"/>
+  <testcase name="subtract_basicSubtractionZero_returnsSame" classname="CalculatorTests" time="0.001"/>
+  <testcase name="isEven_zero_returnTrue" classname="CalculatorTests" time="0.001"/>
+  <testcase name="subtract_basicSubtractionPositive_returnsPositive" classname="CalculatorTests" time="0.001"/>
+  <testcase name="isEven_negativeOddNumber_returnFalse" classname="CalculatorTests" time="0.0"/>
+  <testcase name="isEven_positiveNumbers_returnTrue" classname="CalculatorTests" time="0.0"/>
+  <testcase name="add_positiveNegativeAddition_returnsSum" classname="CalculatorTests" time="0.001"/>
+</testsuite>
