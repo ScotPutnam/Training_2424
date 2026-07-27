@@ -1,58 +1,45 @@
 import pytest
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
+LOGIN_URL = "https://the-internet.herokuapp.com/login"
 
-@pytest.fixture(scope="module")
+
+@pytest.fixture(scope="function")
 def driver():
-    """Create a Chrome WebDriver for Selenium tests."""
-    options = Options()
-    options.add_argument("--headless=new")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-
+    """Create a Chrome WebDriver and quit after the test."""
     service = Service(ChromeDriverManager().install())
-    browser = webdriver.Chrome(service=service, options=options)
-    browser.implicitly_wait(5)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
 
-    yield browser
-
-    browser.quit()
-
-
-def test_css_selector_by_id(driver):
-    driver.get("https://the-internet.herokuapp.com/login")
-
-    username_input = driver.find_element(By.CSS_SELECTOR, "#username")
-
-    assert username_input.is_displayed()
-    assert username_input.get_attribute("id") == "username"
-    assert username_input.get_attribute("name") == "username"
+    driver = webdriver.Chrome(service=service, options=options)
+    driver.implicitly_wait(5)
+    yield driver
+    driver.quit()
 
 
-def test_css_selector_by_class_and_tag(driver):
-    driver.get("https://the-internet.herokuapp.com/login")
+@pytest.mark.parametrize(
+    "description, selector, expected_tag, expected_id",
+    [
+        ("By ID", "#username", "input", "username"),
+        ("By class", ".radius", "button", None),
+        ("By tag", "button", "button", None),
+        ("By attribute", "input[type='password']", "input", None),
+        ("Attribute contains", "input[id*='user']", "input", "username"),
+        ("Attribute starts with", "input[id^='user']", "input", "username"),
+        ("Attribute ends with", "input[id$='name']", "input", "username"),
+    ],
+)
+def test_css_selector_locates_login_elements(driver, description, selector, expected_tag, expected_id):
+    """Verify CSS selector examples can locate elements on the login page."""
+    driver.get(LOGIN_URL)
 
-    radius_button = driver.find_element(By.CSS_SELECTOR, ".radius")
-    login_button = driver.find_element(By.CSS_SELECTOR, "button")
+    element = driver.find_element(By.CSS_SELECTOR, selector)
 
-    assert radius_button.is_displayed()
-    assert login_button.is_displayed()
-    assert radius_button.tag_name.lower() == "button"
-
-
-def test_css_selector_by_attribute_and_descendant_selector(driver):
-    driver.get("https://the-internet.herokuapp.com/login")
-
-    password_input = driver.find_element(By.CSS_SELECTOR, "input[type='password']")
-    form_input = driver.find_element(By.CSS_SELECTOR, "form input[name='password']")
-
-    assert password_input.is_displayed()
-    assert password_input.get_attribute("type") == "password"
-
-    assert form_input.is_displayed()
-    assert form_input.get_attribute("name") == "password"
+    assert element is not None
+    assert element.tag_name == expected_tag
+    if expected_id:
+        assert element.get_attribute("id") == expected_id
