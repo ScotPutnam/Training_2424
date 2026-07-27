@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Flash Cards — QEA Interview (Weeks 1–6)</title>
+<title>Flash Cards — QEA Interview (Weeks 1–8)</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -228,7 +228,7 @@
 
 <header>
   <h1>Flash Cards</h1>
-  <p class="subtitle">Weeks 1–6 · Java · Python · SQL · QEA · Unit Testing</p>
+  <p class="subtitle">Weeks 1–8 · Java · Python · SQL · QEA · Unit Testing · API · Selenium · BDD</p>
   <div class="top-nav">
     <a href="index.html">Home</a> ·
     <a href="study-guide.html">Study Guide</a> ·
@@ -243,6 +243,9 @@
   <button class="deck-btn" data-deck="sql">SQL</button>
   <button class="deck-btn" data-deck="qea">QEA</button>
   <button class="deck-btn" data-deck="testing">Testing (W6)</button>
+  <button class="deck-btn" data-deck="api">API (W7)</button>
+  <button class="deck-btn" data-deck="selenium">Selenium (W7-8)</button>
+  <button class="deck-btn" data-deck="bdd">BDD (W8)</button>
   <button id="shuffleBtn">🔀 Shuffle</button>
   <button id="resetBtn">↻ Reset</button>
 </div>
@@ -655,6 +658,88 @@ const CARDS = [
   { deck:"testing", cat:"Test Docs", q:"Test plan vs test strategy?", a:"<b>Plan</b>: master document — objectives, schedule, estimates, deliverables. <b>Strategy</b>: the component describing testing <i>approaches/techniques</i> and effort estimates." },
   { deck:"testing", cat:"Test Docs", q:"Test progress report vs test summary report?", a:"<b>Progress</b>: ongoing status during testing (executed/passed/failed/defects). <b>Summary</b>: aggregated results per run/cycle, compared against <b>exit criteria</b> at milestones." },
   { deck:"testing", cat:"STLC", q:"Name the STLC phases in order.", a:"<b>Requirement Analysis → Test Planning → Test Case Development (∥ Environment Setup) → Test Execution → Test Cycle Closure</b>." },
+
+  // ===== API (WEEK 7) =====
+  { deck:"api", cat:"API Basics", q:"What is an API?", a:"An <b>Application Programming Interface</b> — a contract defining how software components interact (endpoint + request + response)." },
+  { deck:"api", cat:"REST vs SOAP", q:"REST vs SOAP — biggest differences?", a:"<b>REST</b> = architectural style, JSON, lightweight, stateless, resource-based. <b>SOAP</b> = strict protocol, XML-only, WSDL contract, built-in WS-Security. REST dominates modern web APIs." },
+  { deck:"api", cat:"REST", q:"What makes REST 'stateless'?", a:"Each request carries all info needed; the server stores no session state between requests." },
+  { deck:"api", cat:"HTTP Methods", q:"Which HTTP methods are idempotent?", a:"<b>GET, PUT, DELETE</b> (and HEAD/OPTIONS) — repeating them gives the same result. <b>POST</b> and <b>PATCH</b> are not guaranteed idempotent." },
+  { deck:"api", cat:"HTTP Methods", q:"What does 'safe' mean for an HTTP method?", a:"No side effects on the server. GET/HEAD/OPTIONS are safe; POST/PUT/PATCH/DELETE are not." },
+  { deck:"api", cat:"HTTP Methods", q:"PUT vs PATCH?", a:"<b>PUT</b> replaces the entire resource (all fields). <b>PATCH</b> applies a partial update (only the changed fields)." },
+  { deck:"api", cat:"Status Codes", q:"Typical success code for POST creating a resource?", a:"<b>201 Created</b> (not 200). DELETE often returns 204 No Content." },
+  { deck:"api", cat:"Status Codes", q:"401 vs 403?", a:"<b>401 Unauthorized</b> = not authenticated (who are you?). <b>403 Forbidden</b> = authenticated but not allowed (no permission)." },
+  { deck:"api", cat:"Security", q:"Authentication vs authorization?", a:"<b>Authentication</b> = verifying identity ('who are you?'). <b>Authorization</b> = verifying permissions ('what may you do?')." },
+  { deck:"api", cat:"Test Pyramid", q:"Why favor API tests over UI tests?", a:"API tests are faster, more stable (no flaky locators), and can run before a UI exists — the middle of the test pyramid gives the best speed/coverage balance." },
+  { deck:"api", cat:"API Defects", q:"What is IDOR?", a:"<b>Insecure Direct Object Reference</b> — changing an ID in the request grants access to another user's object. An authorization defect." },
+  { deck:"api", cat:"API Defects", q:"Horizontal vs vertical privilege escalation?", a:"<b>Horizontal</b>: access another user's data at the same level. <b>Vertical</b>: a regular user reaches admin-only functionality." },
+  { deck:"api", cat:"API Defects", q:"What status signals rate limiting?", a:"<b>429 Too Many Requests</b>, usually with <code>X-RateLimit-Limit/Remaining/Reset</code> or <code>Retry-After</code> headers." },
+  { deck:"api", cat:"Postman", q:"What is a Postman collection?", a:"A group of saved, organized requests that can be run as a suite, shared, exported, and version-controlled." },
+  { deck:"api", cat:"Postman", q:"Pre-request script vs Tests?", a:"<b>Pre-request</b> runs before the request (generate data, set variables, fetch token). <b>Tests</b> run after the response (assertions, extract &amp; chain data)." },
+  { deck:"api", cat:"Postman", q:"How do you assert a status code in Postman?", a:"<code>pm.test(\"ok\", () => pm.response.to.have.status(201));</code> — Chai-style assertions via <code>pm.expect()</code>." },
+  { deck:"api", cat:"Postman", q:"How do you chain requests in Postman?", a:"In one request's Tests, save a value: <code>pm.environment.set(\"userId\", body.id)</code>; reference it in the next request as <code>{{userId}}</code>." },
+  { deck:"api", cat:"Postman", q:"Variable resolution order (highest→lowest)?", a:"<b>Local → Data → Environment → Collection → Global.</b>" },
+  { deck:"api", cat:"Postman", q:"Initial value vs current value?", a:"<b>Initial</b> is shared with the team; <b>current</b> stays local. Keep secrets (keys/tokens) in the current value only." },
+  { deck:"api", cat:"REST Assured", q:"What is the REST Assured syntax structure?", a:"<b>given()</b> (preconditions) → <b>when()</b> (HTTP method) → <b>then()</b> (validation) — BDD Given-When-Then." },
+  { deck:"api", cat:"REST Assured", q:"How do you assert a JSON field in REST Assured?", a:"<code>.then().body(\"name\", equalTo(\"John\"))</code> using Hamcrest matchers; path uses JSONPath." },
+  { deck:"api", cat:"REST Assured", q:"How do you extract a value from a response?", a:"<code>.extract().path(\"id\")</code> for one value, or <code>.extract().as(User.class)</code> to deserialize into a POJO." },
+  { deck:"api", cat:"REST Assured", q:"What is a RequestSpecification for?", a:"A reusable request config (base URI, headers, content type) built with RequestSpecBuilder and applied via <code>.spec()</code>." },
+  { deck:"api", cat:"Python requests", q:"How do you send a JSON POST with requests?", a:"<code>requests.post(url, json=data)</code> — sets Content-Type: application/json automatically." },
+  { deck:"api", cat:"Python requests", q:"What does response.raise_for_status() do?", a:"Raises an <code>HTTPError</code> if the status code is 4xx or 5xx." },
+  { deck:"api", cat:"Python requests", q:"Why use a requests Session?", a:"It persists headers, auth, and cookies across multiple requests and reuses the TCP connection." },
+  { deck:"api", cat:"JMeter", q:"What is JMeter used for?", a:"Open-source load &amp; performance testing — simulating many concurrent virtual users and measuring response time/throughput." },
+  { deck:"api", cat:"JMeter", q:"What is a Thread Group?", a:"JMeter's simulated virtual users. Key settings: number of threads (users), ramp-up period, loop count/duration." },
+  { deck:"api", cat:"JMeter", q:"Sampler vs Listener?", a:"<b>Sampler</b> sends the actual request (e.g. HTTP Request). <b>Listener</b> collects/displays results (Summary Report, View Results Tree)." },
+  { deck:"api", cat:"JMeter", q:"Why run JMeter in CLI (non-GUI) mode for load tests?", a:"The GUI (esp. View Results Tree) is resource-heavy and skews results. Use <code>jmeter -n -t plan.jmx -l results.jtl</code> for real load runs &amp; CI." },
+  { deck:"api", cat:"Performance", q:"Load vs stress vs endurance vs spike testing?", a:"<b>Load</b>: expected traffic (meet SLAs). <b>Stress</b>: beyond capacity (find breaking point). <b>Endurance</b>: normal load, long time (find leaks). <b>Spike</b>: sudden surge (test scaling/recovery)." },
+  { deck:"api", cat:"Performance", q:"Why report percentiles (P90/P95/P99) not just average?", a:"Averages hide outliers; percentiles show the real distribution of user experience (e.g. P99 = worst 1%)." },
+
+  // ===== SELENIUM (WEEKS 7-8) =====
+  { deck:"selenium", cat:"WebDriver", q:"What is Selenium WebDriver?", a:"A browser-automation framework. <code>WebDriver</code> is the interface; ChromeDriver/FirefoxDriver/EdgeDriver implement it." },
+  { deck:"selenium", cat:"WebDriver", q:"driver.close() vs driver.quit()?", a:"<b>close()</b> closes the current window; <b>quit()</b> closes all windows and ends the WebDriver session. Use quit() in teardown." },
+  { deck:"selenium", cat:"WebDriver", q:"findElement vs findElements on no match?", a:"<b>findElement</b> throws <code>NoSuchElementException</code>; <b>findElements</b> returns an empty list (never throws)." },
+  { deck:"selenium", cat:"Locators", q:"Preferred locator order in Selenium?", a:"<b>id → name → CSS selector → XPath</b> (link text for anchors). Prefer stable, unique attributes." },
+  { deck:"selenium", cat:"Locators", q:"Selenium Python locator syntax?", a:"<code>driver.find_element(By.ID, \"x\")</code> — By strategy + value as two args (vs Java's <code>By.id(\"x\")</code>)." },
+  { deck:"selenium", cat:"XPath", q:"Relative vs absolute XPath?", a:"<b>Relative</b> (<code>//input[@id='x']</code>) searches anywhere — preferred. <b>Absolute</b> (<code>/html/body/div[1]</code>) is brittle — avoid." },
+  { deck:"selenium", cat:"XPath", q:"contains() vs starts-with() vs normalize-space()?", a:"<code>contains(@class,'btn')</code> = substring; <code>starts-with(@id,'user')</code> = prefix; <code>normalize-space()</code> trims/collapses whitespace." },
+  { deck:"selenium", cat:"XPath", q:"XPath vs CSS selector — key advantage of XPath?", a:"XPath can match by <b>text()</b> and traverse to a <b>parent</b>; CSS can't. CSS is faster and more concise." },
+  { deck:"selenium", cat:"Waits", q:"Implicit vs explicit wait?", a:"<b>Implicit</b>: global, polls for element existence only. <b>Explicit</b> (WebDriverWait + ExpectedConditions): waits for a specific condition — preferred." },
+  { deck:"selenium", cat:"Waits", q:"Why never use Thread.sleep()/time.sleep()?", a:"It always waits the full fixed duration and is still unreliable. Use explicit waits that return as soon as the condition is met." },
+  { deck:"selenium", cat:"Waits", q:"Why not mix implicit and explicit waits?", a:"They combine unpredictably, producing inconsistent effective timeouts. Pick explicit waits." },
+  { deck:"selenium", cat:"Waits", q:"Which condition before clicking vs reading?", a:"<code>elementToBeClickable</code> before clicking; <code>visibilityOfElementLocated</code> before reading/verifying." },
+  { deck:"selenium", cat:"POM", q:"What is the Page Object Model?", a:"A pattern giving each page a class that encapsulates its locators and actions, separating test logic from UI details — change a locator once, not everywhere." },
+  { deck:"selenium", cat:"POM", q:"Should page objects contain assertions?", a:"No — assertions belong in tests. Page objects expose actions and return data (or the next page object)." },
+  { deck:"selenium", cat:"POM", q:"What is Page Factory?", a:"Selenium's built-in POM support: <code>@FindBy</code> annotations declare elements, <code>PageFactory.initElements(driver, this)</code> wires them (lazy-loaded)." },
+  { deck:"selenium", cat:"POM", q:"@FindBys vs @FindAll?", a:"<b>@FindBys</b> = AND (chained locators, all must match). <b>@FindAll</b> = OR (any locator matches)." },
+  { deck:"selenium", cat:"Windows", q:"How do you handle a new window/tab?", a:"Store the main handle, get <code>getWindowHandles()</code>, <code>switchTo().window(handle)</code>, work, then switch back." },
+  { deck:"selenium", cat:"Alerts/Frames", q:"How do you handle a JS alert and an iframe?", a:"Alert: <code>driver.switchTo().alert().accept()/dismiss()</code>. Frame: <code>switchTo().frame(...)</code> then <code>switchTo().defaultContent()</code>." },
+  { deck:"selenium", cat:"Setup", q:"What does WebDriverManager do?", a:"Auto-downloads and configures the correct browser driver binary (<code>WebDriverManager.chromedriver().setup()</code>), replacing manual System.setProperty. Selenium 4.6+ Selenium Manager does this natively." },
+  { deck:"selenium", cat:"Python", q:"Java findElement vs Python equivalent?", a:"Java <code>driver.findElement(By.id(\"x\"))</code> → Python <code>driver.find_element(By.ID, \"x\")</code>; sendKeys → send_keys; getTitle() → .title." },
+
+  // ===== BDD & FRAMEWORKS (WEEK 8) =====
+  { deck:"selenium", cat:"Integration", q:"What does integration testing verify?", a:"That combined modules work together — defects in the <b>interfaces</b> and data flow between components. Uses mostly real dependencies." },
+  { deck:"selenium", cat:"Integration", q:"Stub vs driver?", a:"<b>Stub</b> = fake of a lower module the code calls (top-down). <b>Driver</b> = fake of a higher module that calls the code (bottom-up)." },
+  { deck:"selenium", cat:"Integration", q:"Top-down vs bottom-up integration?", a:"<b>Top-down</b>: high-level modules first, using stubs for lower ones. <b>Bottom-up</b>: low-level modules first, using drivers for higher ones. Sandwich = both." },
+  { deck:"selenium", cat:"System Testing", q:"What is system testing?", a:"Testing the complete, integrated system against requirements from the end-user perspective. Maps to System Design in the V-model." },
+  { deck:"selenium", cat:"System Testing", q:"Unit vs integration vs system — dependencies?", a:"Unit: mocked. Integration: mostly real. System: all real, production-like environment." },
+  { deck:"bdd", cat:"BDD", q:"What is BDD?", a:"Behavior-Driven Development — describing system behavior in business-readable language (Gherkin) so everyone collaborates. Extends TDD outward to stakeholders." },
+  { deck:"bdd", cat:"BDD", q:"Who are the Three Amigos?", a:"<b>Business/PO</b> (what value?), <b>Developer</b> (how to build?), <b>Tester/QA</b> (what could go wrong?) — meeting before coding to agree on scenarios." },
+  { deck:"bdd", cat:"BDD", q:"TDD vs BDD?", a:"<b>TDD</b>: code design, developer-focused, unit level (Red-Green-Refactor). <b>BDD</b>: behavior, everyone, acceptance level (Discover-Formulate-Automate)." },
+  { deck:"bdd", cat:"BDD", q:"Name the three BDD pillars.", a:"<b>Discovery</b> (explore requirements) → <b>Formulation</b> (write example scenarios) → <b>Automation</b> (turn them into tests)." },
+  { deck:"bdd", cat:"Gherkin", q:"What do Given/When/Then mean?", a:"<b>Given</b> = precondition/context. <b>When</b> = action/event. <b>Then</b> = expected outcome. And/But chain same-type steps." },
+  { deck:"bdd", cat:"Gherkin", q:"What is a Background in Gherkin?", a:"Shared setup steps that run before EACH scenario in the feature — avoids repeating common Given steps." },
+  { deck:"bdd", cat:"Gherkin", q:"Declarative vs imperative scenarios?", a:"Write <b>declaratively</b> (what: 'I log in with valid credentials') not <b>imperatively</b> (how: click this, type that). Keeps scenarios business-readable." },
+  { deck:"bdd", cat:"Cucumber", q:"What is 'glue' in Cucumber?", a:"The packages Cucumber scans to match Gherkin steps to annotated Java step-definition methods, extracting parameters." },
+  { deck:"bdd", cat:"Cucumber", q:"Where do feature files vs step definitions live?", a:"Feature files: <code>src/test/resources/features</code>. Step definitions: <code>src/test/java/.../stepdefinitions</code>." },
+  { deck:"bdd", cat:"Cucumber", q:"How do you capture a step parameter?", a:"Cucumber expressions: <code>{string}</code>, <code>{int}</code>, <code>{double}</code>, <code>{word}</code> — e.g. <code>@When(\"I enter username {string}\")</code>." },
+  { deck:"bdd", cat:"Cucumber", q:"@Before vs @After hook order?", a:"<b>@Before</b> runs lowest order first; <b>@After</b> runs highest order first (reverse). Take a screenshot on failure in @After." },
+  { deck:"bdd", cat:"Cucumber", q:"How do tags filter tests?", a:"Tag expressions: <code>@smoke and not @wip</code>, <code>(@ui or @api) and not @slow</code>. Tags cascade feature → scenario." },
+  { deck:"bdd", cat:"Gherkin", q:"Scenario Outline vs data table?", a:"<b>Scenario Outline</b> + Examples runs the whole scenario once per row (data-driven). A <b>data table</b> passes structured data to a single step." },
+  { deck:"bdd", cat:"Behave", q:"What is Behave's project structure?", a:"<code>features/*.feature</code>, <code>features/steps/*.py</code> (step defs), and <code>features/environment.py</code> (hooks like before_scenario)." },
+  { deck:"bdd", cat:"Behave", q:"What is the Behave context object?", a:"An object passed to every step and hook that shares state (driver, page objects, test data) across steps." },
+  { deck:"bdd", cat:"Behave", q:"How does Behave type-convert step parameters?", a:"Parse format: <code>{count:d}</code> for int, <code>{amount:f}</code> for float, plain <code>{name}</code> for string." },
+  { deck:"bdd", cat:"Playwright", q:"Playwright vs Selenium — the key advantage?", a:"Playwright has <b>auto-waiting</b> built into every action (locators wait for actionability), cutting flakiness. One API drives Chromium/Firefox/WebKit." },
+  { deck:"bdd", cat:"Playwright", q:"Playwright object model?", a:"<b>Playwright → Browser → BrowserContext → Page → Locator</b>. A BrowserContext is an isolated session (own cookies/storage)." },
+  { deck:"bdd", cat:"Playwright", q:"What is the Playwright Trace Viewer?", a:"A debugging tool that replays a run with DOM snapshots, screenshots, actions, and network activity. Codegen records actions into code." },
 ];
 
 let deck = "all";

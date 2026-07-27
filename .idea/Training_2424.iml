@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Week4/Day1/venv/Lib/site-packages" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Week6/examples/venv/Lib/site-packages" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Week4/Day1/venv/Lib/site-packages/pandas/tests/extension" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/week8/examples/SeleniumPython/venv/Lib/site-packages" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

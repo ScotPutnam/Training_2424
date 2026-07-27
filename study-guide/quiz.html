@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Quiz — QEA Interview (Weeks 1–6)</title>
+<title>Quiz — QEA Interview (Weeks 1–8)</title>
 <style>
   :root {
     --bg: #0f172a;
@@ -258,7 +258,7 @@
 
 <header>
   <h1>Practice Quiz</h1>
-  <p class="subtitle">Weeks 1–6 · Java · Python · SQL · QEA · Unit Testing</p>
+  <p class="subtitle">Weeks 1–8 · Java · Python · SQL · QEA · Unit Testing · API · Selenium · BDD</p>
   <div class="top-nav">
     <a href="index.html">Home</a> ·
     <a href="study-guide.html">Study Guide</a> ·
@@ -957,6 +957,144 @@ const ALL_QUESTIONS = [
   { topic:"testing", cat:"STLC", q:"Which STLC phase comes immediately after Test Planning?",
     choices:["Test Execution","Test Case Development","Requirement Analysis","Test Cycle Closure"], answer:1,
     exp:"Requirement Analysis → Test Planning → Test Case Development (parallel with Environment Setup) → Execution → Closure." },
+
+  // ===== API TESTING (WEEK 7) =====
+  { topic:"api", cat:"REST vs SOAP", q:"Which statement about REST is TRUE?",
+    choices:["It requires XML for all messages","It is a strict protocol with WSDL","It is stateless and resource-based","It cannot use HTTPS"], answer:2,
+    exp:"REST is a stateless, resource-based architectural style. XML-only + WSDL describes SOAP." },
+  { topic:"api", cat:"HTTP Methods", q:"Which HTTP method is NOT idempotent?",
+    choices:["GET","PUT","DELETE","POST"], answer:3,
+    exp:"POST is not idempotent — repeating it may create multiple resources. GET/PUT/DELETE are idempotent." },
+  { topic:"api", cat:"HTTP Methods", q:"You need to update ONLY one field of a resource. Which method fits best?",
+    choices:["PUT","PATCH","POST","GET"], answer:1,
+    exp:"PATCH applies a partial update. PUT replaces the entire resource." },
+  { topic:"api", cat:"Status Codes", q:"A POST that successfully creates a resource should typically return…",
+    choices:["200 OK","201 Created","204 No Content","301 Moved"], answer:1,
+    exp:"201 Created signals a new resource was created; returning 200 is a common defect." },
+  { topic:"api", cat:"Status Codes", q:"A request has a valid token but the user lacks permission. Correct status?",
+    choices:["401 Unauthorized","403 Forbidden","404 Not Found","400 Bad Request"], answer:1,
+    exp:"403 Forbidden = authenticated but not allowed. 401 = not authenticated." },
+  { topic:"api", cat:"Security", q:"Authentication answers which question?",
+    choices:["What are you allowed to do?","Who are you?","How fast is the API?","Is the data valid?"], answer:1,
+    exp:"Authentication = identity ('who are you?'). Authorization = permissions ('what may you do?')." },
+  { topic:"api", cat:"API Defects", q:"Changing an ID in a URL returns another user's private record. This is…",
+    choices:["A rate-limiting defect","IDOR (broken authorization)","A status-code mismatch","A timeout defect"], answer:1,
+    exp:"Insecure Direct Object Reference — an authorization defect where object access isn't checked against the caller." },
+  { topic:"api", cat:"Test Pyramid", q:"Why are API tests generally preferred over UI tests?",
+    choices:["They render the browser faster","They are faster and more stable, with no flaky locators","They require no assertions","They only test the database"], answer:1,
+    exp:"API tests sit in the middle of the pyramid: faster and more stable than UI, broader than unit." },
+  { topic:"api", cat:"Postman", q:"In Postman, where do you write assertions that run after the response?",
+    choices:["Pre-request Script","Tests (post-response) tab","Params tab","Authorization tab"], answer:1,
+    exp:"The Tests/post-response script runs after the response, using pm.test() and pm.expect()." },
+  { topic:"api", cat:"Postman", q:"Postman variable resolution order, highest priority first, is:",
+    choices:["Global → Collection → Environment → Data → Local","Local → Data → Environment → Collection → Global","Environment → Global → Local → Data → Collection","Collection → Local → Global → Environment → Data"], answer:1,
+    exp:"Local > Data > Environment > Collection > Global." },
+  { topic:"api", cat:"Postman", q:"Where should you store a secret API key in a shared Postman environment?",
+    choices:["Initial value","Current value only","A global variable","The collection description"], answer:1,
+    exp:"Initial values sync to the team; keep secrets in the local-only current value." },
+  { topic:"api", cat:"REST Assured", q:"REST Assured uses which structural syntax?",
+    choices:["Arrange-Act-Assert only","given() – when() – then()","setUp – test – tearDown","before – during – after"], answer:1,
+    exp:"REST Assured uses BDD-style given() (setup) → when() (action) → then() (validation)." },
+  { topic:"api", cat:"REST Assured", q:"How do you assert a JSON field value in REST Assured?",
+    choices:[".body(\"name\", equalTo(\"John\"))",".assertEquals(\"name\",\"John\")",".expect(name).toBe(\"John\")",".verify(\"name\").is(\"John\")"], answer:0,
+    exp:"REST Assured uses Hamcrest matchers with JSONPath: .body(\"name\", equalTo(\"John\"))." },
+  { topic:"api", cat:"Python requests", q:"Which sends a JSON body and sets Content-Type automatically?",
+    choices:["requests.post(url, data=payload)","requests.post(url, json=payload)","requests.post(url, body=payload)","requests.post(url, files=payload)"], answer:1,
+    exp:"The json= parameter serializes the dict and sets Content-Type: application/json." },
+  { topic:"api", cat:"Python requests", q:"What does response.raise_for_status() do?",
+    choices:["Returns the status code","Raises HTTPError for 4xx/5xx","Retries the request","Prints the headers"], answer:1,
+    exp:"It raises an HTTPError if the status is 400 or above." },
+  { topic:"api", cat:"JMeter", q:"In JMeter, what simulates virtual users?",
+    choices:["Listener","Sampler","Thread Group","Assertion"], answer:2,
+    exp:"A Thread Group defines the number of virtual users, ramp-up, and loop/duration." },
+  { topic:"api", cat:"JMeter", q:"Why disable View Results Tree during a real load test?",
+    choices:["It only works in CI","It is resource-heavy and skews results","It cannot record HTTP","It requires a license"], answer:1,
+    exp:"GUI listeners consume memory/CPU; run load tests in non-GUI (CLI) mode and write to a .jtl." },
+  { topic:"api", cat:"Performance", q:"Which test finds the system's breaking point by exceeding capacity?",
+    choices:["Load testing","Stress testing","Endurance testing","Smoke testing"], answer:1,
+    exp:"Stress testing pushes beyond expected capacity to find the breaking point." },
+  { topic:"api", cat:"Performance", q:"Why report P95/P99 percentiles instead of just the average response time?",
+    choices:["Averages are harder to compute","Percentiles reveal outliers/tail latency the average hides","Percentiles ignore slow requests","Averages violate SLAs"], answer:1,
+    exp:"A few slow outliers barely move the average but show up in high percentiles — closer to real user experience." },
+
+  // ===== SELENIUM / AUTOMATION (WEEK 7-8) =====
+  { topic:"selenium", cat:"WebDriver", q:"What is the difference between driver.close() and driver.quit()?",
+    choices:["No difference","close() ends the session; quit() closes one window","close() closes the current window; quit() closes all windows and ends the session","quit() only minimizes the browser"], answer:2,
+    exp:"close() closes the current window; quit() closes every window and ends the WebDriver session." },
+  { topic:"selenium", cat:"Locators", q:"What does findElement do when no element matches?",
+    choices:["Returns null","Returns an empty list","Throws NoSuchElementException","Retries forever"], answer:2,
+    exp:"findElement throws NoSuchElementException; findElements returns an empty list." },
+  { topic:"selenium", cat:"Waits", q:"Which waiting strategy is preferred for reliable tests?",
+    choices:["Thread.sleep()","Implicit wait","Explicit wait (WebDriverWait + ExpectedConditions)","No waits at all"], answer:2,
+    exp:"Explicit waits target a specific condition and return as soon as it's met — the recommended approach." },
+  { topic:"selenium", cat:"Waits", q:"Why should you avoid mixing implicit and explicit waits?",
+    choices:["It's not allowed by Java","They combine unpredictably, causing inconsistent timeouts","Implicit waits are deprecated","Explicit waits need a license"], answer:1,
+    exp:"Combining the two produces unpredictable effective timeouts; standardize on explicit waits." },
+  { topic:"selenium", cat:"XPath", q:"Which XPath function matches elements by a substring of an attribute?",
+    choices:["text()","starts-with()","contains()","normalize-space()"], answer:2,
+    exp:"contains(@class,'btn') matches any element whose class contains 'btn'." },
+  { topic:"selenium", cat:"XPath", q:"A key capability XPath has that CSS selectors lack is:",
+    choices:["Matching by id","Matching by class","Matching by visible text() and traversing to a parent","Running in the browser"], answer:2,
+    exp:"XPath can match on text() and navigate to a parent/ancestor; CSS cannot." },
+  { topic:"selenium", cat:"POM", q:"Where do assertions belong in a Page Object Model design?",
+    choices:["Inside page objects","In the tests, not the page objects","In the WebDriver","In the locators"], answer:1,
+    exp:"Page objects expose actions/data and return page objects; assertions live in the tests." },
+  { topic:"selenium", cat:"Page Factory", q:"Which annotation declares an element locator in Page Factory?",
+    choices:["@FindBy","@Locator","@Element","@WebElement"], answer:0,
+    exp:"@FindBy declares the locator; PageFactory.initElements(driver, this) wires the fields." },
+  { topic:"selenium", cat:"Setup", q:"What does WebDriverManager do?",
+    choices:["Runs tests in parallel","Auto-downloads and configures the correct browser driver binary","Generates Page Objects","Records user actions"], answer:1,
+    exp:"WebDriverManager auto-manages driver binaries, replacing manual System.setProperty setup." },
+  { topic:"selenium", cat:"Python", q:"The Python equivalent of Java's driver.findElement(By.id(\"x\")) is:",
+    choices:["driver.find_element(By.ID, \"x\")","driver.findElement(By.ID(\"x\"))","driver.get_element(\"x\")","driver.element(By.id, \"x\")"], answer:0,
+    exp:"Python passes the By strategy and value as two arguments: find_element(By.ID, \"x\")." },
+  { topic:"selenium", cat:"Integration", q:"In top-down integration testing, what replaces not-yet-ready lower modules?",
+    choices:["Drivers","Stubs","Mocks of the caller","Spies"], answer:1,
+    exp:"Top-down uses stubs for lower modules; bottom-up uses drivers for higher modules." },
+  { topic:"selenium", cat:"Integration", q:"A 'driver' in integration testing simulates…",
+    choices:["A lower-level module the code calls","A higher-level module that calls the code under test","The database","The browser"], answer:1,
+    exp:"A driver stands in for the calling (higher) module in bottom-up integration." },
+  { topic:"selenium", cat:"System Testing", q:"System testing primarily validates the system against…",
+    choices:["Individual method logic","Interface contracts","Requirements, from the end-user perspective","Database schemas"], answer:2,
+    exp:"System testing evaluates the complete integrated system against its requirements." },
+
+  // ===== BDD / CUCUMBER / BEHAVE / PLAYWRIGHT (WEEK 8) =====
+  { topic:"bdd", cat:"BDD", q:"Who makes up the 'Three Amigos' in BDD?",
+    choices:["Three developers","Business/PO, Developer, Tester","Scrum Master, PO, Manager","QA, DevOps, Security"], answer:1,
+    exp:"Business/Product Owner, Developer, and Tester collaborate before coding to agree on scenarios." },
+  { topic:"bdd", cat:"BDD", q:"How does BDD relate to TDD?",
+    choices:["It replaces TDD entirely","It extends TDD to describe behavior in business language for all stakeholders","It is only for unit tests","It removes the need for tests"], answer:1,
+    exp:"BDD extends TDD outward — behavior in natural language everyone can read." },
+  { topic:"bdd", cat:"Gherkin", q:"In Gherkin, which keyword expresses the action being tested?",
+    choices:["Given","When","Then","And"], answer:1,
+    exp:"Given = precondition, When = action/event, Then = expected outcome." },
+  { topic:"bdd", cat:"Gherkin", q:"What does a Background section do?",
+    choices:["Runs once before all features","Runs shared setup steps before EACH scenario","Defines example data","Tags the feature"], answer:1,
+    exp:"Background holds Given steps that run before every scenario in the feature." },
+  { topic:"bdd", cat:"Gherkin", q:"Which runs the same scenario once per row of example data?",
+    choices:["Background","Data table","Scenario Outline with Examples","Doc string"], answer:2,
+    exp:"Scenario Outline + Examples is Gherkin's data-driven construct using <placeholders>." },
+  { topic:"bdd", cat:"Cucumber", q:"What is 'glue' in Cucumber?",
+    choices:["A reporting plugin","The packages Cucumber scans to match steps to step-definition methods","The feature file folder","A type of assertion"], answer:1,
+    exp:"Glue tells Cucumber where the step definitions live so it can match Gherkin steps to methods." },
+  { topic:"bdd", cat:"Cucumber", q:"For @Before hooks with order values 1, 2, 3 — which runs first?",
+    choices:["Order 3","Order 1","Random","They run in parallel"], answer:1,
+    exp:"@Before runs lowest order first; @After runs highest order first (reverse)." },
+  { topic:"bdd", cat:"Cucumber", q:"Which tag expression runs smoke tests that are not work-in-progress?",
+    choices:["@smoke or @wip","@smoke and not @wip","not @smoke and @wip","@smoke @wip"], answer:1,
+    exp:"Tag expressions use and/or/not: '@smoke and not @wip'." },
+  { topic:"bdd", cat:"Behave", q:"In Behave, where do lifecycle hooks like before_scenario live?",
+    choices:["features/steps/*.py","features/environment.py","behave.ini","conftest.py"], answer:1,
+    exp:"environment.py holds before_all/after_all, before_scenario/after_scenario, etc." },
+  { topic:"bdd", cat:"Behave", q:"What is the Behave 'context' object used for?",
+    choices:["Storing the report","Sharing state (driver, data) between steps and hooks","Parsing Gherkin","Running the browser"], answer:1,
+    exp:"context is passed to every step/hook and carries shared state across them." },
+  { topic:"bdd", cat:"Playwright", q:"What is Playwright's main advantage over Selenium?",
+    choices:["It only supports Chrome","Built-in auto-waiting for element actionability, reducing flakiness","It needs no code","It runs only in the cloud"], answer:1,
+    exp:"Playwright auto-waits on every action, so tests are less flaky than manual-wait Selenium." },
+  { topic:"bdd", cat:"Playwright", q:"What is a Playwright BrowserContext?",
+    choices:["A single tab","An isolated browser session with its own cookies/storage","The test runner","A locator"], answer:1,
+    exp:"A BrowserContext is an isolated session (own cookies/storage); Pages live inside it." },
 ];
 
 let questions = [];
@@ -985,6 +1123,9 @@ function renderSetup() {
         <option value="sql">SQL only</option>
         <option value="qea">QEA only</option>
         <option value="testing">Unit Testing (Week 6) only</option>
+        <option value="api">API Testing (Week 7) only</option>
+        <option value="selenium">Selenium / Automation (Week 7-8) only</option>
+        <option value="bdd">BDD · Cucumber · Behave · Playwright (Week 8) only</option>
       </select></label>
       <label># Questions: <select id="countSel">
         <option value="10">10</option>

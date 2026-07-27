@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Study Guide — QEA Interview (Weeks 1–6)</title>
+<title>Study Guide — QEA Interview (Weeks 1–8)</title>
 <style>
   :root {
     --bg: #f7f8fa;
@@ -270,6 +270,36 @@
   <a href="#test-team">Test Team &amp; Documents</a>
   <a href="#stlc">STLC</a>
 
+  <h2>API &amp; UI Automation (Week 7)</h2>
+  <a href="#api-intro">API Testing · REST vs SOAP</a>
+  <a href="#api-pyramid">API in the Test Pyramid</a>
+  <a href="#api-defects">Typical API Defects</a>
+  <a href="#postman">Postman Essentials</a>
+  <a href="#postman-scripts">Pre-request &amp; Test Scripts</a>
+  <a href="#postman-env">Environments &amp; Variables</a>
+  <a href="#rest-assured">REST Assured (Java)</a>
+  <a href="#py-requests">Python requests</a>
+  <a href="#jmeter">JMeter</a>
+  <a href="#perf-testing">Performance Testing Types</a>
+  <a href="#selenium-intro">Selenium WebDriver (Java)</a>
+  <a href="#locators">Locator Strategies</a>
+  <a href="#xpath">XPath</a>
+  <a href="#waits">Waiting Strategies</a>
+  <a href="#pom">Page Object Model &amp; Factory</a>
+  <a href="#webdriver-extras">Windows · Alerts · Options · WDM</a>
+
+  <h2>Cross-Language &amp; BDD (Week 8)</h2>
+  <a href="#selenium-python">Selenium with Python</a>
+  <a href="#integration">Integration Testing</a>
+  <a href="#system-testing">System Testing</a>
+  <a href="#bdd">BDD &amp; Three Amigos</a>
+  <a href="#gherkin">Gherkin Syntax</a>
+  <a href="#cucumber">Cucumber (Java)</a>
+  <a href="#hooks-tags">Hooks &amp; Tags</a>
+  <a href="#scenario-outline">Scenario Outline &amp; Tables</a>
+  <a href="#behave">Behave (Python BDD)</a>
+  <a href="#playwright">Playwright</a>
+
   <h2>Interview Prep</h2>
   <a href="#behavioral">Behavioral Questions</a>
 </nav>
@@ -277,7 +307,7 @@
 <main>
   <header class="hero">
     <h1>QEA Interview Study Guide</h1>
-    <p>Weeks 1–6: Java · Python · SQL · QEA · Unit Testing — compiled from your training notes and interview question banks.</p>
+    <p>Weeks 1–8: Java · Python · SQL · QEA · Unit Testing · API &amp; UI Automation · BDD — compiled from your training notes and interview question banks.</p>
     <div class="tools">
       <a href="flashcards.html">Flash Cards →</a>
       <a href="quiz.html">Quiz →</a>
@@ -1878,9 +1908,468 @@ def test_signup():
     </div>
   </section>
 
+  <!-- ============== WEEK 7: API & UI AUTOMATION ============== -->
+  <section id="week7">
+    <h1>Part 7 — API Testing &amp; UI Automation (Week 7)</h1>
+
+    <div class="topic-card" id="api-intro">
+      <h2>API Testing · REST vs SOAP</h2>
+      <p>An <strong>API</strong> is a contract for how software components interact. API testing validates business logic, data integrity, and integration points at the service layer — <em>faster and more stable than UI testing</em>, and it can begin before any UI exists (<strong>shift-left</strong>).</p>
+      <p><strong>Request anatomy:</strong> method + URL/endpoint + headers + optional body. <strong>Response anatomy:</strong> status code + headers + body.</p>
+      <table>
+        <tr><th>Aspect</th><th>REST</th><th>SOAP</th></tr>
+        <tr><td>Type</td><td>Architectural <em>style</em></td><td>Strict <em>protocol</em></td></tr>
+        <tr><td>Data format</td><td>JSON (or XML, others)</td><td>XML only</td></tr>
+        <tr><td>State</td><td><strong>Stateless</strong>, resource-based (URIs)</td><td>Operation-based, WSDL contract</td></tr>
+        <tr><td>Security</td><td>HTTPS, OAuth, JWT</td><td>WS-Security (built-in)</td></tr>
+        <tr><td>Weight</td><td>Lightweight, fast</td><td>Heavier, slower</td></tr>
+        <tr><td>Use for</td><td>Web/mobile/public APIs</td><td>Legacy enterprise, financial</td></tr>
+      </table>
+      <p><strong>REST maps CRUD to HTTP methods:</strong> <code>GET</code> read · <code>POST</code> create · <code>PUT</code> full replace · <code>PATCH</code> partial update · <code>DELETE</code> remove.</p>
+      <table>
+        <tr><th>Method</th><th>Safe</th><th>Idempotent</th><th>Body</th><th>Typical success</th></tr>
+        <tr><td>GET</td><td>Yes</td><td>Yes</td><td>No</td><td>200</td></tr>
+        <tr><td>POST</td><td>No</td><td>No</td><td>Yes</td><td>201</td></tr>
+        <tr><td>PUT</td><td>No</td><td>Yes</td><td>Yes</td><td>200/204</td></tr>
+        <tr><td>PATCH</td><td>No</td><td>No</td><td>Yes</td><td>200/204</td></tr>
+        <tr><td>DELETE</td><td>No</td><td>Yes</td><td>No</td><td>200/204</td></tr>
+      </table>
+      <div class="tip"><strong>Safe</strong> = no side effects. <strong>Idempotent</strong> = same result no matter how many times you repeat it. POST is neither (each call can create a new resource).</div>
+    </div>
+
+    <div class="topic-card" id="api-pyramid">
+      <h2>API in the Test Pyramid · Test Types</h2>
+      <p>The <strong>test pyramid</strong>: many fast <strong>unit</strong> tests (60–70%), fewer <strong>API/integration</strong> tests (20–30%), a thin cap of slow <strong>UI/E2E</strong> tests (5–10%). API tests are the sweet spot — more coverage than unit, more stability &amp; speed than UI.</p>
+      <p><strong>Types of API tests:</strong> Functional (correct behavior for valid/invalid input), Performance (load/stress/etc.), Security (authn/authz, injection, rate limits), Reliability (timeouts, retries, failover), <strong>Contract</strong> (matches documented schema), Integration (DB, third-party services).</p>
+    </div>
+
+    <div class="topic-card" id="api-defects">
+      <h2>Typical API Testing Defects</h2>
+      <ul>
+        <li><strong>Status-code mismatch</strong> — 200 returned where 201/400/404 expected. Client logic breaks even when the body is fine.</li>
+        <li><strong>Data-validation errors</strong> — accepts invalid data (bad email, negative age) or rejects valid input (O'Brien, .co.uk). Test with boundary + format + required-field cases.</li>
+        <li><strong>Authentication failures</strong> — missing auth check, expired/invalid token accepted, token still valid after logout.</li>
+        <li><strong>Authorization errors</strong> — horizontal (user A reads user B's data) &amp; vertical (regular user hits admin endpoint) privilege escalation; <strong>IDOR</strong> (change the ID, get someone else's object).</li>
+        <li><strong>Rate-limiting issues</strong> — no throttling on login (brute force); expect <code>429 Too Many Requests</code> + <code>X-RateLimit-*</code> headers.</li>
+        <li><strong>Payload structure problems</strong> — inconsistent shape, missing fields, type drift (id as number vs string), null-vs-absent fields.</li>
+        <li><strong>Timeout issues</strong> — hangs, silent timeouts, cascade delays; expect <code>504</code> and graceful cleanup.</li>
+        <li><strong>Error-message defects</strong> — too vague ("Something went wrong") or too revealing (SQL/stack traces leak schema).</li>
+      </ul>
+      <div class="warn"><strong>authentication</strong> = "who are you?" (identity). <strong>authorization</strong> = "what are you allowed to do?" (permissions). 401 = unauthenticated, 403 = forbidden.</div>
+    </div>
+
+    <div class="topic-card" id="postman">
+      <h2>Postman Essentials</h2>
+      <p><strong>Postman</strong> is the industry-standard API client: build/send requests, inspect formatted responses, write test scripts, and organize work into <strong>collections</strong> (grouped, runnable, shareable requests) inside <strong>workspaces</strong>.</p>
+      <p>Request builder tabs: <strong>Params · Authorization · Headers · Body · Pre-request Script · Tests</strong>. Body types: raw JSON, <code>x-www-form-urlencoded</code>, <code>form-data</code> (file uploads), binary.</p>
+      <p><strong>Auth types:</strong> No Auth · API Key (header or query) · Basic (base64 user:pass) · Bearer Token (JWT/OAuth) · OAuth 2.0 · Digest · Inherit from parent (set once at collection level).</p>
+      <p>Variables use <code>{{name}}</code> syntax. The <strong>Collection Runner</strong> executes a whole collection as a suite, optionally against a data file (CSV/JSON) for data-driven runs.</p>
+      <div class="tip">vs alternatives: <strong>curl</strong>/<strong>HTTPie</strong> for CLI/CI one-offs, <strong>Insomnia</strong> for a cleaner GraphQL-friendly UI. Postman wins on visualization, scripting, and team collaboration.</div>
+    </div>
+
+    <div class="topic-card" id="postman-scripts">
+      <h2>Pre-request &amp; Test (Post-response) Scripts</h2>
+      <p>Both are JavaScript running in a sandbox with the <code>pm</code> object. <strong>Pre-request</strong> runs <em>before</em> the request (generate data, set variables, fetch a token). <strong>Tests</strong> run <em>after</em> the response (assertions, extract &amp; chain data).</p>
+      <p>Execution order per request: <em>Collection → Folder → Request</em> pre-request → REQUEST SENT → response → <em>Request → Folder → Collection</em> tests.</p>
+<pre><code>// Pre-request: dynamic data
+pm.environment.set("email", `user_${Date.now()}@test.com`);
+// Built-in dynamic vars: {{$guid}} {{$randomEmail}} {{$timestamp}}
+
+// Tests: Chai-style assertions
+pm.test("Status is 201", () =&gt; pm.response.to.have.status(201));
+pm.test("Has id", () =&gt; {
+    const body = pm.response.json();
+    pm.expect(body).to.have.property("id");
+    pm.environment.set("userId", body.id);   // chain to next request
+});
+pm.test("Fast enough", () =&gt;
+    pm.expect(pm.response.responseTime).to.be.below(500));</code></pre>
+      <div class="tip"><strong>Chaining:</strong> extract a value in one request's Tests (<code>pm.environment.set</code>), then reference it as <code>{{userId}}</code> in the next request's URL/body.</div>
+    </div>
+
+    <div class="topic-card" id="postman-env">
+      <h2>Environments &amp; Variable Scopes</h2>
+      <p>An <strong>environment</strong> is a set of key-value variables representing a context (dev/staging/prod). Write the test once, switch environments from the dropdown to run it anywhere.</p>
+      <p><strong>Initial value</strong> is shared with the team; <strong>current value</strong> stays on your machine — keep secrets (API keys, tokens) in the current value only.</p>
+      <p><strong>Variable resolution order</strong> (highest → lowest priority):</p>
+      <p><strong>Local → Data (CSV/JSON) → Environment → Collection → Global</strong></p>
+      <div class="warn">Never resolving? Check an environment is actually selected (not "No Environment"), the name matches exactly (case-sensitive), and the variable is enabled.</div>
+    </div>
+
+    <div class="topic-card" id="rest-assured">
+      <h2>REST Assured — Programmatic API Testing (Java)</h2>
+      <p>Open-source Java library that turns HTTP calls into readable <strong>Given-When-Then</strong> code — the industry standard for Java API testing, pairs with JUnit 5 + Hamcrest matchers.</p>
+<pre><code>import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
+given()                                   // preconditions
+    .baseUri("https://api.example.com")
+    .contentType(ContentType.JSON)
+    .header("Authorization", "Bearer " + token)
+    .pathParam("userId", 123)
+    .queryParam("status", "active")
+    .body(userPojo)                       // POJO/Map/String auto-serialized
+.when()                                   // action
+    .get("/users/{userId}")
+.then()                                   // verification
+    .statusCode(200)
+    .body("name", equalTo("John"))
+    .body("roles", everyItem(notNullValue()))
+    .time(lessThan(2000L));</code></pre>
+      <p><strong>Extract data</strong>: <code>.extract().path("id")</code> or <code>.extract().as(User.class)</code>. <strong>Reuse config</strong> with <code>RequestSpecification</code> (RequestSpecBuilder) and <code>ResponseSpecification</code>.</p>
+      <p>Auth helpers: <code>.auth().basic()</code>, <code>.auth().preemptive().basic()</code>, <code>.auth().oauth2(token)</code>, <code>.auth().digest()</code>. Logging: <code>.log().all()</code>, <code>.log().ifValidationFails()</code>.</p>
+      <div class="tip">The Given-When-Then structure is the <em>same BDD shape</em> you use in JUnit's Arrange-Act-Assert and Cucumber scenarios.</div>
+    </div>
+
+    <div class="topic-card" id="py-requests">
+      <h2>Python <code>requests</code> — "HTTP for Humans"</h2>
+      <p>Python's most popular HTTP client; pairs naturally with pytest fixtures. Methods map directly to functions: <code>requests.get/post/put/patch/delete</code>.</p>
+<pre><code>import requests
+
+r = requests.get(url, params={"page": 1}, headers={...}, timeout=10)
+r.status_code      # 200
+r.ok               # True for 2xx
+r.json()           # parsed body
+r.headers["Content-Type"]
+
+# POST JSON (sets Content-Type automatically)
+requests.post(url, json={"name": "John"})
+# POST form data
+requests.post(url, data={"user": "x", "pass": "y"})
+
+# Auth
+requests.get(url, auth=("user", "pass"))           # Basic
+requests.get(url, headers={"Authorization": f"Bearer {tok}"})
+
+r.raise_for_status()   # raise HTTPError if status &gt;= 400</code></pre>
+      <p><strong>Sessions</strong> persist headers, auth, and cookies across requests: <code>s = requests.Session()</code> then <code>s.get(...)</code>. Use as a context manager or wrap in a reusable <code>APIClient</code> class. <code>timeout=(connect, read)</code> prevents hangs.</p>
+      <table>
+        <tr><th></th><th>Python + requests</th><th>Java + REST Assured</th></tr>
+        <tr><td>Typing</td><td>Dynamic (runtime)</td><td>Static (compile-time)</td></tr>
+        <tr><td>Build</td><td>pip / requirements.txt</td><td>Maven / pom.xml</td></tr>
+        <tr><td>Best for</td><td>Rapid, data-driven, scripting</td><td>Enterprise, refactoring, type safety</td></tr>
+      </table>
+    </div>
+
+    <div class="topic-card" id="jmeter">
+      <h2>Apache JMeter — Load &amp; Performance</h2>
+      <p>Open-source, Java-based tool that answers "does it work <em>fast enough</em>, and under <em>many concurrent users</em>?" — the gap functional tools (Postman/REST Assured) don't cover.</p>
+      <p><strong>Test Plan hierarchy:</strong></p>
+      <ul>
+        <li><strong>Thread Group</strong> — virtual users. Key settings: <em>Number of Threads</em> (users), <em>Ramp-up period</em> (time to start them all), <em>Loop count / Duration</em>.</li>
+        <li><strong>Samplers</strong> — the actual requests (HTTP Request, JDBC Request, FTP…).</li>
+        <li><strong>Config Elements</strong> (HTTP Defaults, CSV Data Set), <strong>Pre/Post-Processors</strong> (JSON Extractor), <strong>Assertions</strong>, <strong>Timers</strong> (think time).</li>
+        <li><strong>Listeners</strong> — collect results: <em>View Results Tree</em> (debug only — disable under load), <em>Summary Report</em>, <em>Aggregate Report</em> (adds percentiles).</li>
+      </ul>
+      <p>Run in <strong>GUI mode</strong> to build/debug; run in <strong>CLI (non-GUI) mode</strong> for real load tests &amp; CI: <code>jmeter -n -t plan.jmx -l results.jtl</code>. Functions: <code>${__Random()}</code>, <code>${__UUID()}</code>, <code>${__counter()}</code>, <code>${__CSV()}</code>.</p>
+      <div class="warn">GUI listeners like <em>View Results Tree</em> are resource-heavy — disable them during actual load runs; use a Simple Data Writer to a <code>.jtl</code> and generate the report afterward.</div>
+    </div>
+
+    <div class="topic-card" id="perf-testing">
+      <h2>Performance Testing Types &amp; Metrics</h2>
+      <table>
+        <tr><th>Type</th><th>Load level</th><th>Goal</th></tr>
+        <tr><td><strong>Load</strong></td><td>Expected traffic</td><td>Meet SLAs, find bottlenecks</td></tr>
+        <tr><td><strong>Stress</strong></td><td>Beyond capacity</td><td>Find the breaking point</td></tr>
+        <tr><td><strong>Endurance (soak)</strong></td><td>Normal, long duration</td><td>Find memory leaks / resource exhaustion</td></tr>
+        <tr><td><strong>Spike</strong></td><td>Sudden surge</td><td>Test auto-scaling &amp; recovery</td></tr>
+        <tr><td><strong>Scalability</strong></td><td>Increasing resources</td><td>Measure horizontal/vertical scaling</td></tr>
+      </table>
+      <p><strong>Key metrics:</strong> response time (esp. <strong>percentiles</strong> P90/P95/P99 — averages hide outliers), <strong>throughput</strong> (RPS/TPS), <strong>error rate</strong> (&lt;1% acceptable), resource utilization (CPU/memory). A <strong>baseline</strong> is a known reference point; compare future runs against it (±10% is typically acceptable). Targets are written into <strong>SLAs</strong>.</p>
+    </div>
+
+    <div class="topic-card" id="selenium-intro">
+      <h2>Selenium WebDriver (Java)</h2>
+      <p>Browser-automation framework. <code>WebDriver</code> is the main interface; <code>ChromeDriver</code>/<code>FirefoxDriver</code>/<code>EdgeDriver</code> implement it. Maven dependency: <code>org.seleniumhq.selenium:selenium-java</code>.</p>
+<pre><code>WebDriver driver = new ChromeDriver();
+driver.get("https://example.com");         // navigate
+driver.getTitle(); driver.getCurrentUrl(); // page info
+WebElement el = driver.findElement(By.id("username"));
+List&lt;WebElement&gt; all = driver.findElements(By.tagName("a"));
+el.sendKeys("text"); el.click(); el.clear();
+el.getText(); el.getAttribute("href"); el.isDisplayed();
+driver.quit();                             // close all windows</code></pre>
+      <p>Interfaces off the driver: <code>navigate()</code> (to/back/forward/refresh), <code>manage()</code> (window, timeouts, cookies), <code>switchTo()</code> (frame/window/alert).</p>
+      <div class="warn"><code>driver.close()</code> closes the current window; <code>driver.quit()</code> closes <em>all</em> windows and ends the session. Always <code>quit()</code> in teardown.</div>
+    </div>
+
+    <div class="topic-card" id="locators">
+      <h2>Locator Strategies (<code>By</code>)</h2>
+      <p>Selenium finds elements with the <code>By</code> class. Preference order for stability: <strong>id → name → CSS selector → XPath</strong>; link text for anchors.</p>
+      <table>
+        <tr><th>Java</th><th>Python</th></tr>
+        <tr><td><code>By.id("x")</code></td><td><code>By.ID, "x"</code></td></tr>
+        <tr><td><code>By.name("x")</code></td><td><code>By.NAME, "x"</code></td></tr>
+        <tr><td><code>By.className("x")</code></td><td><code>By.CLASS_NAME, "x"</code></td></tr>
+        <tr><td><code>By.cssSelector("#x .y")</code></td><td><code>By.CSS_SELECTOR, "#x .y"</code></td></tr>
+        <tr><td><code>By.xpath("//div")</code></td><td><code>By.XPATH, "//div"</code></td></tr>
+        <tr><td><code>By.linkText("Home")</code></td><td><code>By.LINK_TEXT, "Home"</code></td></tr>
+        <tr><td><code>By.tagName("a")</code></td><td><code>By.TAG_NAME, "a"</code></td></tr>
+      </table>
+      <p><code>findElement</code> throws <code>NoSuchElementException</code> if nothing matches; <code>findElements</code> returns an empty list (never throws). Selenium 4 adds <strong>relative locators</strong> (<code>above</code>, <code>below</code>, <code>near</code>, <code>toLeftOf</code>).</p>
+    </div>
+
+    <div class="topic-card" id="xpath">
+      <h2>XPath</h2>
+      <p>XPath locates elements by path expression — essential when there's no stable id/class, when matching by <em>text</em>, or navigating relationships.</p>
+<pre><code>//input[@id='username']              // relative (preferred)
+/html/body/div[1]/form               // absolute (brittle — avoid)
+//button[contains(@class,'btn')]     // partial attribute match
+//a[starts-with(@id,'user_')]        // prefix match
+//button[text()='Submit']            // exact text
+//button[normalize-space()='Submit'] // trims/collapses whitespace
+//input[@type='text' and @name='q']  // multiple conditions</code></pre>
+      <p><strong>Axes</strong> navigate the DOM tree: <code>parent::</code>, <code>ancestor::</code>, <code>child::</code>, <code>descendant::</code>, <code>following-sibling::</code>, <code>preceding-sibling::</code>. Example: <code>//label[text()='Email']/following-sibling::input</code>.</p>
+      <table>
+        <tr><th></th><th>XPath</th><th>CSS Selector</th></tr>
+        <tr><td>Match by text</td><td>Yes (<code>text()</code>)</td><td>No</td></tr>
+        <tr><td>Traverse to parent</td><td>Yes</td><td>No</td></tr>
+        <tr><td>Speed / syntax</td><td>Slower / verbose</td><td>Faster / concise</td></tr>
+      </table>
+    </div>
+
+    <div class="topic-card" id="waits">
+      <h2>Waiting Strategies</h2>
+      <p>Web pages load asynchronously, so tests race the browser and become <strong>flaky</strong>. Waits synchronize them.</p>
+      <ul>
+        <li><strong>Implicit wait</strong> — global; polls the DOM for element <em>existence</em>. Set once. <code>driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10))</code> / <code>driver.implicitly_wait(10)</code>. Limited: only existence, not visibility/clickability.</li>
+        <li><strong>Explicit wait</strong> (preferred) — waits for a <em>specific condition</em> via <code>WebDriverWait</code> + <code>ExpectedConditions</code> / <code>expected_conditions</code>.</li>
+        <li><strong>Fluent wait</strong> — explicit wait with custom polling interval and ignored exceptions.</li>
+        <li><strong>Never</strong> use <code>Thread.sleep()</code> / <code>time.sleep()</code> — always waits the full duration, and it's still unreliable.</li>
+      </ul>
+<pre><code>// Java
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+wait.until(ExpectedConditions.elementToBeClickable(By.id("submit"))).click();
+
+# Python
+wait = WebDriverWait(driver, 10)
+wait.until(EC.visibility_of_element_located((By.ID, "msg")))</code></pre>
+      <p>Common conditions: <code>presenceOfElementLocated</code>, <code>visibilityOfElementLocated</code>, <code>elementToBeClickable</code>, <code>invisibilityOfElementLocated</code>, <code>textToBePresentInElementLocated</code>, <code>titleContains</code>, <code>urlContains</code>, <code>alertIsPresent</code>.</p>
+      <div class="warn">Don't mix implicit and explicit waits — the combination produces unpredictable timeouts. Pick explicit waits.</div>
+    </div>
+
+    <div class="topic-card" id="pom">
+      <h2>Page Object Model &amp; Page Factory</h2>
+      <p><strong>POM</strong> puts each page's locators and actions in its own class, separating <em>test logic</em> from <em>UI details</em>. Change a locator once, not in every test. Tests read like user stories.</p>
+      <ul>
+        <li>Keep <strong>locators private</strong>; expose only action methods (<code>loginAs()</code>, <code>getErrorMessage()</code>).</li>
+        <li>Methods return page objects — a <em>new</em> page after navigation, <code>this</code> to stay (enables method chaining / fluent API).</li>
+        <li><strong>No assertions in page objects</strong> — those belong in tests.</li>
+        <li>A <strong>BasePage</strong> holds shared helpers (waits, click, type).</li>
+      </ul>
+      <p><strong>Page Factory</strong> is Selenium's built-in POM support using annotations. <code>@FindBy(id="username")</code> declares an element; <code>PageFactory.initElements(driver, this)</code> in the constructor wires them (lazy-loaded — found on first access).</p>
+<pre><code>public class LoginPage {
+    @FindBy(id = "username") private WebElement user;
+    @FindBy(id = "login-btn") private WebElement loginBtn;
+    public LoginPage(WebDriver d){ PageFactory.initElements(d, this); }
+    public DashboardPage loginAs(String u,String p){ /* ... */ }
+}</code></pre>
+      <p><code>@FindBys</code> = AND (chained), <code>@FindAll</code> = OR (any match), <code>@CacheLookup</code> caches static elements (never on dynamic ones). Use standard POM when you need dynamic/runtime-built locators.</p>
+    </div>
+
+    <div class="topic-card" id="webdriver-extras">
+      <h2>Windows · Alerts · Options · WebDriverManager · Screenshots</h2>
+      <p><strong>Windows/tabs:</strong> <code>driver.getWindowHandle()</code> (current), <code>getWindowHandles()</code> (all). Store the main handle, switch with <code>driver.switchTo().window(handle)</code>, and always switch back.</p>
+      <p><strong>Frames/iframes:</strong> <code>switchTo().frame(id|index|element)</code>, then <code>switchTo().defaultContent()</code> or <code>parentFrame()</code> to leave.</p>
+      <p><strong>Alerts (JS popups):</strong> <code>Alert a = driver.switchTo().alert(); a.accept(); a.dismiss(); a.getText(); a.sendKeys()</code>.</p>
+      <p><strong>Browser options:</strong> <code>ChromeOptions</code> — <code>addArguments("--headless")</code>, <code>"--start-maximized"</code>, incognito, etc. <strong>WebDriverManager</strong> (<code>io.github.bonigarcia</code>) auto-downloads the right driver binary — <code>WebDriverManager.chromedriver().setup()</code> replaces manual <code>System.setProperty</code>. (Selenium Manager, built into Selenium 4.6+, does this automatically too.)</p>
+      <p><strong>Screenshots:</strong> Java <code>((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE)</code>; Python <code>driver.save_screenshot("shot.png")</code>. <strong>CLI runs:</strong> <code>mvn test -Dtest=ClassName#method</code>.</p>
+    </div>
+  </section>
+
+  <!-- ============== WEEK 8: CROSS-LANGUAGE & BDD ============== -->
+  <section id="week8">
+    <h1>Part 8 — Cross-Language Automation &amp; BDD (Week 8)</h1>
+
+    <div class="topic-card" id="selenium-python">
+      <h2>Selenium with Python</h2>
+      <p>Same WebDriver concepts as Java, cleaner syntax. Your Java knowledge transfers directly.</p>
+<pre><code>from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+driver = webdriver.Chrome()
+driver.get("https://example.com/login")
+driver.find_element(By.ID, "username").send_keys("user")
+driver.find_element(By.ID, "submit").click()
+driver.quit()</code></pre>
+      <table>
+        <tr><th>Java</th><th>Python</th></tr>
+        <tr><td><code>driver.findElement(By.id("x"))</code></td><td><code>driver.find_element(By.ID, "x")</code></td></tr>
+        <tr><td><code>el.sendKeys("t")</code></td><td><code>el.send_keys("t")</code></td></tr>
+        <tr><td><code>driver.getTitle()</code></td><td><code>driver.title</code></td></tr>
+        <tr><td><code>driver.getCurrentUrl()</code></td><td><code>driver.current_url</code></td></tr>
+        <tr><td><code>WebDriverWait(driver, Duration.ofSeconds(10))</code></td><td><code>WebDriverWait(driver, 10)</code></td></tr>
+      </table>
+      <p><strong>webdriver-manager</strong> (pip) auto-manages drivers: <code>Service(ChromeDriverManager().install())</code>. Pythonic patterns: context managers for cleanup, list comprehensions over <code>find_elements</code>. Window handling: <code>driver.current_window_handle</code>, <code>driver.window_handles</code>, <code>driver.switch_to.window(h)</code>, <code>switch_to.frame()</code> / <code>default_content()</code>. Selenium 4: <code>driver.switch_to.new_window('tab')</code>.</p>
+    </div>
+
+    <div class="topic-card" id="integration">
+      <h2>Integration Testing</h2>
+      <p>Tests that <strong>combined modules work together</strong> — exposes defects in the <em>interfaces</em> and data flow between components (unit tests can't catch these). Uses mostly real dependencies (real test DB), unlike unit tests.</p>
+      <table>
+        <tr><th>Approach</th><th>How</th><th>Needs</th></tr>
+        <tr><td><strong>Big Bang</strong></td><td>Integrate everything at once</td><td>Simple but hard to isolate defects</td></tr>
+        <tr><td><strong>Top-Down</strong></td><td>High-level modules first</td><td><strong>Stubs</strong> for lower modules</td></tr>
+        <tr><td><strong>Bottom-Up</strong></td><td>Low-level modules first</td><td><strong>Drivers</strong> for higher modules</td></tr>
+        <tr><td><strong>Sandwich (Hybrid)</strong></td><td>Both, meet in the middle</td><td>Stubs + drivers</td></tr>
+      </table>
+      <div class="tip"><strong>Stub</strong> = fake of a <em>lower</em> module the code-under-test <em>calls</em> (top-down). <strong>Driver</strong> = fake of a <em>higher</em> module that <em>calls</em> the code-under-test (bottom-up). Mnemonic: drivers <em>drive</em> from above, stubs <em>stub out</em> what's below.</div>
+    </div>
+
+    <div class="topic-card" id="system-testing">
+      <h2>System Testing</h2>
+      <p>Tests the <strong>complete, integrated system</strong> against requirements, from the end-user's perspective. In the <strong>V-model</strong> it maps to the <em>System Design</em> phase (integration ↔ architecture design, unit ↔ module design, acceptance ↔ requirements).</p>
+      <p><strong>Functional</strong> system testing: features, end-to-end workflows, data flow, error handling. <strong>Non-functional</strong>: performance, load, stress, security, usability, compatibility, recovery, installation.</p>
+      <p>Needs a <strong>production-like environment</strong>. <strong>Entry criteria</strong>: integration tests passing, environment &amp; data ready, test cases approved. <strong>Exit criteria</strong>: all planned cases run, critical/high defects resolved, ≥95% pass rate, stakeholder sign-off. Selenium/Playwright automation shines for system-level <strong>regression</strong>.</p>
+      <table>
+        <tr><th></th><th>Unit</th><th>Integration</th><th>System</th></tr>
+        <tr><td>Scope</td><td>One function</td><td>Component groups</td><td>Whole system</td></tr>
+        <tr><td>Dependencies</td><td>Mocked</td><td>Mostly real</td><td>All real</td></tr>
+        <tr><td>Basis</td><td>Code</td><td>Interfaces</td><td>Requirements</td></tr>
+      </table>
+    </div>
+
+    <div class="topic-card" id="bdd">
+      <h2>BDD &amp; the Three Amigos</h2>
+      <p><strong>Behavior-Driven Development</strong> extends TDD by describing <em>behavior in business language</em> everyone can read, closing the gap between what was requested and what was built. Three pillars: <strong>Discovery → Formulation → Automation</strong>.</p>
+      <p>The <strong>Three Amigos</strong> collaborate <em>before</em> coding: <strong>Business/PO</strong> ("what value?"), <strong>Developer</strong> ("how do we build it?"), <strong>Tester/QA</strong> ("what could go wrong?"). Output: shared understanding + concrete example scenarios.</p>
+      <table>
+        <tr><th></th><th>TDD</th><th>BDD</th></tr>
+        <tr><td>Focus</td><td>Code design</td><td>System behavior</td></tr>
+        <tr><td>Language</td><td>Programming</td><td>Natural (Gherkin)</td></tr>
+        <tr><td>Audience</td><td>Developers</td><td>Everyone</td></tr>
+        <tr><td>Cycle</td><td>Red → Green → Refactor</td><td>Discover → Formulate → Automate</td></tr>
+      </table>
+      <p><strong>Benefits:</strong> living documentation, early ambiguity detection (cheap to fix), business engagement, regression safety. <strong>Anti-patterns:</strong> technical/UI language in scenarios, scenario explosion, implementation details, incidental details, writing scenarios after the code, no business involvement.</p>
+    </div>
+
+    <div class="topic-card" id="gherkin">
+      <h2>Gherkin Syntax</h2>
+      <p>Gherkin is the business-readable language of BDD. Structure: <strong>Feature → Scenario → Steps</strong>.</p>
+<pre><code>Feature: User Login
+  As a registered user
+  I want to log in
+  So that I can access my dashboard
+
+  Background:                    # runs before EACH scenario
+    Given the application is running
+
+  Scenario: Successful login
+    Given I am on the login page
+    When I enter valid credentials
+    And I submit the login form
+    Then I should see my dashboard</code></pre>
+      <ul>
+        <li><strong>Given</strong> = precondition/context · <strong>When</strong> = action/event · <strong>Then</strong> = expected outcome.</li>
+        <li><strong>And</strong> / <strong>But</strong> chain more steps of the same type (readability only).</li>
+        <li><strong>Background</strong> = shared setup steps for every scenario in the feature.</li>
+        <li>Write <strong>declaratively</strong> (what, not how); focus on behavior, keep scenarios short and independent, name by outcome.</li>
+      </ul>
+    </div>
+
+    <div class="topic-card" id="cucumber">
+      <h2>Cucumber Framework (Java)</h2>
+      <p>Cucumber runs Gherkin. Architecture: <strong>Feature files</strong> (<code>src/test/resources/features</code>) → Gherkin parser → <strong>Step definitions</strong> (Java, <code>src/test/java/.../stepdefinitions</code>) → <strong>Runner</strong> → reports.</p>
+      <p><strong>Glue</strong> connects features to steps: Cucumber scans the glue packages and matches each Gherkin step to an annotated Java method, extracting parameters.</p>
+<pre><code>@When("I enter username {string}")     // {string} {int} {double} {word}
+public void enterUsername(String user) {
+    loginPage.enterUsername(user);
+}</code></pre>
+      <p>Runner (JUnit 5 platform):</p>
+<pre><code>@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("features")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME,
+    value = "com.example.stepdefinitions,com.example.hooks")
+@ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "@smoke and not @wip")
+public class TestRunner {}</code></pre>
+      <p>Maven deps: <code>cucumber-java</code> + <code>cucumber-junit-platform-engine</code>. Share state across step classes with dependency-injected <strong>TestContext</strong> (holds the WebDriver). <strong>Doc strings</strong> (<code>"""</code>) for multi-line text; <strong>data tables</strong> map to <code>DataTable</code>.</p>
+    </div>
+
+    <div class="topic-card" id="hooks-tags">
+      <h2>Cucumber Hooks &amp; Tags</h2>
+      <p><strong>Hooks</strong> manage the test lifecycle (in <code>io.cucumber.java</code>):</p>
+      <ul>
+        <li><code>@Before</code> / <code>@After</code> — before/after each <em>scenario</em> (setup driver, screenshot on failure &amp; quit).</li>
+        <li><code>@BeforeStep</code> / <code>@AfterStep</code> — around each step.</li>
+        <li><code>@BeforeAll</code> / <code>@AfterAll</code> — once per run.</li>
+        <li><strong>Order:</strong> <code>@Before</code> runs <em>lowest</em> order first; <code>@After</code> runs <em>highest</em> order first (reverse).</li>
+      </ul>
+<pre><code>@After
+public void tearDown(Scenario scenario) {
+    if (scenario.isFailed()) {
+        byte[] shot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+        scenario.attach(shot, "image/png", "failure");
+    }
+    driver.quit();
+}</code></pre>
+      <p><strong>Tags</strong> (<code>@smoke</code>, <code>@regression</code>, <code>@wip</code>) categorize scenarios and cascade from feature → scenario. Filter runs with tag expressions: <code>@smoke and not @wip</code>, <code>(@ui or @api) and not @slow</code>. Conditional hooks: <code>@Before("@ui")</code>. Run: <code>mvn test -Dcucumber.filter.tags="@smoke"</code>.</p>
+    </div>
+
+    <div class="topic-card" id="scenario-outline">
+      <h2>Scenario Outline &amp; Data Tables</h2>
+      <p><strong>Scenario Outline</strong> runs the same scenario once per row of an <code>Examples</code> table — data-driven testing in Gherkin. Placeholders use <code>&lt;angle brackets&gt;</code>.</p>
+<pre><code>Scenario Outline: Login attempts
+  Given I am on the login page
+  When I log in as "&lt;user&gt;" with "&lt;password&gt;"
+  Then I should see "&lt;result&gt;"
+
+  Examples:
+    | user  | password | result       |
+    | john  | correct  | dashboard    |
+    | john  | wrong    | error message |</code></pre>
+      <p><strong>Data tables</strong> (inside a single step) pass structured data to one step — mapped to <code>DataTable</code> (Java) or <code>context.table</code> (Behave). Use Scenario Outline for "run this N times with different data"; use a data table for "here's a set of data for <em>this</em> step".</p>
+    </div>
+
+    <div class="topic-card" id="behave">
+      <h2>Behave — Python BDD</h2>
+      <p>Python's Cucumber equivalent. Structure: <code>features/*.feature</code>, <code>features/steps/*.py</code>, and <code>features/environment.py</code> (hooks).</p>
+<pre><code>from behave import given, when, then, step
+
+@given('the user "{username}" is logged in')   # {username} string
+def step_logged_in(context, username):
+    context.auth.login(username)                # context shares state
+
+@then('the cart should have {count:d} items')  # :d int, :f float
+def step_cart(context, count):
+    assert context.cart.count == count</code></pre>
+      <p>The <strong>context object</strong> carries state between steps and hooks (driver, page objects, test data). <code>@step</code> matches Given/When/Then. Data table → <code>context.table</code>; doc string → <code>context.text</code>.</p>
+      <p><strong>environment.py hooks:</strong> <code>before_all/after_all</code>, <code>before_feature/after_feature</code>, <code>before_scenario/after_scenario</code>, <code>before_step/after_step</code>, <code>before_tag/after_tag</code>.</p>
+<pre><code># run: behave, behave --tags=@smoke, behave --tags="@smoke and not @wip"
+def before_scenario(context, scenario):
+    context.browser = webdriver.Chrome()
+def after_scenario(context, scenario):
+    context.browser.quit()</code></pre>
+    </div>
+
+    <div class="topic-card" id="playwright">
+      <h2>Playwright</h2>
+      <p>Modern Microsoft browser-automation framework — an alternative to Selenium with <strong>auto-waiting</strong> built into every action (locators wait for the element to be actionable, cutting flakiness). One API drives Chromium, Firefox, and WebKit.</p>
+      <p><strong>Object model:</strong> <code>Playwright → Browser → BrowserContext → Page → Locator</code>. A <strong>BrowserContext</strong> is an isolated session (own cookies/storage) — cheap to create, great for test isolation.</p>
+<pre><code>try (Playwright playwright = Playwright.create()) {          // AutoCloseable
+    Browser browser = playwright.chromium()
+        .launch(new BrowserType.LaunchOptions().setHeadless(false));
+    BrowserContext context = browser.newContext();
+    Page page = context.newPage();
+    page.navigate("https://example.com/login");
+    page.locator("#username").fill("user");                  // auto-waits
+    page.locator("#login-btn").click();
+    assertThat(page).hasURL(Pattern.compile(".*dashboard")); // web-first assertion
+}</code></pre>
+      <table>
+        <tr><th></th><th>Playwright</th><th>Selenium</th></tr>
+        <tr><td>Waiting</td><td>Auto-wait built in</td><td>Manual explicit waits</td></tr>
+        <tr><td>Browsers</td><td>Chromium/Firefox/WebKit (bundled)</td><td>All, via drivers</td></tr>
+        <tr><td>Extras</td><td>Codegen, trace viewer, video, network intercept</td><td>Via add-ons</td></tr>
+        <tr><td>Maturity</td><td>Newer</td><td>Established, huge ecosystem</td></tr>
+      </table>
+      <p><strong>Tooling:</strong> <em>Codegen</em> records actions into code (<code>playwright codegen</code>); the <strong>Trace Viewer</strong> replays a run with DOM snapshots, screenshots, and network for debugging; built-in screenshot/video capture and <strong>visual (screenshot) testing</strong>. Install browsers: <code>mvn exec:java -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install"</code>.</p>
+    </div>
+  </section>
+
   <!-- ============== INTERVIEW PREP ============== -->
   <section id="interview-prep">
-    <h1>Part 6 — Final Interview Prep</h1>
+    <h1>Part 9 — Final Interview Prep</h1>
 
     <div class="topic-card" id="behavioral">
       <h2>Behavioral Questions (asked in previous finals)</h2>
@@ -1895,12 +2384,13 @@ def test_signup():
         <li>How did you get into tech?</li>
       </ul>
       <div class="tip"><strong>Technical areas that came up in previous final interviews:</strong> Python (list vs tuple, generators, decorators, lambda, modules vs packages, pulling even/odd from a list, 2nd largest number, word frequency on a whiteboard, Pandas joins/NULL replacement, SQLAlchemy) · Java (exceptions &amp; throws, abstract vs interface, overloading vs overriding, collections, static/final, wrappers, StringBuilder, constructors, lambdas, OOP pillars in your project) · SQL (joins, unions, PK/FK, outer joins, highest-salary query across two tables, safe data practices with JDBC) · Testing (TDD vs BDD, test plan, test scripts, system vs integration testing, SDLC, functional vs non-functional, defect lifecycle, deferred defects, test case fields, API testing, regression, hard vs soft asserts, high-severity/low-priority example, why automate).</div>
-      <p>Every one of those topics is covered in Parts 1–5 — drill the matching flash-card decks the night before.</p>
+      <p>Every one of those topics is covered in Parts 1–8 — drill the matching flash-card decks the night before.</p>
+      <div class="tip"><strong>New in Weeks 7–8 (likely follow-ups):</strong> REST vs SOAP · idempotent vs safe methods · 401 vs 403 · authentication vs authorization · why API tests over UI tests (test pyramid) · Postman variable scopes &amp; chaining · REST Assured Given-When-Then · implicit vs explicit waits · why Page Object Model · XPath vs CSS · integration vs system testing · stubs vs drivers · TDD vs BDD · the Three Amigos · Scenario Outline vs data table · Cucumber vs Behave · Playwright vs Selenium (auto-wait).</div>
     </div>
   </section>
 
   <footer style="text-align:center; padding:40px 0; color:var(--muted);">
-    <p>Built for the Weeks 1–6 QEA final interview · <a href="flashcards.html">Flash Cards</a> · <a href="quiz.html">Quiz</a></p>
+    <p>Built for the Weeks 1–8 QEA final interview · <a href="flashcards.html">Flash Cards</a> · <a href="quiz.html">Quiz</a></p>
   </footer>
 </main>
 </body>
